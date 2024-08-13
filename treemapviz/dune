@@ -1,0 +1,9 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_experimental_treemapviz bonsai_web
+   bonsai_web_components.feather_icon
+   bonsai_web_components.web_ui_element_size_hooks core virtual_dom.css_gen
+   core_kernel.nonempty_list)
+ (preprocess
+  (pps bonsai.ppx_bonsai ppx_css ppx_jane)))

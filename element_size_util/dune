@@ -1,0 +1,7 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_web bonsai_web_components.web_ui_element_size_hooks core
+   virtual_dom.css_gen)
+ (preprocess
+  (pps ppx_jane bonsai.ppx_bonsai ppx_css)))

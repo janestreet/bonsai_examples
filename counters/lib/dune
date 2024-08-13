@@ -1,0 +1,5 @@
+(library
+ (name bonsai_web_counters_example)
+ (libraries bonsai_web core)
+ (preprocess
+  (pps bonsai.ppx_bonsai ppx_jane ppx_pattern_bind)))

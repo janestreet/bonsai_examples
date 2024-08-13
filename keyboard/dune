@@ -1,0 +1,7 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_web core js_of_ocaml virtual_dom.ui_effect
+   virtual_dom.keyboard)
+ (preprocess
+  (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_css ppx_jane)))

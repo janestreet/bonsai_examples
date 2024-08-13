@@ -1,0 +1,8 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries async_rpc_kernel bonsai_web expect_test_helpers_core async_kernel
+   core polling_state_rpc.diffable_polling_state_rpc_response
+   polling_state_rpc)
+ (preprocess
+  (pps ppx_jane ppx_diff.ppx_diff bonsai.ppx_bonsai)))

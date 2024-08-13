@@ -1,0 +1,6 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_web core)
+ (preprocess
+  (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_jane)))

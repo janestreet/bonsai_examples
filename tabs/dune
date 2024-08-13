@@ -1,0 +1,6 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_web bonsai_web_ui_tabs core)
+ (preprocess
+  (pps bonsai.ppx_bonsai ppx_jane)))

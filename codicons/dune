@@ -1,0 +1,7 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_web bonsai_web_components.web_ui_form codicons core
+   fuzzy_match.match js_clipboard js_of_ocaml)
+ (preprocess
+  (pps ppx_jane bonsai.ppx_bonsai ppx_css)))

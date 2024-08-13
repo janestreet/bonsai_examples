@@ -1,0 +1,5 @@
+(library
+ (name bonsai_time_example)
+ (libraries bonsai_web core)
+ (preprocess
+  (pps ppx_jane bonsai.ppx_bonsai)))

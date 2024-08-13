@@ -1,0 +1,6 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_web core incr_dom.vdom_file_download)
+ (preprocess
+  (pps ppx_jane)))

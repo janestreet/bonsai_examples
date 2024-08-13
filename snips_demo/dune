@@ -1,0 +1,13 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries async_js bonsai_web ppx_css.inline_css bonsai_web.kado
+   bonsai_experimental_snips core virtual_dom.css_gen virtual_dom)
+ (preprocess
+  (pps ppx_jane bonsai.ppx_bonsai)))
+
+(rule
+ (targets style.ml style.mli style__generated.ml style__generated.mli)
+ (deps style.css)
+ (action
+  (bash "%{bin:css_inliner} %{deps}")))

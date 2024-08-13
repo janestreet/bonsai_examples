@@ -1,0 +1,7 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_web bonsai_web_components.web_ui_form core
+   virtual_dom.css_gen bonsai_web_components.feather_icon fuzzy_match.match)
+ (preprocess
+  (pps ppx_jane bonsai.ppx_bonsai ppx_css)))

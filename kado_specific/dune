@@ -1,0 +1,9 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai.extra bonsai_web bonsai_web.kado
+   bonsai_web_components.web_ui_auto_generated
+   bonsai_web_components.web_ui_form core virtual_dom.css_gen
+   virtual_dom.ui_effect)
+ (preprocess
+  (pps ppx_jane bonsai.ppx_bonsai)))

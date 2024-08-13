@@ -1,0 +1,5 @@
+(library
+ (name bonsai_drag_and_drop_example)
+ (libraries bonsai_web bonsai_web_components.web_ui_drag_and_drop core)
+ (preprocess
+  (pps bonsai.ppx_bonsai ppx_css ppx_jane)))

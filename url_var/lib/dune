@@ -1,0 +1,10 @@
+(library
+ (name bonsai_web_ui_url_var_example_urls)
+ (libraries bonsai bonsai.extra bonsai_web
+   bonsai_web_components.tailwind_colors bonsai_web_components.web_ui_form
+   bonsai_web_components.web_ui_url_var core virtual_dom.css_gen
+   bonsai_web_components.feather_icon ppx_typed_fields.typed_fields_lib
+   ppx_typed_fields.typed_variants_lib uri uri_parsing)
+ (preprocess
+  (pps ppx_jane ppx_css ppx_demo js_of_ocaml-ppx ppx_typed_fields
+    bonsai.ppx_bonsai)))

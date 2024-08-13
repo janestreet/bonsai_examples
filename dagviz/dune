@@ -1,0 +1,10 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries virtual_dom.svg bonsai_web_components.web_ui_element_size_hooks
+   bonsai_web_components.bonsai_experimental_dagviz bonsai_web
+   bonsai_web_components.tailwind_colors core virtual_dom.css_gen
+   bonsai_web_components.feather_icon)
+ (preprocess
+  (pps js_of_ocaml-ppx ppx_typed_fields ppx_jane ppx_css ppx_demo
+    bonsai.ppx_bonsai)))

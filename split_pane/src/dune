@@ -1,0 +1,7 @@
+(library
+ (name bonsai_web_ui_split_pane_example)
+ (libraries core bonsai_web bonsai_web_components.web_ui_split_pane
+   bonsai_web_components.web_ui_auto_generated
+   bonsai_web_components.web_ui_form)
+ (preprocess
+  (pps ppx_jane ppx_css bonsai.ppx_bonsai)))

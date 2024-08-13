@@ -1,0 +1,7 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries core bonsai_web bonsai_web_ui_panels_experimental
+   virtual_dom.ui_effect)
+ (preprocess
+  (pps bonsai.ppx_bonsai ppx_jane)))

@@ -1,0 +1,7 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_web bonsai_web_ui_codemirror_read_only
+   bonsai_experimental_animation core)
+ (preprocess
+  (pps ppx_jane bonsai.ppx_bonsai ppx_embed_file ppx_css)))

@@ -1,0 +1,8 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_web bonsai_web_components.web_ui_form
+   bonsai_web_components.web_ui_reorderable_list core
+   virtual_dom.input_widgets)
+ (preprocess
+  (pps ppx_jane bonsai.ppx_bonsai ppx_css)))
