@@ -9,11 +9,11 @@ module Url_var := Bonsai_web_ui_url_var
 
 (* $MDX part-begin=assoc *)
 val assoc
-  :  ?here:Stdlib.Lexing.position
+  :  here:[%call_pos]
   -> ('k, 'cmp) Bonsai.comparator
   -> ('k, 'v, 'cmp) Map.t Bonsai.t
-  -> f:('k Bonsai.t -> 'v Bonsai.t -> Bonsai.graph -> 'result Bonsai.t)
-  -> Bonsai.graph
+  -> f:('k Bonsai.t -> 'v Bonsai.t -> local_ Bonsai.graph -> 'result Bonsai.t)
+  -> local_ Bonsai.graph
   -> ('k, 'result, 'cmp) Map.t Bonsai.t
 (* $MDX part-end *)
 
@@ -22,15 +22,15 @@ val state_machine0
   :  default_model:'model
   -> apply_action:
        (('action, unit) Bonsai.Apply_action_context.t -> 'model -> 'action -> 'model)
-  -> Bonsai.graph
+  -> local_ Bonsai.graph
   -> 'model Bonsai.t * ('action -> unit Effect.t) Bonsai.t
 (* $MDX part-end *)
 
 (* $MDX part-begin=peek *)
 val peek
-  :  ?here:Stdlib.Lexing.position
+  :  here:[%call_pos]
   -> 'a Bonsai.t
-  -> Bonsai.graph
+  -> local_ Bonsai.graph
   -> 'a Computation_status.t Effect.t Bonsai.t
 (* $MDX part-end *)
 
@@ -105,6 +105,6 @@ val mirror
   -> interactive_set:('m -> unit Effect.t) Bonsai.t
   -> interactive_value:'m Bonsai.t
   -> unit
-  -> Bonsai.graph
+  -> local_ Bonsai.graph
   -> unit Bonsai.t
 (* $MDX part-end *)

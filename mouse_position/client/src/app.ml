@@ -17,7 +17,7 @@ let session_to_color session =
   ]
 ;;
 
-let app graph =
+let app (local_ graph) =
   let%sub { last_ok_response; _ } =
     Rpc_effect.Polling_state_rpc.poll
       ~sexp_of_query:[%sexp_of: Unit.t]
@@ -39,7 +39,7 @@ let app graph =
     Bonsai.assoc
       (module Session)
       active_users
-      ~f:(fun session username graph ->
+      ~f:(fun session username (local_ graph) ->
         let result =
           Rpc_effect.Rpc.poll
             ~sexp_of_query:[%sexp_of: Session.t]
@@ -52,8 +52,7 @@ let app graph =
             session
             graph
         in
-        let%arr result = result
-        and username = username in
+        let%arr result and username in
         result, username)
       graph
   in
@@ -70,8 +69,8 @@ let app graph =
     Bonsai.assoc
       (module Session)
       mouse_positions
-      ~f:(fun session info _graph ->
-        let%arr session = session
+      ~f:(fun session info (local_ _graph) ->
+        let%arr session
         and mouse_position, username = info in
         Node.div
           ~key:(Session.to_string session)
@@ -90,8 +89,7 @@ let app graph =
   in
   let status_sidebar =
     let theme = View.Theme.current graph in
-    let%arr rpc_results = rpc_results
-    and theme = theme in
+    let%arr rpc_results and theme in
     let rows = Map.to_alist rpc_results in
     let columns =
       [ View.Table.Col.make
@@ -119,9 +117,7 @@ let app graph =
   let set_mouse_position =
     Rpc_effect.Rpc.dispatcher Protocol.Set_mouse_position.rpc ~where_to_connect:Self graph
   in
-  let%arr cursor_blocks = cursor_blocks
-  and status_sidebar = status_sidebar
-  and set_mouse_position = set_mouse_position in
+  let%arr cursor_blocks and status_sidebar and set_mouse_position in
   Node.div
     ~attrs:
       [ Style.container

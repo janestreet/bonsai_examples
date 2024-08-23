@@ -4,7 +4,7 @@ open! Bonsai.Let_syntax
 
 let on_change _ = Effect.Ignore
 
-let component graph =
+let component (local_ graph) =
   let%map theme = View.Theme.current graph in
   [ Kado.Unstable.Input.textbox
       ~constants:(View.constants theme)

@@ -9,17 +9,17 @@ let hello_world = Vdom.Node.span [ Vdom.Node.text "hello world" ]
 
 (* $MDX part-begin=hello-user *)
 let hello_user (name : string Bonsai.t) : Vdom.Node.t Bonsai.t =
-  let%arr name = name in
+  let%arr name in
   Vdom.Node.span [ Vdom.Node.textf "hello %s" name ]
 ;;
 
 (* $MDX part-end *)
 
 (* $MDX part-begin=hello-text-box *)
-let hello_textbox graph : Vdom.Node.t Bonsai.t =
+let hello_textbox (local_ graph) : Vdom.Node.t Bonsai.t =
   let state, set = Bonsai.state "" graph in
   let%arr message = hello_user state
-  and set = set in
+  and set in
   Vdom.Node.div
     [ Vdom.Node.input ~attrs:[ Vdom.Attr.on_input (fun _ text -> set text) ] (); message ]
 ;;
@@ -169,7 +169,9 @@ module State_view_spec = struct
 end
 
 let%expect_test "test Bonsai.state" =
-  let state_single_bonsai graph : (string * (string -> unit Vdom.Effect.t)) Bonsai.t =
+  let state_single_bonsai (local_ graph)
+    : (string * (string -> unit Vdom.Effect.t)) Bonsai.t
+    =
     let state, inject = Bonsai.state "hello" graph in
     Bonsai.both state inject
   in

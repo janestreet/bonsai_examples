@@ -22,7 +22,7 @@ let apply_action (_ : _ Bonsai.Apply_action_context.t) model = function
     Map.update model location ~f:(Option.value_map ~default:0 ~f:(( + ) diff))
 ;;
 
-let component graph =
+let component (local_ graph) =
   let state, inject =
     Bonsai.state_machine0
       graph
@@ -32,8 +32,7 @@ let component graph =
       ~default_model
       ~apply_action
   in
-  let%arr state = state
-  and inject = inject in
+  let%arr state and inject in
   let button text action =
     Node.button ~attrs:[ Attr.on_click (fun _ -> inject action) ] [ Node.text text ]
   in

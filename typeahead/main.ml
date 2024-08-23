@@ -42,7 +42,7 @@ end
 (* thanks to the good folks in webdev-public, you can no longer fool this into letting you
    choose a pokemon as your favourite if its already your not favourite! *)
 
-let components graph =
+let components (local_ graph) =
   let open! Bonsai.Let_syntax in
   let open! Bonsai_web_ui_typeahead in
   let all_options, inject_all_options =
@@ -55,7 +55,7 @@ let components graph =
   let typeahead_single ?handle_unknown_option () =
     Typeahead.create
       ~on_select_change:
-        (let%map inject_all_options = inject_all_options in
+        (let%map inject_all_options in
          fun favourite_pokemon ->
            Option.value_map
              favourite_pokemon
@@ -79,8 +79,7 @@ let components graph =
       (module Pokemon)
       ~to_string:(Bonsai.return Pokemon.to_string)
       ~on_set_change:
-        (let%map inject_all_options = inject_all_options
-         and favourite_pokemon = favourite_pokemon in
+        (let%map inject_all_options and favourite_pokemon in
          fun not_good_pokemon ->
            (* Remove the favourite pokemon if it exists. *)
            let all_pokemon =
@@ -118,11 +117,11 @@ let components graph =
   let%sub { view = typeahead_multi_with_custom_input_vdom; _ } =
     typeahead_multi_with_custom_input ~all_options:(Bonsai.return Pokemon.all) graph
   in
-  let%arr typeahead_single_vdom = typeahead_single_vdom
-  and typeahead_multi_vdom = typeahead_multi_vdom
-  and typeahead_single_with_custom_input_vdom = typeahead_single_with_custom_input_vdom
-  and typeahead_multi_with_empty_options_vdom = typeahead_multi_with_empty_options_vdom
-  and typeahead_multi_with_custom_input_vdom = typeahead_multi_with_custom_input_vdom in
+  let%arr typeahead_single_vdom
+  and typeahead_multi_vdom
+  and typeahead_single_with_custom_input_vdom
+  and typeahead_multi_with_empty_options_vdom
+  and typeahead_multi_with_custom_input_vdom in
   Vdom.Node.create
     "main"
     [ Vdom.Node.section

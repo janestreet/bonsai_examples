@@ -89,9 +89,9 @@ module Shared_code = struct
     ; container : Vdom.Node.t -> Vdom.Node.t
     }
 
-  let prepare graph =
+  let prepare (local_ graph) =
     let theme = View.Theme.current graph in
-    let%arr theme = theme in
+    let%arr theme in
     let { View.Constants.intent = { info; error; warning; success }
         ; primary
         ; extreme_primary_border
@@ -139,11 +139,12 @@ module Markup = struct
   type t =
     | H of string
     | P of string
-    | D of (Bonsai.graph -> (Vdom.Node.t * string) Bonsai.t)
-    | Ds of (string option * (Bonsai.graph -> (Vdom.Node.t * string) Bonsai.t)) list
+    | D of (local_ Bonsai.graph -> (Vdom.Node.t * string) Bonsai.t)
+    | Ds of
+        (string option * (local_ Bonsai.graph -> (Vdom.Node.t * string) Bonsai.t)) list
 
-  let remove_layout_comments code _graph =
-    let%arr code = code in
+  let remove_layout_comments code (local_ _graph) =
+    let%arr code in
     String.split_lines code
     |> List.filter ~f:(Fn.non (String.is_substring ~substring:"remove-this-line"))
     |> String.concat ~sep:"\n"
@@ -159,9 +160,10 @@ module Markup = struct
           | _ -> '_')
       in
       let link = Vdom.Node.a ~attrs:[ Vdom.Attr.href ("#" ^ id) ] [ Vdom.Node.text s ] in
-      fun _graph -> Bonsai.return (Vdom.Node.h2 ~attrs:[ Vdom.Attr.id id ] [ link ])
+      fun (local_ _graph) ->
+        Bonsai.return (Vdom.Node.h2 ~attrs:[ Vdom.Attr.id id ] [ link ])
     | P s ->
-      fun _graph ->
+      fun (local_ _graph) ->
         Bonsai.return
           (Vdom.Node.inner_html
              ()
@@ -169,7 +171,7 @@ module Markup = struct
              ~tag:"p"
              ~this_html_is_sanitized_and_is_totally_safe_trust_me:s)
     | D c ->
-      fun graph ->
+      fun (local_ graph) ->
         let%sub demo, code = c graph in
         let code = remove_layout_comments code graph in
         let gallery =
@@ -178,7 +180,7 @@ module Markup = struct
         let%arr { Gallery.demo; code } = gallery in
         Vdom.Node.div ~attrs:[ Shared_code.Style.x2_grid ] [ code; demo ]
     | Ds a ->
-      fun graph ->
+      fun (local_ graph) ->
         a
         |> List.map ~f:(fun (ocaml_label, c) ->
           let%sub demo, code = c graph in
@@ -186,7 +188,7 @@ module Markup = struct
           let r =
             Gallery.make_demo' ~hide_html:true ~ocaml_label:None ~demo ~code () graph
           in
-          let%arr r = r in
+          let%arr r in
           ocaml_label, r)
         |> Bonsai.all
         |> Bonsai.map ~f:(fun demos ->
@@ -232,7 +234,7 @@ let blue, green, orange = ... (* more of the same *)
 |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; normal; _ } = prepared in
     let vdom, demo =
@@ -255,7 +257,7 @@ let blue, green, orange = ... (* more of the same *)
 end
 
 module Your_first_snip = struct
-  let view graph =
+  let view (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; normal; red; _ } = prepared in
     let vdom, demo =
@@ -294,7 +296,7 @@ module Your_first_snip = struct
 end
 
 module Composed_snips = struct
-  let view graph =
+  let view (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; normal; red; blue; _ } = prepared in
     let vdom, demo =
@@ -323,7 +325,7 @@ module Composed_snips = struct
 end
 
 module Sideways_snips = struct
-  let view1 graph =
+  let view1 (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; normal; red; blue; green; _ } = prepared in
     let vdom, demo =
@@ -339,7 +341,7 @@ module Sideways_snips = struct
     container vdom, demo
   ;;
 
-  let alt_1 graph =
+  let alt_1 (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; normal; red; blue; green; _ } = prepared in
     let vdom, demo =
@@ -355,7 +357,7 @@ module Sideways_snips = struct
     container vdom, demo
   ;;
 
-  let alt_2 graph =
+  let alt_2 (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; normal; red; blue; green; _ } = prepared in
     let vdom, demo =
@@ -371,7 +373,7 @@ module Sideways_snips = struct
     container vdom, demo
   ;;
 
-  let alt_3 graph =
+  let alt_3 (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; normal; red; blue; green; _ } = prepared in
     let vdom, demo =
@@ -403,7 +405,7 @@ module Sideways_snips = struct
 end
 
 module All_the_sides = struct
-  let view graph =
+  let view (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; normal; red; blue; green; orange } = prepared in
     let vdom, demo =
@@ -430,7 +432,7 @@ module All_the_sides = struct
 end
 
 module Splits = struct
-  let view graph =
+  let view (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; red; blue; green; _ } = prepared in
     let vdom, demo =
@@ -448,7 +450,7 @@ module Splits = struct
     container vdom, demo
   ;;
 
-  let view2 graph =
+  let view2 (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; red; green; orange; blue; normal; _ } = prepared in
     let vdom, demo =
@@ -488,7 +490,7 @@ module Splits = struct
 end
 
 module Splits_on_splits = struct
-  let view graph =
+  let view (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; red; normal; orange; blue; _ } = prepared in
     let vdom, demo =
@@ -509,7 +511,7 @@ module Splits_on_splits = struct
     container vdom, demo
   ;;
 
-  let view2 graph =
+  let view2 (local_ graph) =
     let prepared = Shared_code.prepare graph in
     let%arr { container; red; normal; orange; blue; _ } = prepared in
     let vdom, demo =
@@ -537,7 +539,7 @@ module Splits_on_splits = struct
   ;;
 end
 
-let component graph =
+let component (local_ graph) =
   let%sub theme, theme_picker =
     Gallery.Theme_picker.component ~default:Kado_light ~standalone:false () graph
   in
@@ -557,7 +559,7 @@ let component graph =
   in
   View.Theme.set_for_app
     theme
-    (fun graph ->
+    (fun (local_ graph) ->
       let nodes =
         Bonsai.all
           ([ intro
@@ -574,7 +576,7 @@ let component graph =
            |> List.map ~f:(fun x -> x graph))
       in
       let attr =
-        let%arr theme = theme in
+        let%arr theme in
         let border =
           View.extreme_primary_border_color theme |> Css_gen.Color.to_string_css
         in
@@ -593,9 +595,7 @@ let component graph =
           nodes
           graph
       in
-      let%arr theme_picker = theme_picker
-      and attr = attr
-      and body = body in
+      let%arr theme_picker and attr and body in
       let header =
         Vdom.Node.div
           ~attrs:[ Shared_code.Style.header ]

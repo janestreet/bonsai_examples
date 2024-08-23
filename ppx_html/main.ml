@@ -32,7 +32,7 @@ module Basic = struct
             </div>
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -48,7 +48,7 @@ module With_tailwind = struct
 
   let view =
     let vdom, demo = [%demo [%html {|<div tailwind="w-16 h-16 bg-amber-400"></div>|}]] in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -72,7 +72,7 @@ module With_ppx_css = struct
             ></div>
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -103,7 +103,7 @@ module Svg_example = struct
             </svg>
           |}]]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -119,7 +119,7 @@ module Plain_html = struct
 
   let view =
     let vdom, demo = [%demo {%html|<h1>Hello World!</h1>|}] in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -147,7 +147,7 @@ module Html_with_vdom_interpolation = struct
             </div>
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -168,11 +168,11 @@ module Html_no_string_interpolation = struct
         let age = 2 in
         {%html|
             <div>
-              <h1>Hello %{name#String}! Your age is %{age#Int}.</h1>
+              <h1>Hello #{name}! Your age is %{age#Int}.</h1>
             </div>
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -198,7 +198,7 @@ module Html_with_attributes = struct
             />
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -224,7 +224,7 @@ module Attribute_value_interpolation = struct
             </div>
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -257,7 +257,7 @@ module Attribute_interpolation = struct
             </div>
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -290,7 +290,7 @@ module Interpolating_the_view_function = struct
             </>
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -322,7 +322,7 @@ module Interpolating_an_option = struct
             </div>
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -352,14 +352,14 @@ module Interpolating_a_list = struct
             </div>
           |}]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-let component graph =
+let component (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component ~default:Kado () graph in
   View.Theme.set_for_app
     theme

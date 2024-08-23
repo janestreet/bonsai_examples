@@ -21,7 +21,7 @@ module Col_id = struct
   include Comparator.Make (Row.Typed_field.Packed)
 end
 
-let component ?filter (data : Row.t String.Map.t Bonsai.t) graph =
+let component ?filter (data : Row.t String.Map.t Bonsai.t) (local_ graph) =
   let all = Bonsai.return Row.Typed_field.Packed.all in
   let form = Form.Elements.Typeahead.list (module Col_id) ~all_options:all graph in
   let form = Form.Dynamic.with_default all form graph in
@@ -36,9 +36,9 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) graph =
         (Column.build
            (module Col_id)
            ~columns
-           ~render_cell:(fun col _key data _graph ->
+           ~render_cell:(fun col _key data (local_ _graph) ->
              let%arr { f = T field } = col
-             and data = data in
+             and data in
              let string, float, int =
                Vdom.Node.text, Vdom.Node.textf "%f", Vdom.Node.textf "%d"
              in
@@ -54,7 +54,7 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) graph =
              | Position -> int value
              | Last_fill -> Vdom.Node.text (Time_ns_option.to_string value)
              | Trader -> string value)
-           ~render_header:(fun col _graph ->
+           ~render_header:(fun col (local_ _graph) ->
              let%arr { f = T field } = col in
              Table.Columns.Dynamic_columns.Sortable.Header.with_icon
                (Vdom.Node.text (Row.Typed_field.name field))))
@@ -70,7 +70,7 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) graph =
           }
     =
     table
-  and form = form in
+  and form in
   Vdom.Node.div
     ~attrs:
       [ Vdom.Attr.on_keydown (fun kbc ->

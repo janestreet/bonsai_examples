@@ -11,13 +11,12 @@ module Scale = struct
   let to_string t = sexp_of_t t |> Sexp.to_string
 end
 
-let scale : Bonsai.graph -> (Scale.t * Vdom.Node.t) Bonsai.t =
-  fun graph ->
+let scale : local_ Bonsai.graph -> (Scale.t * Vdom.Node.t) Bonsai.t =
+  fun (local_ graph) ->
   let scale, set_scale =
     Bonsai.state `log ~sexp_of_model:[%sexp_of: Scale.t] ~equal:[%equal: Scale.t] graph
   in
-  let%arr scale = scale
-  and set_scale = set_scale in
+  let%arr scale and set_scale in
   let view =
     Vdom_input_widgets.Dropdown.of_enum
       ~merge_behavior:Legacy_dont_merge
@@ -51,7 +50,7 @@ let options ~logscale =
       (Dygraph.Options.Highlight_series_options.create () ~strokeWidth:1.5)
 ;;
 
-let app graph =
+let app (local_ graph) =
   let x_label = "Month" in
   let y_labels = [ "Nominal"; "Real" ] in
   let%sub scale, scale_view = scale graph in
@@ -75,7 +74,6 @@ let app graph =
       ()
       graph
   in
-  let%arr graph_view = graph_view
-  and scale_view = scale_view in
+  let%arr graph_view and scale_view in
   Vdom.Node.div [ graph_view; Vdom.Node.textf "y-axis scale: "; scale_view ]
 ;;

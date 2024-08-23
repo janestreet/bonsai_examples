@@ -6,5 +6,5 @@ val component
   :  room_list:Room.t list Bonsai.t
   -> refresh_rooms:unit Effect.t
   -> change_room:(Room.t -> unit Effect.t)
-  -> Bonsai.graph
+  -> local_ Bonsai.graph
   -> Vdom.Node.t Bonsai.t

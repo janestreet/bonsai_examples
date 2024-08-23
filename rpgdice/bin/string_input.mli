@@ -11,5 +11,5 @@ end
 val component
   :  (module Conv with type t = 't)
   -> default_model:string
-  -> Bonsai.graph
+  -> local_ Bonsai.graph
   -> ('t Or_error.t * Vdom.Node.t) Bonsai.t

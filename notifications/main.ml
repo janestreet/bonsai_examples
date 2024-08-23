@@ -20,11 +20,9 @@ module User_defined_notification = struct
         | Error of string
       [@@deriving sexp, equal]
 
-      let render ~close t graph =
+      let render ~close t (local_ graph) =
         let theme = View.Theme.current graph in
-        let%arr close = close
-        and t = t
-        and theme = theme in
+        let%arr close and t and theme in
         match t with
         | Success message ->
           View.card theme ~intent:Success ~on_click:close ~title:"Success" message
@@ -33,7 +31,7 @@ module User_defined_notification = struct
       ;;
     end
 
-    let component graph =
+    let component (local_ graph) =
       let notifications =
         Notifications.component
           (module Notification)
@@ -41,17 +39,14 @@ module User_defined_notification = struct
           graph
       in
       let vdom = Notifications.render notifications ~f:Notification.render graph in
-      let%arr vdom = vdom
-      and notifications = notifications in
+      let%arr vdom and notifications in
       vdom, notifications
     ;;]
 
-  let view graph =
+  let view (local_ graph) =
     let theme = View.Theme.current graph in
     let%sub component, notifications = component graph in
-    let%arr component = component
-    and notifications = notifications
-    and theme = theme in
+    let%arr component and notifications and theme in
     let vdom =
       View.hbox
         ~gap:(`Em 1)
@@ -97,7 +92,7 @@ module User_defined_notification = struct
   let filter_attrs = None
 end
 
-let component graph =
+let component (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
   View.Theme.set_for_app
     theme

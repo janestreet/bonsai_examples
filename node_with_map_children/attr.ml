@@ -7,7 +7,7 @@ type t =
   ; reset : unit Effect.t
   }
 
-let component graph =
+let component (local_ graph) =
   let attr, inject =
     Bonsai.state_machine0
       graph
@@ -22,7 +22,6 @@ let component graph =
         | 2 -> Vdom.Attr.create "foo" "6"
         | _ -> Vdom.Attr.css_var ~name:"test" "foo")
   in
-  let%arr attr = attr
-  and inject = inject in
+  let%arr attr and inject in
   { attr; reset = inject () }
 ;;

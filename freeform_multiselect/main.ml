@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 
-let components graph =
+let components (local_ graph) =
   let open! Bonsai.Let_syntax in
   let open! Bonsai_web_ui_freeform_multiselect in
   let control =

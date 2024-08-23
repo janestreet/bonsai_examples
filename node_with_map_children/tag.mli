@@ -6,4 +6,4 @@ type t =
   ; reset : unit Effect.t
   }
 
-val component : Bonsai.graph -> t Bonsai.t
+val component : local_ Bonsai.graph -> t Bonsai.t

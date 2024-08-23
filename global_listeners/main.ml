@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 
-let component _graph =
+let component (local_ _graph) =
   Vdom.Node.div
     [ Vdom.Node.div
         ~attrs:

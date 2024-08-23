@@ -16,7 +16,7 @@ module Style =
       }
       |}]
 
-let component graph =
+let component (local_ graph) =
   let%map.Bonsai big_form = Big_form.component graph
   and list_form = List_form.component graph
   and form_with_submit = Form_with_submit.component graph

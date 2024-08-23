@@ -48,9 +48,9 @@ let () = ignore button
 let () = Util.run_vdom button' ~id:"view_button"
 
 (* $MDX part-begin=button_get_theme *)
-let error_button graph =
+let error_button (local_ graph) =
   let theme = View.Theme.current graph in
-  let%arr theme = theme in
+  let%arr theme in
   View.button theme ~intent:Error ~on_click:do_thing "Error button"
 ;;
 
@@ -59,7 +59,7 @@ let error_button graph =
 let () = Util.run error_button ~id:"button_get_theme"
 
 (* $MDX part-begin=set_theme *)
-let app graph =
+let app (local_ graph) =
   View.Theme.set_for_app (Kado.theme ~version:V1 () |> Bonsai.return) error_button graph
 ;;
 
@@ -68,22 +68,21 @@ let app graph =
 let () = Util.run app ~id:"set_theme"
 
 (* $MDX part-begin=theme_toggle *)
-let themed_theme_toggler ~toggle_dark graph =
+let themed_theme_toggler ~toggle_dark (local_ graph) =
   let%arr theme = View.Theme.current graph
-  and toggle_dark = toggle_dark
+  and toggle_dark
   and error_button = error_button graph in
   View.hbox [ View.button theme ~on_click:toggle_dark "Toggle Dark Mode"; error_button ]
 ;;
 
-let app graph =
+let app (local_ graph) =
   let theme_style, set_theme_style = Bonsai.state Kado.Style.Dark graph in
   let theme =
-    let%arr theme_style = theme_style in
+    let%arr theme_style in
     Kado.theme ~style:theme_style ~version:V1 ()
   in
   let toggle_dark =
-    let%arr theme_style = theme_style
-    and set_theme_style = set_theme_style in
+    let%arr theme_style and set_theme_style in
     set_theme_style
       (match theme_style with
        | Dark -> Light
@@ -98,7 +97,7 @@ let () = Util.run app ~id:"theme_toggle"
 let () = Util.run app ~id:"set_theme"
 
 (* $MDX part-begin=override_constants *)
-let app graph =
+let app (local_ graph) =
   View.Theme.override_constants_for_computation
     error_button
     ~f:(fun constants ->
@@ -116,7 +115,7 @@ let app graph =
 let () = Util.run app ~id:"override_constants"
 
 (* $MDX part-begin=override_theme *)
-let app graph =
+let app (local_ graph) =
   View.Expert.override_theme_for_computation
     error_button
     ~f:(fun (module S) ->

@@ -190,14 +190,12 @@ module Node_data = struct
     }
   [@@deriving sexp, compare, quickcheck, fields ~iterators:create]
 
-  let to_vdom (id : Id.t Bonsai.t) (t : t Bonsai.t) : Bonsai.graph -> Vdom.Node.t Bonsai.t
+  let to_vdom (id : Id.t Bonsai.t) (t : t Bonsai.t)
+    : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t
     =
-    fun graph ->
+    fun (local_ graph) ->
     let collapsed, collapse = Bonsai.toggle ~default_model:true graph in
-    let%arr collapsed = collapsed
-    and id = id
-    and t = t
-    and collapse = collapse in
+    let%arr collapsed and id and t and collapse in
     let status = Status.to_vdom t.status in
     let status_message =
       Vdom.Node.div
@@ -366,11 +364,9 @@ let edge_to_svg
   ~(edge : Edge.t Bonsai.t)
   ~(from : Position.t Bonsai.t)
   ~(to_ : Position.t Bonsai.t)
-  _graph
+  (local_ _graph)
   =
-  let%arr edge = edge
-  and from = from
-  and to_ = to_ in
+  let%arr edge and from and to_ in
   let href =
     let from = edge.from |> Id.to_string in
     let to_ = edge.to_ |> Id.to_string in
@@ -441,7 +437,7 @@ let edge_to_svg
     ]
 ;;
 
-let component graph =
+let component (local_ graph) =
   let curr_id = Bonsai.return Id.Count.zero in
   let dag_data = Bonsai.return { To_vdom.nodes; edges } in
   let%sub dag, _curr_id =
@@ -457,10 +453,10 @@ let component graph =
     match%sub dag with
     | Ok dag -> dag
     | Error error ->
-      let%arr error = error in
+      let%arr error in
       Vdom.Node.sexp_for_debugging [%message "" ~_:(error : Error.t)]
   in
-  let%arr dag = dag in
+  let%arr dag in
   Vdom.Node.div
     ~attrs:[ Styles.header ]
     [ Vdom.Node.div

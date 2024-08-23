@@ -64,7 +64,7 @@ let overlay ~left ~right =
   ]
 ;;
 
-let component graph =
+let component (local_ graph) =
   let form = Knobs.form graph in
   let%arr ( { shared = { left = `Hex left; right = `Hex right }
             ; for_gradient = { steps }

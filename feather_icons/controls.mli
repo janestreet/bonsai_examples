@@ -9,4 +9,4 @@ type t =
   }
 
 (** The part on the right where you can control the size/color/etc. of all the icons. *)
-val component : Bonsai.graph -> (t * Vdom.Node.t) Bonsai.t
+val component : local_ Bonsai.graph -> (t * Vdom.Node.t) Bonsai.t

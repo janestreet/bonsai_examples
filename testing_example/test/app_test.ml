@@ -96,8 +96,10 @@ module State_view_spec = struct
 end
 
 let%expect_test "test Bonsai.state" =
-  let component : Bonsai.graph -> (string * (string -> unit Vdom.Effect.t)) Bonsai.t =
-    fun graph ->
+  let component
+    : local_ Bonsai.graph -> (string * (string -> unit Vdom.Effect.t)) Bonsai.t
+    =
+    fun (local_ graph) ->
     let state, set_state =
       Bonsai.state
         "hello"
@@ -105,8 +107,7 @@ let%expect_test "test Bonsai.state" =
         ~equal:[%equal: String.t]
         graph
     in
-    let%arr state = state
-    and set_state = set_state in
+    let%arr state and set_state in
     state, set_state
   in
   let handle = Handle.create (module State_view_spec) component in

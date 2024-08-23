@@ -50,10 +50,18 @@ let options ~title ?value_formatter ?axis_label_formatter () =
       (Dygraph.Options.Highlight_series_options.create () ~strokeWidth:1.5)
 ;;
 
-let app graph =
+let app (local_ graph) =
   let x_label = "time" in
   let y_labels = [ "brownian motion" ] in
-  let make_graph ~name ~title ~data ?value_formatter ?axis_label_formatter () graph =
+  let make_graph
+    ~name
+    ~title
+    ~data
+    ?value_formatter
+    ?axis_label_formatter
+    ()
+    (local_ graph)
+    =
     let options = options ~title ?value_formatter ?axis_label_formatter () in
     let%sub { graph_view; _ } =
       Dygraph.With_bonsai.create
@@ -106,7 +114,6 @@ let app graph =
       ()
       graph
   in
-  let%arr hide_overnights_graph = hide_overnights_graph
-  and visible_overnights_graphs = visible_overnights_graphs in
+  let%arr hide_overnights_graph and visible_overnights_graphs in
   Vdom.Node.div [ hide_overnights_graph; visible_overnights_graphs ]
 ;;

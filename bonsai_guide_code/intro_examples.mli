@@ -18,9 +18,9 @@ val emails_bonsai
 (* $MDX part-end *)
 
 (* $MDX part-begin=emails_stateful *)
-val emails_stateful : name:string Bonsai.t -> Bonsai.graph -> Vdom.Node.t Bonsai.t
+val emails_stateful : name:string Bonsai.t -> local_ Bonsai.graph -> Vdom.Node.t Bonsai.t
 (* $MDX part-end *)
 
 (* $MDX part-begin=app *)
-val app : Bonsai.graph -> Vdom.Node.t Bonsai.t
+val app : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t
 (* $MDX part-end *)

@@ -107,7 +107,7 @@ module Style =
       }
       |}]
 
-let component graph =
+let component (local_ graph) =
   let model, inject =
     Bonsai.state_machine0
       graph
@@ -118,8 +118,7 @@ let component graph =
       ~apply_action:(fun (_ : _ Bonsai.Apply_action_context.t) model action ->
         List.append model [ action ])
   in
-  let%arr model = model
-  and inject = inject in
+  let%arr model and inject in
   let last_event = List.last model in
   Vdom.Node.div
     ~attrs:[ Vdom.Attr.on_keydown (handle_event inject) ]

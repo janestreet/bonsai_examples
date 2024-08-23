@@ -63,10 +63,10 @@ module Flashing_box_attr = Vdom.Attr.Hooks.Make (struct
 let hook text = Vdom.Attr.create_hook "flashing-box" (Flashing_box_attr.create text)
 let box text = Vdom.Node.div ~attrs:[ Style.box; hook text ] []
 
-let component graph =
+let component (local_ graph) =
   let state, toggle = Bonsai.toggle ~default_model:false graph in
-  let%arr state = state
-  and toggle = toggle
+  let%arr state
+  and toggle
   and theme = View.Theme.current graph in
   View.vbox
     [ Vdom.Node.p

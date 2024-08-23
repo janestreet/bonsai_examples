@@ -56,7 +56,7 @@ module _ = struct
     Table.Columns.Dynamic_experimental.build
       (module Col_id)
       ~columns:(Bonsai.return [ Col_id.Symbol; Price; Num_owned ])
-      ~render_cell:(fun col _key data _graph ->
+      ~render_cell:(fun col _key data (local_ _graph) ->
         match%sub col with
         | Symbol ->
           let%arr { Row.symbol; _ } = data in
@@ -67,8 +67,8 @@ module _ = struct
         | Num_owned ->
           let%arr { num_owned; _ } = data in
           Vdom.Node.text (string_of_int num_owned))
-      ~render_header:(fun col _graph ->
-        let%arr col = col in
+      ~render_header:(fun col (local_ _graph) ->
+        let%arr col in
         let name =
           match col with
           | Symbol -> Vdom.Node.text "Symbol"
@@ -81,7 +81,7 @@ module _ = struct
   (* $MDX part-end *)
 
   (* $MDX part-begin=dynamic_experimental_table_no_focus *)
-  let component graph ~data =
+  let component (local_ graph) ~data =
     let table =
       Table.component
         (module Symbol)
@@ -106,8 +106,8 @@ module _ = struct
   (* $MDX part-begin=dynamic_experimental_sort_variant *)
   module Sort_kind = Table.Columns.Dynamic_experimental.Sort_kind
 
-  let sorts (col_id : Col_id.t Bonsai.t) _graph =
-    let%arr col_id = col_id in
+  let sorts (col_id : Col_id.t Bonsai.t) (local_ _graph) =
+    let%arr col_id in
     match col_id with
     | Symbol ->
       Some
@@ -127,7 +127,7 @@ module _ = struct
       (module Col_id)
       ~sorts
       ~columns:(Bonsai.return [ Col_id.Symbol; Price; Num_owned ])
-      ~render_cell:(fun col _key data _graph ->
+      ~render_cell:(fun col _key data (local_ _graph) ->
         match%sub col with
         | Symbol ->
           let%arr { Row.symbol; _ } = data in
@@ -138,8 +138,8 @@ module _ = struct
         | Num_owned ->
           let%arr { num_owned; _ } = data in
           Vdom.Node.text (string_of_int num_owned))
-      ~render_header:(fun col _graph ->
-        let%arr col = col in
+      ~render_header:(fun col (local_ _graph) ->
+        let%arr col in
         let name =
           match col with
           | Symbol -> Vdom.Node.text "Symbol"
@@ -149,7 +149,7 @@ module _ = struct
         Table.Columns.Dynamic_columns.Sortable.Header.with_icon name)
   ;;
 
-  let component graph ~data =
+  let component (local_ graph) ~data =
     let table =
       Table.component
         (module Symbol)
@@ -170,7 +170,7 @@ module _ = struct
   ;;
 
   (* $MDX part-begin=dynamic_experimental_focus_variant *)
-  let component graph ~data =
+  let component (local_ graph) ~data =
     let table =
       Table.component
         (module Symbol)
@@ -249,7 +249,7 @@ module _ = struct
          S.compare (Row.Typed_field.get field a) (Row.Typed_field.get field b)))
   ;;
 
-  let sorts (col_id : Col_id.t Bonsai.t) _graph =
+  let sorts (col_id : Col_id.t Bonsai.t) (local_ _graph) =
     let%arr { f = T field } = col_id in
     match field with
     | Symbol -> sort (module String) field
@@ -267,15 +267,15 @@ module _ = struct
       (module Col_id)
       ~sorts
       ~columns:all_columns
-      ~render_cell:(fun col _key data _graph ->
+      ~render_cell:(fun col _key data (local_ _graph) ->
         let%arr { f = T field } = col
-        and data = data in
+        and data in
         let value = Row.Typed_field.get field data in
         match field with
         | Symbol -> Vdom.Node.text value
         | Price -> Vdom.Node.textf "%f" value
         | Num_owned -> Vdom.Node.textf "%d" value)
-      ~render_header:(fun col _graph ->
+      ~render_header:(fun col (local_ _graph) ->
         let%arr { f = T field } = col in
         Table.Columns.Dynamic_columns.Sortable.Header.with_icon
           (Vdom.Node.text (Row.Typed_field.name field)))
@@ -298,23 +298,23 @@ module _ = struct
 
   let all_columns = Bonsai.return Row.Typed_field.Packed.all
 
-  let component graph ~data =
+  let component (local_ graph) ~data =
     let sortable_state = Column.Sortable.state ~equal:[%equal: Col_id.t] () graph in
     let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
       Column.build
         (module Col_id)
         ~columns:all_columns
-        ~render_cell:(fun col _key data _graph ->
+        ~render_cell:(fun col _key data (local_ _graph) ->
           let%arr { f = T field } = col
-          and data = data in
+          and data in
           let value = Row.Typed_field.get field data in
           match field with
           | Symbol -> Vdom.Node.text value
           | Price -> Vdom.Node.textf "%f" value
           | Num_owned -> Vdom.Node.textf "%d" value)
-        ~render_header:(fun col _graph ->
+        ~render_header:(fun col (local_ _graph) ->
           let%arr ({ f = T field } as col) = col
-          and sortable_state = sortable_state in
+          and sortable_state in
           Column.Sortable.Header.Expert.default_click_handler
             ~sortable:true
             ~column_id:col

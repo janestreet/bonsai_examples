@@ -67,7 +67,7 @@ let items =
   ]
 ;;
 
-let component graph =
+let component (local_ graph) =
   let selected_items, add_item =
     Bonsai.state_machine0
       graph
@@ -85,8 +85,10 @@ let component graph =
 
         let label_for_field = `Inferred
 
-        let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-          fun typed_field graph ->
+        let form_for_field
+          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          =
+          fun typed_field (local_ graph) ->
           match typed_field with
           | Suggestion_list_kind ->
             Form.Elements.Dropdown.enumerable
@@ -145,7 +147,7 @@ let component graph =
           graph
       in
       let add_random_item =
-        let%arr inject = inject in
+        let%arr inject in
         let%bind.Effect item =
           Effect.of_sync_fun
             (fun () ->
@@ -197,8 +199,8 @@ let component graph =
         data
         graph
   in
-  let%arr selected_items = selected_items
-  and query_box = query_box
+  let%arr selected_items
+  and query_box
   and form = form >>| Form.view_as_vdom in
   Node.div
     [ form

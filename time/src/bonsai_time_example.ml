@@ -11,7 +11,7 @@ let _untestable_component =
 (* $MDX part-end *)
 
 (* $MDX part-begin=testable-clock-component *)
-let component graph =
+let component (local_ graph) =
   let now = Bonsai.Incr.with_clock ~f:Bonsai.Time_source.watch_now graph in
   now >>| Time_ns.to_string_utc >>| Vdom.Node.text
 ;;

@@ -82,7 +82,7 @@ module Style = struct
 end
 
 module Temporary_toggle = struct
-  let state ~base ~temporary timeout graph =
+  let state ~base ~temporary timeout (local_ graph) =
     let last_set_time, set_time =
       Bonsai.state
         Time_ns.min_value_representable
@@ -95,9 +95,7 @@ module Temporary_toggle = struct
     in
     let toggle = Bonsai.Clock.at toggle_back_time graph in
     let get_now = Bonsai.Clock.get_current_time graph in
-    let%arr set_time = set_time
-    and toggle = toggle
-    and get_now = get_now in
+    let%arr set_time and toggle and get_now in
     let output =
       match toggle with
       | Before -> temporary
@@ -112,7 +110,7 @@ module Temporary_toggle = struct
 end
 
 module Icon_grid = struct
-  let icon_card icon graph =
+  let icon_card icon (local_ graph) =
     let copied =
       Temporary_toggle.state
         ~base:`Show_icon
@@ -121,7 +119,7 @@ module Icon_grid = struct
         graph
     in
     let%arr copied, set_copied = copied
-    and icon = icon in
+    and icon in
     let name = Codicons.name icon in
     let variant_name =
       String.map name ~f:(function
@@ -150,18 +148,18 @@ module Icon_grid = struct
           [ Codicons.svg Copy; Node.p [ Node.text [%string "Copied %{variant_name}!"] ] ])
   ;;
 
-  let component icons graph =
+  let component icons (local_ graph) =
     let icons =
       Bonsai.map icons ~f:(String.Map.of_list_with_key_exn ~get_key:Codicons.name)
     in
     let cards = Bonsai.assoc (module String) icons ~f:(fun _ -> icon_card) graph in
-    let%arr cards = cards in
+    let%arr cards in
     Vdom.Node.div ~attrs:[ Style.grid ] (Map.data cards)
   ;;
 end
 
 module Search = struct
-  let component () graph =
+  let component () (local_ graph) =
     let input =
       Form.Elements.Textbox.string
         ~placeholder:(Bonsai.return "Filter icons")
@@ -169,7 +167,7 @@ module Search = struct
         ()
         graph
     in
-    let%arr input = input in
+    let%arr input in
     let search =
       Form.value input
       |> Result.ok
@@ -195,11 +193,11 @@ module Search = struct
   ;;
 end
 
-let app graph =
+let app (local_ graph) =
   let search = Search.component () graph in
   let icons = Bonsai.map ~f:fst search in
   let grid = Icon_grid.component icons graph in
-  let%arr grid = grid
+  let%arr grid
   and _, search = search in
   Vdom.Node.div ~attrs:[ Style.main ] [ search; grid ]
 ;;

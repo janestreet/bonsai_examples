@@ -10,12 +10,12 @@ module Toggle_popover = struct
     {| This tests that there is not a bad interaction between popover toggling behavior and the [close_when_clicked_outside] flag. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let vdom, demo =
       [%demo
-        fun graph ->
+        fun (local_ graph) ->
           let theme = View.Theme.current graph in
-          let popover_content ~close:_ _graph =
+          let popover_content ~close:_ (local_ _graph) =
             Bonsai.return (View.text "Popover contents")
           in
           let popover =
@@ -28,7 +28,7 @@ module Toggle_popover = struct
               graph
           in
           let%arr { wrap; open_ = _; close = _; toggle; is_open = _ } = popover
-          and theme = theme in
+          and theme in
           wrap (View.button theme ~intent:Info ~on_click:toggle "toggle popover")]
     in
     Bonsai.map (vdom graph) ~f:(fun vdom -> vdom, demo)
@@ -45,14 +45,14 @@ module Two_left_click_popovers = struct
     {|This test tests against a regression where clicking on the outside to click a context menu, also opened chrome's context menu.|}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let vdom, demo =
       [%demo
         let theme = View.Theme.current graph in
-        let popover_content ~close:_ _graph =
+        let popover_content ~close:_ (local_ _graph) =
           Bonsai.return (View.text "Popover contents")
         in
-        let popover graph =
+        let popover (local_ graph) =
           let popover =
             Bonsai_web_ui_popover.component
               ~close_when_clicked_outside:(Bonsai.return true)
@@ -67,7 +67,7 @@ module Two_left_click_popovers = struct
               graph
           in
           let%arr { wrap; open_; close = _; toggle = _; is_open = _ } = popover
-          and theme = theme in
+          and theme in
           wrap
             (View.button
                theme
@@ -90,7 +90,7 @@ module Two_left_click_popovers = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-let component graph =
+let component (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
   View.Theme.set_for_app
     theme

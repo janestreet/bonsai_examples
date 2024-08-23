@@ -12,25 +12,25 @@ let card ~theme ~name ~content =
     content
 ;;
 
-let buttons graph =
+let buttons (local_ graph) =
   let%map.Bonsai buttons = Button.component graph
   and theme = View.Theme.current graph in
   card ~theme ~name:"buttons" ~content:buttons
 ;;
 
-let textbox graph =
+let textbox (local_ graph) =
   let%map.Bonsai textbox = Textbox.component graph
   and theme = View.Theme.current graph in
   card ~theme ~name:"input" ~content:textbox
 ;;
 
-let app graph =
+let app (local_ graph) =
   let%map.Bonsai buttons = buttons graph
   and textbox = textbox graph in
   View.hbox ~gap:(`Em 1) [ buttons; textbox ]
 ;;
 
-let app graph =
+let app (local_ graph) =
   let theme = Bonsai.return (Kado.theme ~version:Bleeding ()) in
   View.Theme.set_for_app theme app graph
 ;;

@@ -12,4 +12,4 @@ type result =
 (** The color-list component is used for both the "before"
     and "after" columns in the UI. It generates random int => float maps, and exposes a UI
     for manipulating them, as well as returning the currently-selected map. *)
-val component : string -> Bonsai.graph -> result Bonsai.t
+val component : string -> local_ Bonsai.graph -> result Bonsai.t

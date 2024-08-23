@@ -9,7 +9,7 @@ let component
   ~refresh_rooms
   ~change_room
   ~send_message
-  graph
+  (local_ graph)
   =
   let open Bonsai.Let_syntax in
   let send_message =
@@ -25,9 +25,7 @@ let component
   in
   let compose_panel = Compose_message.component ~send_message graph in
   let messages_panel = Messages_panel.component ~messages ~current_room graph in
-  let%arr rooms_list = rooms_list
-  and compose_panel = compose_panel
-  and messages_panel = messages_panel in
+  let%arr rooms_list and compose_panel and messages_panel in
   Vdom.Node.div
     ~attrs:[ Vdom.Attr.id "container" ]
     [ rooms_list

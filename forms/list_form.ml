@@ -97,8 +97,10 @@ module Advanced_list = struct
 
         let label_for_field = `Inferred
 
-        let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-          fun typed_field graph ->
+        let form_for_field
+          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          =
+          fun typed_field (local_ graph) ->
           match typed_field with
           | Duration_hrs -> E.Textbox.int ~allow_updates_when_focused:`Always () graph
           | Price -> E.Textbox.float ~allow_updates_when_focused:`Always () graph
@@ -106,7 +108,7 @@ module Advanced_list = struct
       end)
   ;;
 
-  let form_per_symbol graph =
+  let form_per_symbol (local_ graph) =
     let symbol_form = E.Textbox.string ~allow_updates_when_focused:`Always () graph in
     Form.Typed.Record.make
       (module struct
@@ -114,13 +116,15 @@ module Advanced_list = struct
 
         let label_for_field = `Inferred
 
-        let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-          fun typed_field graph ->
+        let form_for_field
+          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          =
+          fun typed_field (local_ graph) ->
           match typed_field with
           | Symbol -> symbol_form
           | Configs ->
             let add_element_text =
-              let%arr symbol_form = symbol_form in
+              let%arr symbol_form in
               let symbol = Form.value_or_default ~default:"" symbol_form in
               sprintf "add config for %s" symbol
             in
@@ -151,7 +155,7 @@ module Advanced_list = struct
     ]
   ;;
 
-  let component graph =
+  let component (local_ graph) =
     let many_symbols = many_symbols graph in
     let many_symbols =
       Form.Dynamic.with_default (Bonsai.return starting_value) many_symbols graph
@@ -160,11 +164,10 @@ module Advanced_list = struct
   ;;
 end
 
-let component graph =
+let component (local_ graph) =
   let simple_list = Simple_list.component graph in
   let advanced_list = Advanced_list.component graph in
-  let%arr simple_list = simple_list
-  and advanced_list = advanced_list in
+  let%arr simple_list and advanced_list in
   let simple_output =
     Vdom.Node.sexp_for_debugging
       [%sexp (Form.value simple_list : Simple_list.t list Or_error.t)]

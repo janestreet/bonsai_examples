@@ -15,7 +15,7 @@ module Text = struct
     When invoked without any optional parameters, it will produce a dom Text node. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo View.themed_text theme "hello world"]
   ;;
@@ -32,7 +32,7 @@ module Text_with_style_and_size = struct
     that are themable and consistent across different components. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       vbox
@@ -58,7 +58,7 @@ module Text_with_intent = struct
        to give the theme the ability to style it differently. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       vbox
@@ -85,7 +85,7 @@ module Table = struct
     extracts the cell-specific data, and a renderer for that cell-specific data. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let module T =
       [%demo
@@ -137,7 +137,7 @@ module Table_with_group = struct
     {| To make column groups, simply call the "group" function with a list of sub-columns. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let module T = struct
       type t =
@@ -188,7 +188,7 @@ module Table_with_empty_cells = struct
     through it indicating that it's properly empty (as opposed to containing - for example - the empty string)|}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let module T = struct
       type t =
@@ -230,7 +230,7 @@ module Tooltip = struct
     {| The standard tooltip function allows annotating some element with a tooltip containing some text |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let hbox = View.hbox ~gap:(`Em 1) in
     [%demo
@@ -262,7 +262,7 @@ module Tooltip_positioning = struct
   the side with the most space.  |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let vbox = View.vbox ~gap:(`Em 1) in
     let hbox = View.hbox ~gap:(`Em 1) ~main_axis_alignment:Space_between in
@@ -308,7 +308,7 @@ module Tooltip_with_arbitrary_content = struct
   let name = "Tooltips with arbitrary content"
   let description = {| With `tooltip_attr'`, tooltips can contain any `Vdom.Node.t` |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       let tooltip =
@@ -335,7 +335,7 @@ module Tooltip_wrap = struct
     {| The standard tooltip function allows annotating some text with a tooltip containing another string |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       View.tooltip
@@ -352,7 +352,7 @@ module Tooltip_directions_wrap = struct
   let name = "Tooltip directions"
   let description = {| Tooltips can be positioned relative to the annotated content |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let vbox = View.vbox ~gap:(`Em 1) in
     let hbox = View.hbox ~gap:(`Em 1) in
@@ -381,7 +381,7 @@ module Tooltip_with_arbitrary_content_wrap = struct
     {| With `tooltip'` you can add a tooltip to abitrary content, and the tooltip itself can contain arbitrary content |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       let tooltip =
@@ -405,7 +405,7 @@ module Button = struct
        as input in the form of a string |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo View.button theme ~on_click:Effect.Ignore "click me"]
   ;;
@@ -418,7 +418,7 @@ module Disabled_button = struct
   let name = "Disabled button"
   let description = {| Buttons can be disabled with an optional parameter |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       hbox
@@ -435,7 +435,7 @@ module Buttons_with_intent = struct
   let name = "Buttons with Intent"
   let description = {| When given an intent, buttons can change their style |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let on_click = Effect.Ignore in
     [%demo
@@ -460,7 +460,7 @@ module Disabled_buttons_with_intent = struct
       and their visuals change. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       let on_click = Effect.Ignore
@@ -486,7 +486,7 @@ module Badge = struct
        or minor status indicators. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       hbox
@@ -510,7 +510,7 @@ module Dismissible_badge = struct
        have a dismiss button. This is useful for multiselect forms. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       let on_dismiss = Effect.Ignore in
@@ -541,7 +541,7 @@ module Basic_vbox = struct
   let red = make_box (`Name "red") (`Px 20) (`Px 30)
   let green = make_box (`Name "green") (`Px 30) (`Px 50)
   let blue = make_box (`Name "blue") (`Px 50) (`Px 30)
-  let view _graph = Bonsai.return [%demo View.vbox [ red; green; blue ]]
+  let view (local_ _graph) = Bonsai.return [%demo View.vbox [ red; green; blue ]]
   let selector = None
 
   let filter_attrs =
@@ -556,7 +556,7 @@ module Basic_hbox = struct
   let name = "Basic hbox"
   let description = {| The vbox function builds a horizontally stacking container.  |}
   let red, green, blue, filter_attrs = Basic_vbox.(red, green, blue, filter_attrs)
-  let view _graph = Bonsai.return [%demo View.hbox [ red; green; blue ]]
+  let view (local_ _graph) = Bonsai.return [%demo View.hbox [ red; green; blue ]]
   let selector = None
 end
 
@@ -574,7 +574,8 @@ module Interactive_vbox = struct
 
   let white_space_pre = Vdom.Attr.style Css_gen.(white_space `Pre)
 
-  let dropdown (type a) ?init name (module M : Bonsai.Enum with type t = a) graph =
+  let dropdown (type a) ?init name (module M : Bonsai.Enum with type t = a) (local_ graph)
+    =
     Bonsai.map
       (Form.Elements.Dropdown.enumerable_opt ?init (module M) graph)
       ~f:(fun form ->
@@ -625,7 +626,7 @@ module Interactive_vbox = struct
     [@@deriving sexp, enumerate, equal, compare]
   end
 
-  let view graph =
+  let view (local_ graph) =
     let%map axis_v, axis, _ = dropdown "function" ~init:`First_item (module Axis) graph
     and v_direction_v, v_direction, v_f1 =
       dropdown "direction" (module Vertical_dir) graph
@@ -711,7 +712,7 @@ module Basic_tabs = struct
   let name = "Basic Tabs"
   let description = ""
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       let on_change ~from:_ ~to_:_ = Effect.Ignore in
@@ -737,7 +738,7 @@ module Enumerable_tabs = struct
     {| If you have an enumerable type, tabs_enum can be used to generate tabs for it |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let module T =
       [%demo
@@ -765,7 +766,7 @@ module Devbar = struct
   let name = "Basic Devbar"
   let description = {| |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let view, text = [%demo View.devbar theme "DEV"] in
     Vdom.Node.div ~attrs:[ Vdom.Attr.style (Css_gen.max_width (`Px 500)) ] [ view ], text
@@ -779,7 +780,7 @@ module Devbar_intent = struct
   let name = "Devbar with Intent"
   let description = {| |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     let view, text =
       [%demo
@@ -803,7 +804,7 @@ module Basic_card = struct
   let name = "Basic Card"
   let description = {| |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map.Bonsai theme = View.Theme.current graph in
     let view, text = [%demo View.card theme "The message is: You are great!"] in
     Vdom.Node.div ~attrs:[ Vdom.Attr.style (Css_gen.max_width (`Px 500)) ] [ view ], text
@@ -817,7 +818,7 @@ module Card_with_title = struct
   let name = "Card with a title"
   let description = {| |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map.Bonsai theme = View.Theme.current graph in
     let view, text =
       [%demo View.card theme ~title:"New message!!" "The message is: You are great!"]
@@ -833,7 +834,7 @@ module Cards_with_intent = struct
   let name = "Cards with intent"
   let description = {| |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map.Bonsai theme = View.Theme.current graph in
     let view, text =
       [%demo
@@ -857,7 +858,7 @@ module Cards_with_fieldset = struct
   let name = "Cards with fieldset styling"
   let description = {| |}
 
-  let view graph =
+  let view (local_ graph) =
     let%map.Bonsai theme = View.Theme.current graph in
     let view, text =
       [%demo
@@ -909,7 +910,7 @@ module Card_with_rows = struct
     {| View.card' allows for the content to be a list of arbitrary vdom nodes which are separated vertically from one another. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map.Bonsai theme = View.Theme.current graph in
     let view, text =
       [%demo
@@ -934,7 +935,7 @@ module Card_with_rows = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-let component graph =
+let component (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
   View.Theme.set_for_app
     theme

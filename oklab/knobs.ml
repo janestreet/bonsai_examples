@@ -31,8 +31,10 @@ module Shared = struct
 
         let label_for_field = `Inferred
 
-        let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-          fun typed_field graph ->
+        let form_for_field
+          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          =
+          fun typed_field (local_ graph) ->
           match typed_field with
           | Left -> Form.Elements.Color_picker.hex () graph
           | Right -> Form.Elements.Color_picker.hex () graph
@@ -51,8 +53,10 @@ module For_gradient = struct
 
         let label_for_field = `Inferred
 
-        let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-          fun typed_field graph ->
+        let form_for_field
+          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          =
+          fun typed_field (local_ graph) ->
           match typed_field with
           | Steps ->
             Form.Elements.Range.int
@@ -87,8 +91,10 @@ module For_overlay = struct
 
         let label_for_field = `Computed label_for_field
 
-        let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-          fun typed_field graph ->
+        let form_for_field
+          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          =
+          fun typed_field (local_ graph) ->
           match typed_field with
           | Left_alpha ->
             Form.Elements.Range.float
@@ -127,7 +133,7 @@ let initial_params =
   }
 ;;
 
-let form graph =
+let form (local_ graph) =
   let shared = Shared.form graph in
   let for_gradient = For_gradient.form graph in
   let for_overlay = For_overlay.form graph in
@@ -138,8 +144,10 @@ let form graph =
 
         let label_for_field = `Inferred
 
-        let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-          fun typed_field _graph ->
+        let form_for_field
+          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          =
+          fun typed_field (local_ _graph) ->
           match typed_field with
           | Shared -> shared
           | For_gradient -> for_gradient
@@ -150,7 +158,7 @@ let form graph =
   in
   let all = Form.Dynamic.with_default (Bonsai.return initial_params) all graph in
   let value =
-    let%arr all = all in
+    let%arr all in
     (match Form.value all with
      | Error e -> print_s [%message (e : Error.t)]
      | _ -> ());
@@ -166,10 +174,7 @@ let form graph =
   in
   let view =
     let theme = View.Theme.current graph in
-    let%arr shared = shared
-    and for_gradient = for_gradient
-    and for_overlay = for_overlay
-    and theme = theme in
+    let%arr shared and for_gradient and for_overlay and theme in
     View.hbox
       ~gap:(`Em 1)
       ~main_axis_alignment:Center

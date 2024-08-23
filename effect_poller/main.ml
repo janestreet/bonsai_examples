@@ -10,12 +10,11 @@ let fake_slow_capitalize_string_rpc =
     String.uppercase text)
 ;;
 
-let textbox graph =
+let textbox (local_ graph) =
   let text, set_text =
     Bonsai.state "" ~sexp_of_model:[%sexp_of: String.t] ~equal:[%equal: String.t] graph
   in
-  let%arr text = text
-  and set_text = set_text in
+  let%arr text and set_text in
   let view =
     Vdom.Node.input
       ~attrs:[ Vdom.Attr.(value_prop text @ on_input (fun _ -> set_text)) ]
@@ -24,7 +23,7 @@ let textbox graph =
   text, view
 ;;
 
-let component graph =
+let component (local_ graph) =
   let%sub text, view = textbox graph in
   let capitalized =
     Bonsai.Edge.Poll.(
@@ -38,8 +37,7 @@ let component graph =
         ~effect:(Bonsai.return fake_slow_capitalize_string_rpc)
         graph)
   in
-  let%arr view = view
-  and capitalized = capitalized in
+  let%arr view and capitalized in
   Vdom.Node.div [ view; Vdom.Node.text capitalized ]
 ;;
 

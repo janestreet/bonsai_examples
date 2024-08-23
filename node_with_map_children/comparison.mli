@@ -12,5 +12,5 @@ val view
   :  tag:string Bonsai.t
   -> attr:Vdom.Attr.t Bonsai.t
   -> Color_list.t Bonsai.t
-  -> Bonsai.graph
+  -> local_ Bonsai.graph
   -> Vdom.Node.t Bonsai.t

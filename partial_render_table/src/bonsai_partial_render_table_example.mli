@@ -23,7 +23,7 @@ val component
   -> multisort_columns_when:[ `Shift_click | `Ctrl_click | `Shift_or_ctrl_click ] Bonsai.t
   -> should_show_position:bool Bonsai.t
   -> (string, Row.t, Base.String.comparator_witness) Base.Map.t Bonsai.t
-  -> Bonsai.graph
+  -> local_ Bonsai.graph
   -> t Bonsai.t
 
 module Layout_form : sig
@@ -39,7 +39,7 @@ module Layout_form : sig
       }
   end
 
-  val component : Bonsai.graph -> (Vdom.Node.t * Params.t) Bonsai.t
+  val component : local_ Bonsai.graph -> (Vdom.Node.t * Params.t) Bonsai.t
 end
 
 module Column_width_form : sig
@@ -49,6 +49,6 @@ module Column_width_form : sig
           -> [ `Px_float of float ]
           -> unit Ui_effect.t)
            Bonsai.t
-    -> Bonsai.graph
+    -> local_ Bonsai.graph
     -> Vdom.Node.t Bonsai.t
 end

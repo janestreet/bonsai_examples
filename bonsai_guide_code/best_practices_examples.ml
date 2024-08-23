@@ -5,7 +5,7 @@ open! Bonsai.Let_syntax
 let compute_magic_number a b = a * b
 
 (* $MDX part-begin=typical_f *)
-let a_typical_function (input : int Bonsai.t) graph =
+let a_typical_function (input : int Bonsai.t) (local_ graph) =
   (* Declare your state *)
   let num_input_changes, incr_num_input_changes =
     Bonsai.state_machine0
@@ -24,28 +24,25 @@ let a_typical_function (input : int Bonsai.t) graph =
   in
   (* Build intermediate computations *)
   let magic_number =
-    let%arr input = input
-    and num_input_changes = num_input_changes in
+    let%arr input and num_input_changes in
     compute_magic_number input num_input_changes
   in
   let log_current_magic_number =
-    let%arr magic_number = magic_number
-    and write_log_line = write_log_line
+    let%arr magic_number
+    and write_log_line
     and now = Bonsai.Clock.get_current_time graph in
-    let%bind.Effect now = now in
+    let%bind.Effect now in
     write_log_line [%string "%{Time_ns.to_string_utc now} : %{magic_number#Int}"]
   in
   let on_change : (int -> unit Effect.t) Bonsai.t =
-    let%arr incr_num_input_changes = incr_num_input_changes in
+    let%arr incr_num_input_changes in
     fun _new_val -> incr_num_input_changes ()
   in
   (* Declare lifecycle and edge-triggered effects.
      Most code won't need these, but they're not uncommon. *)
   Bonsai.Edge.on_change ~equal:[%equal: int] input ~callback:on_change graph;
   (* Compute main output of your function. This could also be a [match%sub]. *)
-  let%arr logs = logs
-  and magic_number = magic_number
-  and log_current_magic_number = log_current_magic_number in
+  let%arr logs and magic_number and log_current_magic_number in
   View.vbox
     [ Vdom.Node.h1
         [ Vdom.Node.text [%string "Today's Magic Number: %{magic_number#Int}"] ]
@@ -60,7 +57,7 @@ let a_typical_function (input : int Bonsai.t) graph =
 
 let () =
   Util.run
-    (fun graph ->
+    (fun (local_ graph) ->
       let input =
         let%arr approx_now =
           Bonsai.Clock.approx_now ~tick_every:(Time_ns.Span.of_sec 2.) graph
@@ -72,12 +69,12 @@ let () =
 ;;
 
 (* $MDX part-begin=state_with_resetter *)
-let state_with_resetter ~default_value graph
+let state_with_resetter ~default_value (local_ graph)
   : int Bonsai.t * (int -> unit Effect.t) Bonsai.t * unit Effect.t Bonsai.t
   =
   let state_and_setter, reset =
     Bonsai.with_model_resetter
-      ~f:(fun graph ->
+      ~f:(fun (local_ graph) ->
         let state, set_state = Bonsai.state default_value graph in
         Bonsai.both state set_state)
       graph

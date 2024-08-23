@@ -51,8 +51,8 @@ let tree_layout : Vdom.Node.t =
   loop example |> to_vdom
 ;;
 
-let app : Bonsai.graph -> Vdom.Node.t Bonsai.t =
-  fun graph ->
+let app : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t =
+  fun (local_ graph) ->
   let module N = Vdom.Node in
   let%map drilldown_with_breadcrumbs =
     Drilldown_with_breadcrumbs.component (Bonsai.return example) graph

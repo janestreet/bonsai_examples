@@ -41,8 +41,7 @@ let draw_history ~active_cursor ~inject ~data:_ ~cursor ~children =
 
 let view cursor history ~inject =
   let open Incr.Let_syntax in
-  let%map cursor = cursor
-  and history = history in
+  let%map cursor and history in
   let spacetime =
     Spacetime_tree.traverse history ~f:(draw_history ~inject ~active_cursor:cursor)
   in
@@ -107,8 +106,7 @@ let create (type i r) (inner_component : (i, r) Bonsai.t) : (i, r * Result.t) Bo
           inner_unpacked
       in
       let apply_action =
-        let%map model = model
-        and inner = inner in
+        let%map model and inner in
         fun ~schedule_event -> function
           | Action.Inner a ->
             let inner =
@@ -123,12 +121,11 @@ let create (type i r) (inner_component : (i, r) Bonsai.t) : (i, r * Result.t) Bo
             { model with inner; cursor }
       in
       let result =
-        let%map inner = inner
+        let%map inner
         and view = view ~inject (model >>| Model.cursor) (model >>| Model.history) in
         Bonsai_lib.Generic.Expert.Snapshot.result inner, view
       in
-      let%map apply_action = apply_action
-      and result = result in
+      let%map apply_action and result in
       Bonsai_lib.Generic.Expert.Snapshot.create ~result ~apply_action)
   |> Bonsai_lib.Generic.Expert.conceal
   |> Bonsai.of_generic

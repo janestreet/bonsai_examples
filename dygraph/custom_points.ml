@@ -90,7 +90,7 @@ let options =
     ~title:"Custom Drawn Points Example"
 ;;
 
-let app graph =
+let app (local_ graph) =
   let%sub.Bonsai { graph_view; _ } =
     Dygraph.With_bonsai.create
       ()

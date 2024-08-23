@@ -20,14 +20,15 @@ module Location = struct
     | Y -> from_query_optional_with_default ~equal:Int.equal int ~default:100
   ;;
 
-  let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
+  let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+    =
     let open Form.Elements.Textbox in
     function
     | X -> int ~allow_updates_when_focused:`Never ()
     | Y -> int ~allow_updates_when_focused:`Never ()
   ;;
 
-  let form_of_t : Bonsai.graph -> t Form.t Bonsai.t =
+  let form_of_t : local_ Bonsai.graph -> t Form.t Bonsai.t =
     Form.Typed.Record.make
       (module struct
         module Typed_field = Typed_field
@@ -69,14 +70,16 @@ module Record = struct
     | Remaining_words_on_path -> with_prefix [] (from_remaining_path string)
   ;;
 
-  let form_of_t : Bonsai.graph -> t Form.t Bonsai.t =
-    fun graph ->
+  let form_of_t : local_ Bonsai.graph -> t Form.t Bonsai.t =
+    fun (local_ graph) ->
     Form.Typed.Record.make
       (module struct
         module Typed_field = Typed_field
 
-        let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-          fun typed_field graph ->
+        let form_for_field
+          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          =
+          fun typed_field (local_ graph) ->
           let open Form.Elements.Textbox in
           let open Form.Elements in
           match typed_field with
@@ -85,7 +88,7 @@ module Record = struct
             Multiple.list (float ~allow_updates_when_focused:`Never ()) graph
           | Optional_string ->
             let form = string ~allow_updates_when_focused:`Never () graph in
-            let%arr form = form in
+            let%arr form in
             Form.optional form ~is_some:(fun x -> not (String.equal x "")) ~none:""
           | Many_locations -> Multiple.list Location.form_of_t graph
           | Nested -> Location.form_of_t graph
@@ -124,9 +127,9 @@ module Variant = struct
         module Typed_variant = Typed_variant
 
         let form_for_variant
-          : type a. a Typed_variant.t -> Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
           =
-          fun typed_field _graph ->
+          fun typed_field (local_ _graph) ->
           match typed_field with
           | Post -> Bonsai.return (Form.return ())
           | Comments -> Bonsai.return (Form.return ())
@@ -159,9 +162,9 @@ module Query_variant = struct
         module Typed_variant = Typed_variant
 
         let form_for_variant
-          : type a. a Typed_variant.t -> Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
           =
-          fun typed_field graph ->
+          fun typed_field (local_ graph) ->
           match typed_field with
           | A -> Form.Elements.Textbox.int ~allow_updates_when_focused:`Never () graph
           | B -> Form.Elements.Textbox.float ~allow_updates_when_focused:`Never () graph
@@ -193,22 +196,22 @@ module T = struct
     | Unable_to_parse -> Parser.with_remaining_path [ "unable" ] Parser.unit
   ;;
 
-  let form_of_t graph =
+  let form_of_t (local_ graph) =
     Form.Typed.Variant.make
       (module struct
         module Typed_variant = Typed_variant
 
         let form_for_variant
-          : type a. a Typed_variant.t -> Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
           =
-          fun typed_field graph ->
+          fun typed_field (local_ graph) ->
           match typed_field with
           | Homepage -> Bonsai.return (Form.return ())
           | Some_string_option ->
             let text =
               Form.Elements.Textbox.string ~allow_updates_when_focused:`Never () graph
             in
-            let%arr text = text in
+            let%arr text in
             Form.optional
               text
               ~is_some:(function
@@ -256,17 +259,17 @@ let%expect_test _ =
 
 let fallback _exn _components = T.Unable_to_parse
 
-let component ~url_var graph =
+let component ~url_var (local_ graph) =
   let url_value = Url_var.value url_var in
   let modify_history, toggle_modify_history = Bonsai.toggle ~default_model:true graph in
   let set_url_var =
-    let%arr modify_history = modify_history in
+    let%arr modify_history in
     let how = if modify_history then `Push else `Replace in
     fun query -> Url_var.set_effect url_var query ~how
   in
   let form = T.form_of_t graph in
   let store_value =
-    let%arr url_value = url_value in
+    let%arr url_value in
     Some url_value
   in
   let%sub () =
@@ -280,20 +283,20 @@ let component ~url_var graph =
   in
   let update_button =
     let update_effect =
-      let%arr modify_history = modify_history in
+      let%arr modify_history in
       let how = if modify_history then `Push else `Replace in
       fun ~f -> Url_var.update_effect url_var ~how ~f
     in
-    let%arr update_effect = update_effect in
+    let%arr update_effect in
     Vdom.Node.button
       ~attrs:[ Vdom.Attr.on_click (fun _ -> update_effect ~f:(fun _ -> Homepage)) ]
       [ Vdom.Node.text "Go to homepage via [update]" ]
   in
-  let%arr form = form
+  let%arr form
   and url = url_value
-  and modify_history = modify_history
-  and toggle_modify_history = toggle_modify_history
-  and update_button = update_button in
+  and modify_history
+  and toggle_modify_history
+  and update_button in
   let saved_to_history_text =
     if modify_history
     then "History is being saved in your browser"

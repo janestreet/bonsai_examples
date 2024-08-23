@@ -2,7 +2,7 @@ open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
 
-let string_duplicator input_string graph =
+let string_duplicator input_string (local_ graph) =
   let num_duplicated, inject_duplicate =
     Bonsai.state_machine0
       graph
@@ -12,9 +12,7 @@ let string_duplicator input_string graph =
       ~default_model:1
       ~apply_action:(fun (_ : _ Bonsai.Apply_action_context.t) model () -> model + 1)
   in
-  let%arr num_duplicated = num_duplicated
-  and inject_duplicate = inject_duplicate
-  and input_string = input_string in
+  let%arr num_duplicated and inject_duplicate and input_string in
   let repeated_string =
     List.init num_duplicated ~f:(Fn.const input_string) |> String.concat ~sep:" "
   in
@@ -25,7 +23,7 @@ let string_duplicator input_string graph =
   Vdom.Node.div [ button; Vdom.Node.text repeated_string ]
 ;;
 
-let string_to_repeat graph =
+let string_to_repeat (local_ graph) =
   let state, set_state =
     Bonsai.state
       "hello"
@@ -33,8 +31,7 @@ let string_to_repeat graph =
       ~equal:[%equal: String.t]
       graph
   in
-  let%arr state = state
-  and set_state = set_state in
+  let%arr state and set_state in
   let view =
     Vdom.Node.textarea
       ~attrs:
@@ -49,12 +46,11 @@ let string_to_repeat graph =
 let app
   (* let%sub can decompose the [(string * Vdom.Node.t) Value.t] into both a
          [string Value.t] and a [Vdom.Node.t Value.t]. *)
-    graph
+  (local_ graph)
   =
   let%sub string, textbox_view = string_to_repeat graph in
   let duplicated = string_duplicator string graph in
-  let%arr textbox_view = textbox_view
-  and duplicated = duplicated in
+  let%arr textbox_view and duplicated in
   Vdom.Node.div [ textbox_view; duplicated ]
 ;;
 

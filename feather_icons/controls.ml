@@ -59,10 +59,10 @@ module Color_input =
 
 let display_none = Vdom.Attr.style (Css_gen.display `None)
 
-let color_input ?(display = Bonsai.return true) () graph =
+let color_input ?(display = Bonsai.return true) () (local_ graph) =
   let classes_ = Vdom.Attr.many [ Card_like.class_; Color_input.class_ ] in
   let extra_attr =
-    let%arr display = display in
+    let%arr display in
     if display then classes_ else Vdom.Attr.(classes_ @ display_none)
   in
   Form.Elements.Color_picker.hex ~extra_attr () graph
@@ -118,22 +118,20 @@ module Fill = struct
         }
         |}]
 
-  let component : Bonsai.graph -> t Bonsai.t =
+  let component : local_ Bonsai.graph -> t Bonsai.t =
     (* Equal to --js-primary-color *)
-    fun graph ->
+    fun (local_ graph) ->
     let default_fill_color = `Hex "#2085ef" in
     let fill_toggle = Form.Elements.Toggle.bool ~default:false () graph in
     let fill_on =
-      let%arr fill_toggle = fill_toggle in
+      let%arr fill_toggle in
       Form.value_or_default fill_toggle ~default:false
     in
     let fill_input =
       let form = color_input ~display:fill_on () graph in
       Form.Dynamic.with_default (Bonsai.return default_fill_color) form graph
     in
-    let%arr fill_toggle = fill_toggle
-    and fill_on = fill_on
-    and fill_input = fill_input in
+    let%arr fill_toggle and fill_on and fill_input in
     let value =
       match fill_on with
       | false -> None
@@ -159,14 +157,14 @@ module Fill = struct
   ;;
 end
 
-let component graph =
+let component (local_ graph) =
   let size_slider = size_slider graph in
   let stroke_width_slider = stroke_width_slider graph in
   let stroke_input = color_input () graph in
   let fill = Fill.component graph in
-  let%arr size_slider = size_slider
-  and stroke_width_slider = stroke_width_slider
-  and stroke_input = stroke_input
+  let%arr size_slider
+  and stroke_width_slider
+  and stroke_input
   and { value = fill; reset = reset_fill; view = fill_view } = fill in
   (* We could have several of these forms using Form.Typed.Record, but
      refrained in order to retain control over the UI layout. *)

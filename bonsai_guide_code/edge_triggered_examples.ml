@@ -3,7 +3,7 @@ open! Bonsai_web
 open! Bonsai.Let_syntax
 
 (* $MDX part-begin=on_change *)
-let on_change_demo graph =
+let on_change_demo (local_ graph) =
   let view, value = State_examples.counter ~step:(Bonsai.return 1) graph in
   Bonsai.Edge.on_change'
     ~equal:Int.equal

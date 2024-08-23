@@ -17,7 +17,7 @@ module Vdom_popover = struct
     with the most space available. |}
   ;;
 
-  let view _graph =
+  let view (local_ _graph) =
     let vdom, demo =
       [%demo
         let popover position alignment =
@@ -46,7 +46,7 @@ module Vdom_popover_virtual = struct
     a bounding box or coordinate. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let vdom, demo =
       [%demo
         let coords, set_coords = Bonsai.state_opt graph in
@@ -54,9 +54,7 @@ module Vdom_popover_virtual = struct
           match%sub coords with
           | None -> return [ Vdom.Node.text "Click to place!" ]
           | Some (x, y) ->
-            let%arr x = x
-            and y = y
-            and set_coords = set_coords in
+            let%arr x and y and set_coords in
             let anchor = Floating_positioning_new.Anchor.of_coordinate ~x ~y in
             [ Vdom_toplayer.For_use_in_portals.popover_custom
                 ~position:Right
@@ -71,8 +69,7 @@ module Vdom_popover_virtual = struct
                 [ View.text "remove popover" ]
             ]
         in
-        let%arr contents = contents
-        and set_coords = set_coords in
+        let%arr contents and set_coords in
         Vdom.Node.div
           ~attrs:
             [ [%css
@@ -86,7 +83,7 @@ module Vdom_popover_virtual = struct
             ]
           contents]
     in
-    let%arr vdom = vdom in
+    let%arr vdom in
     vdom, demo
   ;;
 
@@ -106,7 +103,7 @@ module Vdom_popover_match_anchor_side_length = struct
     Resize the anchors below to see this in action! |}
   ;;
 
-  let view _graph =
+  let view (local_ _graph) =
     let vdom, demo =
       [%demo
         let resizable =
@@ -184,7 +181,7 @@ module Vdom_popover_arrows = struct
     points towards the anchor. |}
   ;;
 
-  let view _graph =
+  let view (local_ _graph) =
     let vdom, demo =
       [%demo
         let arrow =
@@ -235,7 +232,7 @@ module Vdom_tooltip = struct
     |}
   ;;
 
-  let view _graph =
+  let view (local_ _graph) =
     [%demo
       let tooltip position alignment =
         Vdom_toplayer.tooltip
@@ -294,7 +291,7 @@ module Vdom_tooltip_hoverable = struct
       enough time to move their mouse into the tooltip. |}
   ;;
 
-  let view _graph =
+  let view (local_ _graph) =
     [%demo
       let tooltip ~hoverable_inside =
         Vdom_toplayer.tooltip
@@ -401,31 +398,31 @@ module Nested_popovers_remain_open = struct
   let name = "Nested popovers"
   let description = {| Child popovers remain open when their parents close and re-open. |}
 
-  let view graph =
+  let view (local_ graph) =
     let computation, demo =
       [%demo
         let popover, { Toplayer.Controls.open_; _ } =
           Toplayer.Popover.create
             ~close_on_click_outside:(Bonsai.return Toplayer.Close_on_click_outside.No)
-            ~content:(fun ~close graph ->
-              let button_with_popover graph =
+            ~content:(fun ~close (local_ graph) ->
+              let button_with_popover (local_ graph) =
                 let popover, { Toplayer.Controls.open_; _ } =
                   Toplayer.Popover.create
                     ~close_on_click_outside:
                       (Bonsai.return Toplayer.Close_on_click_outside.No)
                     ~position:(return Toplayer.Position.Right)
                     ~alignment:(return Toplayer.Alignment.Start)
-                    ~content:(fun ~close graph ->
+                    ~content:(fun ~close (local_ graph) ->
                       let%arr theme = View.Theme.current graph
-                      and close = close in
+                      and close in
                       View.vbox
                         [ View.text "I am a nested popover"
                         ; View.button theme ~intent:Error ~on_click:close "Close"
                         ])
                     graph
                 in
-                let%arr popover = popover
-                and open_ = open_
+                let%arr popover
+                and open_
                 and theme = View.Theme.current graph in
                 View.button
                   ~attrs:[ popover ]
@@ -437,7 +434,7 @@ module Nested_popovers_remain_open = struct
               let%arr theme = View.Theme.current graph
               and inner_button_1 = button_with_popover graph
               and inner_button_2 = button_with_popover graph
-              and close = close in
+              and close in
               View.vbox
                 [ View.text "Hi, I am a popover"
                 ; inner_button_1
@@ -447,11 +444,11 @@ module Nested_popovers_remain_open = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and popover = popover
-        and open_ = open_ in
+        and popover
+        and open_ in
         View.button theme ~intent:Info ~attrs:[ popover ] ~on_click:open_ "Open Popover"]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -466,7 +463,7 @@ module Theme_arrows = struct
     {| Themes can toggle whether tooltips have arrows through theme `Constants.t`. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let%map theme = View.Theme.current graph in
     [%demo
       let tooltip =
@@ -503,7 +500,7 @@ module Vdom_tooltip_animations = struct
        |}
   ;;
 
-  let view _graph =
+  let view (local_ _graph) =
     [%demo
       let module Style =
         [%css
@@ -569,7 +566,7 @@ module Giant_toplayer_elements = struct
   let name = "Giant toplayer elements"
   let description = {|Tests for oversized popovers and modals|}
 
-  let view graph =
+  let view (local_ graph) =
     let computation, demo =
       [%demo
         let content =
@@ -597,11 +594,11 @@ module Giant_toplayer_elements = struct
           Toplayer.Modal.create ~content:(fun ~close:_ _ -> return content) graph
         in
         let%arr theme = View.Theme.current graph
-        and popover = popover
-        and open_popover = open_popover
-        and open_virtual_popover = open_virtual_popover
-        and open_virtual_aligned_popover = open_virtual_aligned_popover
-        and open_modal = open_modal in
+        and popover
+        and open_popover
+        and open_virtual_popover
+        and open_virtual_aligned_popover
+        and open_modal in
         View.hbox
           [ View.text ~attrs:[ View.tooltip_attr' theme [ content ] ] "Tooltip"
           ; View.button ~attrs:[ popover ] theme ~on_click:open_popover "Open Popover"
@@ -613,7 +610,7 @@ module Giant_toplayer_elements = struct
           ; View.button theme ~on_click:open_modal "Open Modal"
           ]]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -630,7 +627,7 @@ module Autofocus_on_open = struct
     the popover becomes visible a frame or two after the computation is activated. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let computation, demo =
       [%demo
         let focus_style =
@@ -645,7 +642,7 @@ module Autofocus_on_open = struct
           Toplayer.Popover.create
             ~focus_on_open:(return true)
             ~extra_attrs:(return [ focus_style ])
-            ~content:(fun ~close:_ _graph ->
+            ~content:(fun ~close:_ (local_ _graph) ->
               return (Vdom.Node.input ~attrs:[ Vdom.Attr.autofocus true ] ()))
             graph
         in
@@ -655,9 +652,9 @@ module Autofocus_on_open = struct
           Toplayer.Popover.create
             ~focus_on_open:(return true)
             ~extra_attrs:(return [ focus_style ])
-            ~content:(fun ~close:_ graph ->
+            ~content:(fun ~close:_ (local_ graph) ->
               let focus_attr = Effect.Focus.on_activate () graph in
-              let%arr focus_attr = focus_attr in
+              let%arr focus_attr in
               Vdom.Node.input ~attrs:[ focus_attr ] ())
             graph
         in
@@ -667,41 +664,41 @@ module Autofocus_on_open = struct
           Toplayer.Popover.create
             ~focus_on_open:(return true)
             ~extra_attrs:(return [ focus_style ])
-            ~content:(fun ~close:_ _graph -> return (Vdom.Node.input ()))
+            ~content:(fun ~close:_ (local_ _graph) -> return (Vdom.Node.input ()))
             graph
         in
         let { Toplayer.Controls.open_ = open_modal_autofocus; _ } =
           Toplayer.Modal.create
             ~extra_attrs:(return [ focus_style ])
-            ~content:(fun ~close:_ _graph ->
+            ~content:(fun ~close:_ (local_ _graph) ->
               return (Vdom.Node.input ~attrs:[ Vdom.Attr.autofocus true ] ()))
             graph
         in
         let { Toplayer.Controls.open_ = open_modal_focus_on_activate; _ } =
           Toplayer.Modal.create
             ~extra_attrs:(return [ focus_style ])
-            ~content:(fun ~close:_ graph ->
+            ~content:(fun ~close:_ (local_ graph) ->
               let focus_attr = Effect.Focus.on_activate () graph in
-              let%arr focus_attr = focus_attr in
+              let%arr focus_attr in
               Vdom.Node.input ~attrs:[ focus_attr ] ())
             graph
         in
         let { Toplayer.Controls.open_ = open_modal_no_autofocus; _ } =
           Toplayer.Modal.create
             ~extra_attrs:(return [ focus_style ])
-            ~content:(fun ~close:_ _graph -> return (Vdom.Node.input ()))
+            ~content:(fun ~close:_ (local_ _graph) -> return (Vdom.Node.input ()))
             graph
         in
         let%arr theme = View.Theme.current graph
-        and popover_autofocus = popover_autofocus
-        and popover_focus_on_activate = popover_focus_on_activate
-        and popover_no_autofocus = popover_no_autofocus
-        and open_modal_autofocus = open_modal_autofocus
-        and open_modal_focus_on_activate = open_modal_focus_on_activate
-        and open_modal_no_autofocus = open_modal_no_autofocus
-        and open_popover_autofocus = open_popover_autofocus
-        and open_popover_focus_on_activate = open_popover_focus_on_activate
-        and open_popover_no_autofocus = open_popover_no_autofocus in
+        and popover_autofocus
+        and popover_focus_on_activate
+        and popover_no_autofocus
+        and open_modal_autofocus
+        and open_modal_focus_on_activate
+        and open_modal_no_autofocus
+        and open_popover_autofocus
+        and open_popover_focus_on_activate
+        and open_popover_no_autofocus in
         View.vbox
           ~gap:(`Px 4)
           [ View.button
@@ -739,7 +736,7 @@ module Autofocus_on_open = struct
               "Modal without autofocus child"
           ]]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -747,7 +744,7 @@ module Autofocus_on_open = struct
   let filter_attrs = None
 end
 
-let component graph =
+let component (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
   let view =
     Gallery.make_sections

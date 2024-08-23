@@ -3,7 +3,7 @@ module Bonsai = Bonsai.Cont
 
 let assoc = Bonsai.assoc
 
-let state_machine0 ~default_model ~apply_action graph =
+let state_machine0 ~default_model ~apply_action (local_ graph) =
   Bonsai.state_machine0 ~default_model ~apply_action graph
 ;;
 

@@ -33,7 +33,7 @@ module Search_bar =
       }
       |}]
 
-let component graph =
+let component (local_ graph) =
   let search_bar =
     Form.Elements.Textbox.string
       ~extra_attrs:
@@ -43,7 +43,7 @@ let component graph =
       ()
       graph
   in
-  let%arr search_bar = search_bar in
+  let%arr search_bar in
   let icons =
     match Form.value search_bar with
     | Error error ->

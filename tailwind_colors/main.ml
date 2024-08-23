@@ -19,7 +19,7 @@ let abs_position_px t b l r =
   Css_gen.position ~top:(`Px t) ~bottom:(`Px b) ~left:(`Px l) ~right:(`Px r) `Absolute
 ;;
 
-let component _graph =
+let component (local_ _graph) =
   Bonsai.return
     (Node.div
        (List.map Tailwind_colors.Hue.all ~f:(fun hue ->

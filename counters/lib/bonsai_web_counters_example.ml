@@ -7,7 +7,7 @@ module Model = struct
   type t = unit Int.Map.t [@@deriving sexp, equal]
 end
 
-let add_counter_component graph =
+let add_counter_component (local_ graph) =
   let state, inject =
     Bonsai.state_machine0
       graph
@@ -19,8 +19,7 @@ let add_counter_component graph =
         let key = Map.length model in
         Map.add_exn model ~key ~data:())
   in
-  let%arr state = state
-  and inject = inject in
+  let%arr state and inject in
   let view =
     Vdom.Node.button
       ~attrs:[ Vdom.Attr.on_click (fun _ -> inject ()) ]
@@ -40,7 +39,7 @@ module Action = struct
   [@@deriving sexp_of]
 end
 
-let single_counter graph =
+let single_counter (local_ graph) =
   let state, inject =
     Bonsai.state_machine0
       graph
@@ -52,8 +51,7 @@ let single_counter graph =
       | Action.Increment -> model + 1
       | Action.Decrement -> model - 1)
   in
-  let%arr state = state
-  and inject = inject in
+  let%arr state and inject in
   let button label action =
     Vdom.Node.button
       ~attrs:[ Vdom.Attr.on_click (fun _ -> inject action) ]
@@ -69,20 +67,19 @@ let single_counter graph =
 (* [CODE_EXCERPT_END 1] *)
 
 (* [CODE_EXCERPT_BEGIN 3] *)
-let application graph =
+let application (local_ graph) =
   let open Bonsai.Let_syntax in
   let%sub map, add_button = add_counter_component graph in
   let counters =
     Bonsai.assoc (module Int) map ~f:(fun _key _data -> single_counter) graph
   in
-  let%arr add_button = add_button
-  and counters = counters in
+  let%arr add_button and counters in
   Vdom.Node.div [ add_button; Vdom.Node.div (Map.data counters) ]
 ;;
 
 (* [CODE_EXCERPT_END 3] *)
 
-let _application_sugar_free graph =
+let _application_sugar_free (local_ graph) =
   let open Bonsai.Let_syntax in
   Let_syntax.sub (add_counter_component graph) ~f:(fun add_counter ->
     let map = Bonsai.map ~f:fst add_counter in

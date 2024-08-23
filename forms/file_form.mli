@@ -1,4 +1,4 @@
 open! Core
 open Bonsai_web
 
-val form : Bonsai.graph -> Vdom.Node.t Bonsai.t
+val form : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t

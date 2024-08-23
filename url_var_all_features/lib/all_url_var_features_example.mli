@@ -11,5 +11,5 @@ val versioned_parser : T.t Bonsai_web_ui_url_var.Typed.Versioned_parser.t
 
 val component
   :  url_var:T.t Bonsai_web_ui_url_var.t
-  -> Bonsai.graph
+  -> local_ Bonsai.graph
   -> Vdom.Node.t Bonsai.t

@@ -98,8 +98,10 @@ module My_variant = struct
   let label_for_variant = `Inferred
   let initial_choice = `First_constructor
 
-  let form_for_variant : type a. a Typed_variant.t -> Bonsai.graph -> a Form.t Bonsai.t =
-    fun typed_field graph ->
+  let form_for_variant
+    : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+    =
+    fun typed_field (local_ graph) ->
     match typed_field with
     | A -> Bonsai.return (Form.return ())
     | B -> E.Textbox.string ~allow_updates_when_focused:`Always () graph
@@ -126,8 +128,10 @@ module Nested_record = struct
 
     let label_for_field = `Inferred
 
-    let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-      fun typed_field graph ->
+    let form_for_field
+      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      =
+      fun typed_field (local_ graph) ->
       match typed_field with
       | B_1 -> checkbox graph
       | B_2 -> checkbox graph
@@ -145,8 +149,10 @@ module Nested_record = struct
 
     let label_for_field = `Inferred
 
-    let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-      fun typed_field graph ->
+    let form_for_field
+      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      =
+      fun typed_field (local_ graph) ->
       match typed_field with
       | A_1 -> checkbox graph
       | A_2 -> inner_form graph
@@ -167,8 +173,10 @@ module Record_for_list = struct
 
     let label_for_field = `Inferred
 
-    let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-      fun typed_field graph ->
+    let form_for_field
+      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      =
+      fun typed_field (local_ graph) ->
       match typed_field with
       | My_int -> E.Textbox.int ~allow_updates_when_focused:`Always () graph
       | My_string -> E.Textbox.string ~allow_updates_when_focused:`Always () graph
@@ -245,8 +253,8 @@ let label_for_field : type a. a Typed_field.t -> string =
   |> String.substr_replace_all ~pattern:"_" ~with_:" "
 ;;
 
-let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-  fun typed_field graph ->
+let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t =
+  fun typed_field (local_ graph) ->
   match typed_field with
   | Variant ->
     my_variant_form graph >>|| Form.tooltip "Tooltips can also be on header groups"
@@ -358,8 +366,7 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
         (multi_select >>| Form.value_or_default ~default:[])
         graph
     in
-    let%arr multi_select = multi_select
-    and multi_select2 = multi_select2 in
+    let%arr multi_select and multi_select2 in
     Form.both multi_select multi_select2
     |> Form.project ~parse_exn:snd ~unparse:(fun selected -> selected, selected)
   | String_set ->
@@ -376,9 +383,8 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
     let rank =
       E.Rank.list
         (module String)
-        (fun ~source item _graph ->
-          let%arr item = item
-          and source = source in
+        (fun ~source item (local_ _graph) ->
+          let%arr item and source in
           Vdom.Node.div ~attrs:[ source ] [ Vdom.Node.text item ])
         graph
     in
@@ -392,9 +398,8 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
       ~selected_item_attr:(Bonsai.return Query_box_css.selected_item)
       ~extra_list_container_attr:(Bonsai.return Query_box_css.list)
       ~selection_to_string:(Bonsai.return Fn.id)
-      ~f:(fun query _graph ->
-        let%arr query = query
-        and input = input in
+      ~f:(fun query (local_ _graph) ->
+        let%arr query and input in
         Map.filter_map input ~f:(fun data ->
           if String.is_prefix ~prefix:query data then Some (Vdom.Node.text data) else None))
       ()
@@ -406,7 +411,7 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
   | Password -> E.Password.string ~allow_updates_when_focused:`Always () graph
 ;;
 
-let form graph =
+let form (local_ graph) =
   let form =
     Form.Typed.Record.make
       (module struct
@@ -421,12 +426,10 @@ let form graph =
   Form.Dynamic.error_hint form graph
 ;;
 
-let component graph =
+let component (local_ graph) =
   let form = form graph in
   let editable, toggle_editable = Bonsai.toggle ~default_model:true graph in
-  let%arr editable = editable
-  and toggle_editable = toggle_editable
-  and form = form in
+  let%arr editable and toggle_editable and form in
   let output =
     Vdom.Node.sexp_for_debugging ([%sexp_of: t Or_error.t] (Form.value form))
   in

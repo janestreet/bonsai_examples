@@ -13,8 +13,10 @@ module Config = struct
       }
     [@@deriving typed_fields]
 
-    let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-      fun typed_field graph ->
+    let form_for_field
+      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      =
+      fun typed_field (local_ graph) ->
       match typed_field with
       | X ->
         Form.Elements.Number.int
@@ -61,8 +63,10 @@ module Config = struct
       | Virtual of Virtual.t
     [@@deriving typed_variants]
 
-    let form_for_variant : type a. a Typed_variant.t -> Bonsai.graph -> a Form.t Bonsai.t =
-      fun typed_field graph ->
+    let form_for_variant
+      : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      =
+      fun typed_field (local_ graph) ->
       match typed_field with
       | Dom ->
         Form.Elements.Number.int
@@ -92,8 +96,10 @@ module Config = struct
       }
     [@@deriving typed_fields]
 
-    let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-      fun typed_field graph ->
+    let form_for_field
+      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      =
+      fun typed_field (local_ graph) ->
       match typed_field with
       | Main_axis ->
         Form.Elements.Number.float
@@ -114,9 +120,9 @@ module Config = struct
     let label_for_field = `Inferred
   end
 
-  let offset_form graph =
+  let offset_form (local_ graph) =
     let base = Form.Typed.Record.make (module Offset) graph in
-    let%map base = base in
+    let%map base in
     Form.project
       base
       ~parse_exn:(fun { main_axis; cross_axis } ->
@@ -133,8 +139,10 @@ module Config = struct
       }
     [@@deriving typed_fields]
 
-    let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-      fun typed_field graph ->
+    let form_for_field
+      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      =
+      fun typed_field (local_ graph) ->
       match typed_field with
       | Position ->
         Form.Elements.Dropdown.enumerable
@@ -167,8 +175,10 @@ module Config = struct
       }
     [@@deriving typed_fields]
 
-    let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-      fun typed_field graph ->
+    let form_for_field
+      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      =
+      fun typed_field (local_ graph) ->
       match typed_field with
       | Popovers -> popovers_form graph
       | Anchor_type -> anchor_form graph
@@ -188,7 +198,7 @@ let get_viewport_dimensions () =
   Dom_html.window##.innerWidth, Dom_html.window##.innerHeight
 ;;
 
-let with_dom_anchor shift popovers graph =
+let with_dom_anchor shift popovers (local_ graph) =
   let anchor_pos, move =
     Bonsai.state_machine1
       ~default_model:(0, 0)
@@ -207,12 +217,12 @@ let with_dom_anchor shift popovers graph =
     Bonsai.Clock.every
       ~when_to_start_next_effect:`Every_multiple_of_period_non_blocking
       (Time_ns.Span.of_int_ms interval_ms)
-      (let%map move = move in
+      (let%map move in
        move ())
       graph
   in
   let%map left, top = anchor_pos
-  and popovers = popovers in
+  and popovers in
   let popover_attrs =
     List.mapi
       popovers
@@ -247,7 +257,7 @@ let with_dom_anchor shift popovers graph =
 
 let with_virtual_anchor coords popovers =
   let%map { Config.Virtual.x; y; width; height } = coords
-  and popovers = popovers in
+  and popovers in
   let popover_nodes =
     List.mapi
       popovers
@@ -284,18 +294,17 @@ let with_virtual_anchor coords popovers =
      @ popover_nodes)
 ;;
 
-let component graph =
+let component (local_ graph) =
   let form = Config.form graph in
   let body =
     match%sub Bonsai.map form ~f:Form.value with
     | Error e ->
-      let%map e = e in
+      let%map e in
       View.text (Error.to_string_hum e)
     | Ok { anchor_type = Dom shift; popovers } -> with_dom_anchor shift popovers graph
     | Ok { anchor_type = Virtual coords; popovers } -> with_virtual_anchor coords popovers
   in
-  let%map form = form
-  and body = body in
+  let%map form and body in
   let form_div =
     Vdom.Node.div
       ~attrs:

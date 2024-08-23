@@ -3,7 +3,7 @@ open! Bonsai_web
 open! Bonsai.Let_syntax
 
 (* $MDX part-begin=clock_now *)
-let current_time graph =
+let current_time (local_ graph) =
   let%arr now = Bonsai.Clock.now graph in
   Vdom.Node.text (Time_ns.to_string_utc now)
 ;;
@@ -11,7 +11,7 @@ let current_time graph =
 (* $MDX part-end *)
 
 (* $MDX part-begin=clock_approx_now *)
-let approx_current_time graph =
+let approx_current_time (local_ graph) =
   let%arr now = Bonsai.Clock.approx_now ~tick_every:(Time_ns.Span.of_sec 1.) graph in
   Vdom.Node.text (Time_ns.to_string_utc now)
 ;;
@@ -19,10 +19,9 @@ let approx_current_time graph =
 (* $MDX part-end *)
 
 (* $MDX part-begin=vdom_time_ago *)
-let vdom_time_ago graph =
+let vdom_time_ago (local_ graph) =
   let time_since, set_time_since = Bonsai.state (Time_ns.now ()) graph in
-  let%arr time_since = time_since
-  and set_time_since = set_time_since in
+  let%arr time_since and set_time_since in
   Vdom.Node.div
     [ Vdom.Node.button
         ~attrs:[ Vdom.Attr.on_click (fun _ -> set_time_since (Time_ns.now ())) ]
@@ -40,7 +39,7 @@ let long_effect =
 
 (* $MDX part-begin=current_time_effect *)
 
-let measure_time graph =
+let measure_time (local_ graph) =
   let%arr get_time = Bonsai.Clock.get_current_time graph in
   Vdom.Node.button
     ~attrs:
@@ -57,7 +56,7 @@ let measure_time graph =
 (* $MDX part-end *)
 
 (* $MDX part-begin=clock_sleep *)
-let clock_sleep_demo graph =
+let clock_sleep_demo (local_ graph) =
   let%arr sleep = Bonsai.Clock.sleep graph in
   Vdom.Node.button
     ~attrs:
@@ -71,17 +70,16 @@ let clock_sleep_demo graph =
 (* $MDX part-end *)
 
 (* $MDX part-begin=clock_every *)
-let clock_every_demo graph =
+let clock_every_demo (local_ graph) =
   let count, set_count = Bonsai.state 0 graph in
   Bonsai.Clock.every
     ~when_to_start_next_effect:`Every_multiple_of_period_blocking
     ~trigger_on_activate:false
     (Time_ns.Span.of_sec 1.0)
-    (let%arr count = count
-     and set_count = set_count in
+    (let%arr count and set_count in
      set_count (count + 1))
     graph;
-  let%arr count = count in
+  let%arr count in
   Vdom.Node.text [%string "Seconds since you opened the page: %{count#Int}"]
 ;;
 

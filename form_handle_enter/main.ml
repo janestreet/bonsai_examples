@@ -24,20 +24,20 @@ module Css =
       }
       |}]
 
-let component graph =
+let component (local_ graph) =
   let notifications =
     Bonsai_web_ui_notifications.component (module Unit) ~equal:[%equal: Unit.t] graph
   in
   let rendered_notifications =
     Bonsai_web_ui_notifications.render
       notifications
-      ~f:(fun ~close:_ _ _graph ->
+      ~f:(fun ~close:_ _ (local_ _graph) ->
         Bonsai.return
           (Vdom.Node.div ~attrs:[ Css.notification ] [ Vdom.Node.text "Submitted form" ]))
       graph
   in
   let notify =
-    let%arr notifications = notifications in
+    let%arr notifications in
     Bonsai_web_ui_notifications.send_notification
       ~close_after:(Time_ns.Span.of_sec 5.0)
       notifications
@@ -85,14 +85,14 @@ let component graph =
       graph
       ~allow_updates_when_focused:`Never
   in
-  let%arr rendered_notifications = rendered_notifications
-  and notify = notify
-  and form1 = form1
-  and form2 = form2
-  and form3 = form3
-  and form4 = form4
-  and form5 = form5
-  and form6 = form6 in
+  let%arr rendered_notifications
+  and notify
+  and form1
+  and form2
+  and form3
+  and form4
+  and form5
+  and form6 in
   Vdom.Node.div
     [ rendered_notifications
     ; Vdom.Node.text "handle_enter = true"

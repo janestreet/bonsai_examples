@@ -42,7 +42,7 @@ module Action = struct
   [@@deriving sexp_of]
 end
 
-let component name graph =
+let component name (local_ graph) =
   let state, inject =
     Bonsai.state_machine0
       graph
@@ -58,12 +58,11 @@ let component name graph =
   let () =
     Bonsai.Edge.lifecycle
       ~on_activate:
-        (let%map inject = inject in
+        (let%map inject in
          inject Regenerate)
       graph
   in
-  let%arr state = state
-  and inject = inject in
+  let%arr state and inject in
   let header =
     Vdom.Node.div
       ~attrs:[ Style.header ]

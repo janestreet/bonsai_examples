@@ -12,8 +12,9 @@ module T = struct
 
   let label_for_field = `Inferred
 
-  let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-    fun typed_field graph ->
+  let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+    =
+    fun typed_field (local_ graph) ->
     match typed_field with
     | A -> E.Multiple.list (E.Textbox.int ~allow_updates_when_focused:`Always ()) graph
     | B -> E.Textbox.string ~allow_updates_when_focused:`Always () graph
@@ -29,7 +30,7 @@ let alert_effect =
   Effect.of_sync_fun alert
 ;;
 
-let component graph =
+let component (local_ graph) =
   let open Bonsai.Let_syntax in
   let%map form = form graph in
   let on_submit = Form.Submit.create ~f:(fun t -> alert_effect ([%sexp_of: T.t] t)) () in

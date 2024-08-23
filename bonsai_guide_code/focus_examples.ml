@@ -3,7 +3,7 @@ open! Bonsai_web
 open! Bonsai.Let_syntax
 
 (* $MDX part-begin=effect_focus_api *)
-let effect_focus_demo graph =
+let effect_focus_demo (local_ graph) =
   let focus = Effect.Focus.on_effect () graph in
   let%arr { attr; focus; blur } = focus in
   Vdom.Node.div
@@ -22,19 +22,17 @@ let effect_focus_demo graph =
 let () = Util.run effect_focus_demo ~id:"effect_focus_api"
 
 (* $MDX part-begin=effect_focus_onactivate *)
-let effect_focus_onactivate graph =
+let effect_focus_onactivate (local_ graph) =
   let visible, set_visible = Bonsai.state false graph in
   let subview =
     match%sub visible with
     | false -> return Vdom.Node.none
     | true ->
       let autofocus = Effect.Focus.on_activate () graph in
-      let%arr autofocus = autofocus in
+      let%arr autofocus in
       Vdom.Node.input ~attrs:[ autofocus ] ()
   in
-  let%arr visible = visible
-  and set_visible = set_visible
-  and subview = subview in
+  let%arr visible and set_visible and subview in
   Vdom.Node.div
     [ Vdom.Node.button
         ~attrs:[ Vdom.Attr.on_click (fun _ -> set_visible (not visible)) ]
@@ -50,14 +48,14 @@ let () = Util.run effect_focus_onactivate ~id:"effect_focus_onactivate"
 (* $MDX part-begin=autofocus *)
 module Toplayer = Bonsai_web_ui_toplayer
 
-let autofocus graph =
+let autofocus (local_ graph) =
   let { Toplayer.Controls.open_; _ } =
     Toplayer.Modal.create
       ~content:(fun ~close:_ _ ->
         return (Vdom.Node.input ~attrs:[ Vdom.Attr.autofocus true ] ()))
       graph
   in
-  let%arr open_ = open_ in
+  let%arr open_ in
   Vdom.Node.div
     [ Vdom.Node.button
         ~attrs:[ Vdom.Attr.on_click (fun _ -> open_) ]

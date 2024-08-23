@@ -38,7 +38,7 @@ let subwidgets =
 
 let id_prefix = Bonsai.return "multi-select-widget-example"
 
-let bonsai graph =
+let bonsai (local_ graph) =
   let widget_result =
     Widget.bonsai
       ~allow_updates_when_focused:`Never
@@ -47,7 +47,7 @@ let bonsai graph =
       subwidgets
       graph
   in
-  let%arr widget_result = widget_result in
+  let%arr widget_result in
   let open Virtual_dom.Vdom in
   Node.div
     [ Node.h2 [ Node.text "Selection demo" ]

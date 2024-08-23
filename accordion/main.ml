@@ -7,7 +7,7 @@ module Basic_accordion = struct
   let name = "Basic Accordion Usage"
   let description = "Toggle the accordion by clicking its title bar"
 
-  let view graph =
+  let view (local_ graph) =
     let vdom, demo =
       [%demo
         let%sub { view; is_open = _; open_ = _; toggle = _; close = _ } =
@@ -15,7 +15,8 @@ module Basic_accordion = struct
             ~starts_open:true
             ~title:
               (Bonsai.return (Vdom.Node.text "I am an accordion, click me to toggle!"))
-            ~content:(fun _graph -> Bonsai.return (Vdom.Node.text "I am the content!"))
+            ~content:(fun (local_ _graph) ->
+              Bonsai.return (Vdom.Node.text "I am the content!"))
             ()
             graph
         in
@@ -35,7 +36,7 @@ module Accordion_with_controls = struct
     "You can also control the accordion programmatically. Try clicking the buttons below."
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let computation, demo =
       let vbox = View.vbox ~gap:(`Em 1) in
       let hbox = View.hbox ~gap:(`Em_float 0.5) in
@@ -45,12 +46,13 @@ module Accordion_with_controls = struct
           Bonsai_web_ui_accordion.component
             ~starts_open:false
             ~title:(Bonsai.return (Vdom.Node.text "Important!"))
-            ~content:(fun _graph -> Bonsai.return (Vdom.Node.text "Wow, very important"))
+            ~content:(fun (local_ _graph) ->
+              Bonsai.return (Vdom.Node.text "Wow, very important"))
             ()
             graph
         in
         let%arr { view; is_open; open_; toggle; close } = accordion
-        and theme = theme in
+        and theme in
         let open_button = View.button theme ~disabled:is_open ~on_click:open_ "Open" in
         let toggle_button = View.button theme ~on_click:toggle "Toggle" in
         let close_button =
@@ -65,7 +67,7 @@ module Accordion_with_controls = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-let component graph =
+let component (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
   View.Theme.set_for_app
     theme

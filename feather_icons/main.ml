@@ -34,11 +34,9 @@ module Left_section =
       }
       |}]
 
-let left_section ~controls graph =
+let left_section ~controls (local_ graph) =
   let%sub icons, search_bar = Search_bar.component graph in
-  let%arr icons = icons
-  and search_bar = search_bar
-  and controls = controls in
+  let%arr icons and search_bar and controls in
   let icon_grid = Icon_grid.component ~icons ~controls in
   Vdom.Node.div ~attrs:[ Left_section.class_ ] [ search_bar; icon_grid ]
 ;;
@@ -53,11 +51,10 @@ module Main =
       }
       |}]
 
-let main graph =
+let main (local_ graph) =
   let%sub controls, controls_view = Controls.component graph in
   let left_section = left_section ~controls graph in
-  let%arr left_section = left_section
-  and controls_view = controls_view in
+  let%arr left_section and controls_view in
   Vdom.Node.main ~attrs:[ Main.class_ ] [ left_section; controls_view ]
 ;;
 
@@ -76,9 +73,9 @@ module App =
       }
       |}]
 
-let app graph =
+let app (local_ graph) =
   let main = main graph in
-  let%arr main = main in
+  let%arr main in
   Vdom.Node.div ~attrs:[ App.class_ ] [ header; main ]
 ;;
 

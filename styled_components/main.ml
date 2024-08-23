@@ -24,7 +24,7 @@ module Basic = struct
             ]
           []]
     in
-    fun _graph -> Bonsai.return (vdom, demo)
+    fun (local_ _graph) -> Bonsai.return (vdom, demo)
   ;;
 
   let selector = None
@@ -41,13 +41,14 @@ module Parameters = struct
 
   let tomato_color = `Hex "#ff6347"
 
-  let default_int_field graph =
+  let default_int_field (local_ graph) =
     let form = Form.Elements.Textbox.int ~allow_updates_when_focused:`Never () graph in
     Form.Dynamic.with_default (Bonsai.return 2) form graph
   ;;
 
-  let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-    fun typed_field graph ->
+  let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+    =
+    fun typed_field (local_ graph) ->
     match typed_field with
     | Color ->
       let form = Form.Elements.Color_picker.hex () graph in
@@ -66,7 +67,7 @@ module Interpolation = struct
     {|You can interpolate variables using the same syntax as [ppx_string].|}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let f ~color ~width ~height =
       [%demo
         Vdom.Node.div
@@ -81,12 +82,12 @@ module Interpolation = struct
     in
     let form = Form.Typed.Record.make (module Parameters) graph in
     let data =
-      let%arr form = form in
+      let%arr form in
       Form.value_or_default
         form
         ~default:{ Parameters.color = Parameters.tomato_color; width = 2; height = 2 }
     in
-    let%arr form = form
+    let%arr form
     and { color; width; height } = data in
     let color = Css_gen.Color.to_string_css color in
     let width = [%string "%{width#Int}rem"] in
@@ -111,7 +112,7 @@ module Typed_interpolation = struct
   interpolated variable. It will call that module's [to_string_css]. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let f ~color ~width ~height =
       [%demo
         Vdom.Node.div
@@ -126,12 +127,12 @@ module Typed_interpolation = struct
     in
     let form = Form.Typed.Record.make (module Parameters) graph in
     let data =
-      let%arr form = form in
+      let%arr form in
       Form.value_or_default
         form
         ~default:{ Parameters.color = Parameters.tomato_color; width = 2; height = 2 }
     in
-    let%arr form = form
+    let%arr form
     and { color; width; height } = data in
     let color : Css_gen.Color.t =
       let (`Hex c) = color in
@@ -155,7 +156,7 @@ module Nested_css = struct
   let name = {|Nested CSS|}
   let description = {|You can use css's relatively new nesting feature with this too.|}
 
-  let view _graph =
+  let view (local_ _graph) =
     Bonsai.return
       [%demo
         Vdom.Node.div
@@ -184,7 +185,7 @@ module Stylesheet_interpolation = struct
     {| The [ppx_string] syntax also works on [%css stylesheet], letting you target pseudoselectors+more. |}
   ;;
 
-  let view graph =
+  let view (local_ graph) =
     let f ~color ~width ~height =
       [%demo
         let module Style =
@@ -207,12 +208,12 @@ module Stylesheet_interpolation = struct
     in
     let form = Form.Typed.Record.make (module Parameters) graph in
     let data =
-      let%arr form = form in
+      let%arr form in
       Form.value_or_default
         form
         ~default:{ Parameters.color = Parameters.tomato_color; width = 2; height = 2 }
     in
-    let%arr form = form
+    let%arr form
     and { color; width; height } = data in
     let color : Css_gen.Color.t =
       let (`Hex c) = color in
@@ -232,7 +233,7 @@ module Stylesheet_interpolation = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-let component graph =
+let component (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component ~default:Kado () graph in
   View.Theme.set_for_app
     theme

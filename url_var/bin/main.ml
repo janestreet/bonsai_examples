@@ -17,9 +17,9 @@ module Css =
 let c s = s
 let examples_column = c Css.examples_column
 
-let component graph =
+let component (local_ graph) =
   let examples = Bonsai_web_ui_url_var_example_urls.examples graph in
-  let%arr examples = examples in
+  let%arr examples in
   Vdom.Node.div [ Vdom.Node.div ~attrs:[ examples_column ] examples ]
 ;;
 

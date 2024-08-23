@@ -4,7 +4,7 @@ open! Bonsai.Let_syntax
 module Apply_action_context = Bonsai.Apply_action_context
 
 (* $MDX part-begin=resettable_counters *)
-let two_counters graph =
+let two_counters (local_ graph) =
   let%arr counter1 = State_examples.counter_ui graph
   and counter2 = State_examples.counter_ui graph in
   Vdom.Node.div
@@ -18,10 +18,9 @@ let two_counters graph =
     [ counter1; counter2 ]
 ;;
 
-let reset_ui graph ~f =
+let reset_ui (local_ graph) ~f =
   let view, reset = Bonsai.with_model_resetter ~f graph in
-  let%arr view = view
-  and reset = reset in
+  let%arr view and reset in
   Vdom.Node.div
     [ view
     ; Vdom.Node.button
@@ -37,12 +36,12 @@ let resettable_counters = reset_ui ~f:two_counters
 let () = Util.run resettable_counters ~id:"resettable_counters"
 
 (* $MDX part-begin=resettable_counters_from_inside *)
-let resettable_counters_from_inside graph =
+let resettable_counters_from_inside (local_ graph) =
   Bonsai.with_model_resetter'
-    ~f:(fun ~reset graph ->
+    ~f:(fun ~reset (local_ graph) ->
       let%arr counter1 = State_examples.counter_ui graph
       and counter2 = State_examples.counter_ui graph
-      and reset = reset in
+      and reset in
       Vdom.Node.div
         ~attrs:
           [ [%css
@@ -99,10 +98,12 @@ end
 end
 
 (* $MDX part-begin=connection_status *)
-let connection_status graph conn : [ `Connected | `Connecting | `Disconnected ] Bonsai.t =
+let connection_status (local_ graph) conn
+  : [ `Connected | `Connecting | `Disconnected ] Bonsai.t
+  =
   let status, set_status = Bonsai.state `Disconnected graph in
   let register_status_change =
-    let%arr set_status = set_status in
+    let%arr set_status in
     Connection.on_status_change conn set_status
   in
   let () = Bonsai.Edge.lifecycle ~on_activate:register_status_change graph in
@@ -114,14 +115,14 @@ let connection_status graph conn : [ `Connected | `Connecting | `Disconnected ] 
 (* $MDX part-begin=connection_status_ui *)
 let conn = Connection.create ~uri:"https://google.com"
 
-let connection_status_ui graph =
+let connection_status_ui (local_ graph) =
   let connection_status =
     match%sub connection_status graph conn with
     | `Connected -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Connected" ])
     | `Connecting -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Connecting" ])
     | `Disconnected -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Disconnected" ])
   in
-  let%arr connection_status = connection_status in
+  let%arr connection_status in
   Vdom.Node.div [ connection_status ]
 ;;
 
@@ -129,7 +130,7 @@ let connection_status_ui graph =
 let () = Util.run connection_status_ui ~id:"connection_status_ui"
 
 (* $MDX part-begin=resettable_connection_and_counters *)
-let connection_and_counters graph =
+let connection_and_counters (local_ graph) =
   let%arr connection_status_ui = connection_status_ui graph
   and counters = two_counters graph in
   Vdom.Node.div [ connection_status_ui; counters ]
@@ -142,12 +143,14 @@ let resettable_ui = reset_ui ~f:connection_and_counters
 let () = Util.run resettable_ui ~id:"resettable_connection_and_counters"
 
 (* $MDX part-begin=connection_status_reset *)
-let connection_status graph conn : [ `Connected | `Connecting | `Disconnected ] Bonsai.t =
+let connection_status (local_ graph) conn
+  : [ `Connected | `Connecting | `Disconnected ] Bonsai.t
+  =
   let status, set_status =
     Bonsai.state ~reset:(fun model_when_reset -> model_when_reset) `Disconnected graph
   in
   let register_status_change =
-    let%arr set_status = set_status in
+    let%arr set_status in
     Connection.on_status_change conn set_status
   in
   let () = Bonsai.Edge.lifecycle ~on_activate:register_status_change graph in
@@ -156,18 +159,18 @@ let connection_status graph conn : [ `Connected | `Connecting | `Disconnected ] 
 
 (* $MDX part-end *)
 
-let connection_status_ui graph =
+let connection_status_ui (local_ graph) =
   let connection_status =
     match%sub connection_status graph conn with
     | `Connected -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Connected" ])
     | `Connecting -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Connecting" ])
     | `Disconnected -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Disconnected" ])
   in
-  let%arr connection_status = connection_status in
+  let%arr connection_status in
   Vdom.Node.div [ connection_status ]
 ;;
 
-let connection_and_counters graph =
+let connection_and_counters (local_ graph) =
   let%arr connection_status_ui = connection_status_ui graph
   and counters = two_counters graph in
   Vdom.Node.div [ connection_status_ui; counters ]
@@ -265,7 +268,7 @@ module Action = struct
     | Received_fill of Exchange.Order_id.t
 end
 
-let order_manager (exchange : Exchange.t) graph =
+let order_manager (exchange : Exchange.t) (local_ graph) =
   let model, inject_action =
     Bonsai.state_machine0
       ~default_model:Model.empty
@@ -287,13 +290,13 @@ let order_manager (exchange : Exchange.t) graph =
       graph
   in
   let subscribe_to_exchange =
-    let%arr inject_action = inject_action in
+    let%arr inject_action in
     Exchange.subscribe exchange (fun (Fill order_id) ->
       inject_action (Received_fill order_id))
   in
   let () = Bonsai.Edge.lifecycle ~on_activate:subscribe_to_exchange graph in
   let inject_new_order =
-    let%arr inject_action = inject_action in
+    let%arr inject_action in
     inject_action Create_ui_order
   in
   let open_orders =
@@ -310,11 +313,9 @@ let order_manager (exchange : Exchange.t) graph =
 (* $MDX part-end *)
 
 (* $MDX part-begin=trading_ui *)
-let trading_ui exchange graph =
+let trading_ui exchange (local_ graph) =
   let open_orders, filled_orders, inject_new_order = order_manager exchange graph in
-  let%arr open_orders = open_orders
-  and filled_orders = filled_orders
-  and inject_new_order = inject_new_order in
+  let%arr open_orders and filled_orders and inject_new_order in
   Vdom.Node.div
     [ Vdom.Node.text [%string "Open orders:"]
     ; Vdom.Node.sexp_for_debugging [%sexp (open_orders : Order_id.Set.t)]
@@ -332,7 +333,7 @@ let exchange = Exchange.create ()
 let () = Util.run (trading_ui exchange) ~id:"trading_ui"
 let () = Util.run (reset_ui ~f:(trading_ui exchange)) ~id:"trading_ui_reset"
 
-let order_manager (exchange : Exchange.t) graph =
+let order_manager (exchange : Exchange.t) (local_ graph) =
   (* $MDX part-begin=order_manager_with_reset *)
   let model, inject_action =
     Bonsai.state_machine0
@@ -362,13 +363,13 @@ let order_manager (exchange : Exchange.t) graph =
   in
   (* $MDX part-end *)
   let subscribe_to_exchange =
-    let%arr inject_action = inject_action in
+    let%arr inject_action in
     Exchange.subscribe exchange (fun (Fill order_id) ->
       inject_action (Received_fill order_id))
   in
   let () = Bonsai.Edge.lifecycle ~on_activate:subscribe_to_exchange graph in
   let inject_new_order =
-    let%arr inject_action = inject_action in
+    let%arr inject_action in
     inject_action Create_ui_order
   in
   let open_orders =
@@ -383,11 +384,9 @@ let order_manager (exchange : Exchange.t) graph =
 ;;
 
 (* $MDX part-begin=trading_ui *)
-let trading_ui exchange graph =
+let trading_ui exchange (local_ graph) =
   let open_orders, filled_orders, inject_new_order = order_manager exchange graph in
-  let%arr open_orders = open_orders
-  and filled_orders = filled_orders
-  and inject_new_order = inject_new_order in
+  let%arr open_orders and filled_orders and inject_new_order in
   Vdom.Node.div
     [ Vdom.Node.text [%string "Open orders:"]
     ; Vdom.Node.sexp_for_debugging [%sexp (open_orders : Order_id.Set.t)]

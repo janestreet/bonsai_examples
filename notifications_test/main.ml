@@ -15,20 +15,17 @@ there are no changes to the previous API.|}
     [%demo
     module Notifications = Bonsai_web_ui_notifications
 
-    let component graph =
+    let component (local_ graph) =
       let notifications = Notifications.Basic.create () graph in
       let vdom = Notifications.Basic.render notifications graph in
-      let%arr vdom = vdom
-      and notifications = notifications in
+      let%arr vdom and notifications in
       vdom, notifications
     ;;]
 
-  let view graph =
+  let view (local_ graph) =
     let theme = View.Theme.current graph in
     let%sub component, notifications = component graph in
-    let%arr component = component
-    and notifications = notifications
-    and theme = theme in
+    let%arr component and notifications and theme in
     let vdom =
       View.hbox
         ~gap:(`Em 1)
@@ -57,7 +54,7 @@ there are no changes to the previous API.|}
   let filter_attrs = None
 end
 
-let component graph =
+let component (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
   View.Theme.set_for_app
     theme

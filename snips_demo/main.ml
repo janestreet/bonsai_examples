@@ -3,10 +3,10 @@ open! Bonsai_web
 open Bonsai.Let_syntax
 module Snips = Bonsai_experimental_snips
 
-let main graph =
+let main (local_ graph) =
   let open Snips.Infix in
   let theme = View.Theme.current graph in
-  let%arr theme = theme in
+  let%arr theme in
   let colors =
     let f = Css_gen.Color.to_string_css in
     let c = View.constants theme in

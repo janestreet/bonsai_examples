@@ -33,7 +33,7 @@ module Action = struct
   [@@deriving sexp_of]
 end
 
-let component graph =
+let component (local_ graph) =
   let model, inject =
     Bonsai.state_machine0
       graph
@@ -53,8 +53,7 @@ let component graph =
         }
       | Clear -> { const = 0; dice = Map.map model.dice ~f:(Fn.const 0) })
   in
-  let%arr model = model
-  and inject = inject in
+  let%arr model and inject in
   let button = Vdom_input_widgets.Button.simple in
   let dice_button num_faces =
     button

@@ -26,7 +26,7 @@ let rpc =
     (module Diffable_polling_state_rpc_response.Polling_state_rpc_response.Make (T))
 ;;
 
-let component graph =
+let component (local_ graph) =
   let count_and_items, inject =
     Bonsai.state_machine0
       graph
@@ -49,7 +49,7 @@ let component graph =
     Bonsai.assoc
       (module Int)
       (count_and_items >>| Tuple2.get2)
-      ~f:(fun key _data graph ->
+      ~f:(fun key _data (local_ graph) ->
         let response =
           Rpc_effect.Polling_state_rpc.poll
             ~sexp_of_query:[%sexp_of: Int.t]
@@ -62,9 +62,7 @@ let component graph =
             key
             graph
         in
-        let%arr key = key
-        and inject = inject
-        and response = response in
+        let%arr key and inject and response in
         Vdom.Node.div
           [ Vdom.Node.button
               ~attrs:[ Vdom.Attr.on_click (fun _ -> inject (`Remove key)) ]
@@ -76,8 +74,7 @@ let component graph =
           ])
       graph
   in
-  let%arr items = items
-  and inject = inject in
+  let%arr items and inject in
   Vdom.Node.div
     [ Vdom.Node.button
         ~attrs:[ Vdom.Attr.on_click (fun _ -> inject `Add) ]

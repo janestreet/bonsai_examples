@@ -35,5 +35,6 @@ let component =
 ;;
 
 let () =
-  Bonsai_web.Start.start (fun _graph -> Bonsai.return (Vdom.Node.div [ component ]))
+  Bonsai_web.Start.start (fun (local_ _graph) ->
+    Bonsai.return (Vdom.Node.div [ component ]))
 ;;

@@ -20,7 +20,7 @@ let form_of_t =
       let label_for_field = `Inferred
 
       let form_for_field (type a) (field : a Typed_field.t)
-        : Bonsai.graph -> a Form.t Bonsai.t
+        : local_ Bonsai.graph -> a Form.t Bonsai.t
         =
         match field with
         | Name -> Form.Elements.Textbox.string ~allow_updates_when_focused:`Never ()
@@ -52,7 +52,7 @@ let table_form =
 ;;
 
 let () =
-  let app graph =
+  let app (local_ graph) =
     let table_form = table_form graph in
     let table_form =
       (* We call with_default, which sets the form to contain the starting data that we

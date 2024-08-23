@@ -30,7 +30,7 @@ module Ids = struct
       { next = state.next + 1; ids = Map.add_exn ~key:state.next ~data:() state.ids }
   ;;
 
-  let component graph =
+  let component (local_ graph) =
     let state, inject =
       Bonsai.state_machine0
         graph
@@ -40,8 +40,7 @@ module Ids = struct
         ~default_model:State.default
         ~apply_action
     in
-    let%arr state = state
-    and inject = inject in
+    let%arr state and inject in
     Result.
       { ids = State.ids state
       ; inject_remove = (fun x -> inject (`Remove x))
@@ -50,12 +49,12 @@ module Ids = struct
   ;;
 end
 
-let panel_component id (_ : unit Bonsai.t) _graph =
-  let%arr id = id in
+let panel_component id (_ : unit Bonsai.t) (local_ _graph) =
+  let%arr id in
   Node.div [ Node.textf !"Hello, world %{Id}!" id ]
 ;;
 
-let component graph =
+let component (local_ graph) =
   let%sub { ids; inject_add_with_next_id; inject_remove } = Ids.component graph in
   let panels = Bonsai.assoc (module Id) ids ~f:panel_component graph in
   Bonsai_web_ui_panels_experimental.component

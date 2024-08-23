@@ -33,7 +33,7 @@ module Css =
       }
       |}]
 
-let offset_state_machine graph =
+let offset_state_machine (local_ graph) =
   Bonsai.state_machine0
     graph
     ~sexp_of_model:[%sexp_of: Int.t]
@@ -43,16 +43,14 @@ let offset_state_machine graph =
     ~apply_action:(fun (_ : _ Bonsai.Apply_action_context.t) x delta -> x + delta)
 ;;
 
-let component graph =
+let component (local_ graph) =
   let x, add_x = offset_state_machine graph in
   let y, add_y = offset_state_machine graph in
   let show_help, set_show_help =
     Bonsai.state false ~sexp_of_model:[%sexp_of: Bool.t] ~equal:[%equal: Bool.t] graph
   in
   let handler =
-    let%arr add_x = add_x
-    and add_y = add_y
-    and set_show_help = set_show_help in
+    let%arr add_x and add_y and set_show_help in
     let command ?cond ~keys ~description f =
       let handler =
         let open Keyboard_event_handler.Handler in
@@ -124,7 +122,7 @@ let component graph =
   let help_view =
     match%sub show_help with
     | true ->
-      let%arr handler = handler in
+      let%arr handler in
       Vdom.Node.div
         ~attrs:[ Css.help_container ]
         [ Help_text.view
@@ -133,10 +131,7 @@ let component graph =
         ]
     | false -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
   in
-  let%arr x = x
-  and y = y
-  and handler = handler
-  and help_view = help_view in
+  let%arr x and y and handler and help_view in
   let view =
     Vdom.Node.div
       [ Vdom.Node.div

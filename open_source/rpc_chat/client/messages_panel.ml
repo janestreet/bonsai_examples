@@ -15,8 +15,7 @@ let view messages current_room =
     ]
 ;;
 
-let component ~messages ~current_room _graph =
-  let%arr messages = messages
-  and current_room = current_room in
+let component ~messages ~current_room (local_ _graph) =
+  let%arr messages and current_room in
   view messages current_room
 ;;

@@ -92,9 +92,9 @@ module Action = struct
   [@@deriving sexp]
 end
 
-let kanban_column ~extra_dnd ~dnd ~items ~column ~title graph =
+let kanban_column ~extra_dnd ~dnd ~items ~column ~title (local_ graph) =
   let map =
-    let%map items = items
+    let%map items
     and model = dnd >>| Drag_and_drop.model in
     (* Only display items from this column or items that are being hovered
        over this column; exclude any items that have been dragged away and
@@ -119,12 +119,12 @@ let kanban_column ~extra_dnd ~dnd ~items ~column ~title graph =
     Bonsai.assoc
       (module Item_id)
       map
-      ~f:(fun item_id item _graph ->
-        let%arr item = item
-        and item_id = item_id
+      ~f:(fun item_id item (local_ _graph) ->
+        let%arr item
+        and item_id
         and source = dnd >>| Drag_and_drop.source
         and model = dnd >>| Drag_and_drop.model
-        and extra_source = extra_source in
+        and extra_source in
         let contents, _ = item in
         let extra =
           match model with
@@ -150,7 +150,7 @@ let kanban_column ~extra_dnd ~dnd ~items ~column ~title graph =
           [ Node.text contents ])
       graph
   in
-  let%arr items = items
+  let%arr items
   and drop_target = dnd >>| Drag_and_drop.drop_target
   and model = dnd >>| Drag_and_drop.model in
   let is_active =
@@ -176,7 +176,7 @@ let kanban_column ~extra_dnd ~dnd ~items ~column ~title graph =
     [ Node.h3 ~attrs:[ Style.centered ] [ Node.text title ]; Node.div (Map.data items) ]
 ;;
 
-let board ?extra_dnd name graph =
+let board ?extra_dnd name (local_ graph) =
   let items, inject =
     Bonsai.state_machine0
       graph
@@ -206,7 +206,7 @@ let board ?extra_dnd name graph =
       ~source_id:(module Item_id)
       ~target_id:(module Column)
       ~on_drop:
-        (let%map inject = inject in
+        (let%map inject in
          fun item_id new_column -> inject (Move { item_id; new_column }))
       graph
   in
@@ -220,27 +220,22 @@ let board ?extra_dnd name graph =
   let dragged_element =
     Drag_and_drop.dragged_element
       dnd
-      ~f:(fun item_id _graph ->
+      ~f:(fun item_id (local_ _graph) ->
         let text =
           match%sub
-            let%map item_id = item_id
-            and items = items in
+            let%map item_id and items in
             Map.find items item_id
           with
           | Some (contents, _) -> contents
           | None -> Bonsai.return "No item exists with that id"
         in
-        let%arr text = text in
+        let%arr text in
         Node.div ~attrs:[ Style.kanban_item ] [ Node.text text ])
       graph
   in
   let sentinel = Bonsai.map ~f:Drag_and_drop.sentinel dnd in
   let view =
-    let%arr todo = todo
-    and in_progress = in_progress
-    and finished = finished
-    and dragged_element = dragged_element
-    and sentinel = sentinel in
+    let%arr todo and in_progress and finished and dragged_element and sentinel in
     let sentinel = sentinel ~name in
     Node.div
       ~attrs:[ Vdom.Attr.(Style.kanban_container @ sentinel) ]
@@ -249,11 +244,10 @@ let board ?extra_dnd name graph =
   Bonsai.both view dnd
 ;;
 
-let app graph =
+let app (local_ graph) =
   let%sub board1, dnd = board "board1" graph in
   let%sub board2, _ = board ~extra_dnd:dnd "board2" graph in
-  let%arr board1 = board1
-  and board2 = board2 in
+  let%arr board1 and board2 in
   Node.div
     [ Node.p
         [ Node.text
@@ -273,4 +267,4 @@ let app graph =
     ]
 ;;
 
-let board name graph = Bonsai.map (board ?extra_dnd:None name graph) ~f:fst
+let board name (local_ graph) = Bonsai.map (board ?extra_dnd:None name graph) ~f:fst

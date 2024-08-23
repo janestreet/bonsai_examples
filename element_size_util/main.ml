@@ -23,7 +23,7 @@ module Size = struct
   [@@deriving sexp, equal]
 end
 
-let bulk_size_component graph =
+let bulk_size_component (local_ graph) =
   let state = Size_hooks.Bulk_size_tracker.component (module Int) Prune_stale graph in
   let%arr sizes, size_attr = state in
   let mk i =
@@ -45,7 +45,7 @@ let bulk_size_component graph =
     ]
 ;;
 
-let position graph =
+let position (local_ graph) =
   let%sub { positions; get_attr; update } =
     Size_hooks.Position_tracker.component (module Int) graph
   in
@@ -70,8 +70,7 @@ let position graph =
       update
       graph
   in
-  let%arr positions = positions
-  and get_attr = get_attr in
+  let%arr positions and get_attr in
   let mk i =
     let attr = Vdom.Attr.many [ Style.resizable_using_css; get_attr i ] in
     Vdom.Node.div ~attrs:[ attr ] []
@@ -91,12 +90,11 @@ let position graph =
     ]
 ;;
 
-let size_component graph =
+let size_component (local_ graph) =
   let size, inject_size =
     Bonsai.state_opt graph ~sexp_of_model:[%sexp_of: Size.t] ~equal:[%equal: Size.t]
   in
-  let%arr size = size
-  and inject_size = inject_size in
+  let%arr size and inject_size in
   Vdom.Node.div
     [ Vdom.Node.h3 [ Vdom.Node.text "Resize me!" ]
     ; Vdom.Node.div
@@ -110,7 +108,7 @@ let size_component graph =
     ]
 ;;
 
-let fit _graph =
+let fit (local_ _graph) =
   let open Vdom in
   let make s behavior =
     Node.div
@@ -139,20 +137,20 @@ let fit _graph =
        ])
 ;;
 
-let visibility_component graph =
+let visibility_component (local_ graph) =
   let open Size_hooks.Visibility_tracker in
   let pos_x, inject_pos_x = Bonsai.state 0.0 graph in
   let pos_y, inject_pos_y = Bonsai.state 0.0 graph in
   let client_rect, set_client_rect = Bonsai.state_opt graph in
   let visible_rect, set_visible_rect = Bonsai.state_opt graph in
-  let%arr pos_x = pos_x
-  and inject_pos_x = inject_pos_x
-  and pos_y = pos_y
-  and inject_pos_y = inject_pos_y
-  and client_rect = client_rect
-  and set_visible_rect = set_visible_rect
-  and set_client_rect = set_client_rect
-  and visible_rect = visible_rect in
+  let%arr pos_x
+  and inject_pos_x
+  and pos_y
+  and inject_pos_y
+  and client_rect
+  and set_visible_rect
+  and set_client_rect
+  and visible_rect in
   let pos_to_color pos = pos /. 2000. *. 360. |> Float.iround_down_exn in
   let attributes =
     [ Style.visibility_child
@@ -205,7 +203,7 @@ let buttons current inject =
   Page.all |> List.map ~f:make_button_for_tab |> Vdom.Node.div
 ;;
 
-let resizer_component _graph =
+let resizer_component (local_ _graph) =
   Bonsai.return
     (Vdom.Node.div
        [ Vdom.Node.h3 [ Vdom.Node.text "Resize me!" ]
@@ -219,15 +217,14 @@ let resizer_component _graph =
        ])
 ;;
 
-let scroll_tracker_component graph =
+let scroll_tracker_component (local_ graph) =
   let scrollable, set_scrollable =
     Bonsai.state_opt
       graph
       ~sexp_of_model:[%sexp_of: Size_hooks.Scroll_tracker.Scrollable.t]
       ~equal:[%equal: Size_hooks.Scroll_tracker.Scrollable.t]
   in
-  let%arr scrollable = scrollable
-  and set_scrollable = set_scrollable in
+  let%arr scrollable and set_scrollable in
   let status =
     match scrollable with
     | None -> "<none>"
@@ -251,7 +248,7 @@ let scroll_tracker_component graph =
     ]
 ;;
 
-let component graph =
+let component (local_ graph) =
   let page, inject_page =
     Bonsai.state Bulk_size ~sexp_of_model:[%sexp_of: Page.t] ~equal:[%equal: Page.t] graph
   in
@@ -265,9 +262,7 @@ let component graph =
     | Position -> position graph
     | Scroll -> scroll_tracker_component graph
   in
-  let%arr page_component = page_component
-  and page = page
-  and inject_page = inject_page in
+  let%arr page_component and page and inject_page in
   let buttons = buttons page inject_page in
   Vdom.Node.div [ buttons; page_component ]
 ;;

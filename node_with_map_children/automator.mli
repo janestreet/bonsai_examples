@@ -10,5 +10,5 @@ val component
   -> reset_all:unit Effect.t Bonsai.t
   -> step:unit Effect.t Bonsai.t
   -> is_done:bool Bonsai.t
-  -> Bonsai.graph
+  -> local_ Bonsai.graph
   -> unit Bonsai.t

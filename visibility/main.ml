@@ -52,22 +52,22 @@ let hidden_attr = Bonsai.return Style.hidden
 let data = List.init 30 ~f:(fun i -> i, ()) |> Int.Map.of_alist_exn |> Bonsai.return
 let view i = Vdom.Node.div ~attrs:[ Style.box ] [ Vdom.Node.textf "%d" i ]
 
-let component graph =
+let component (local_ graph) =
   let components =
     Bonsai.assoc
       (module Int)
       data
-      ~f:(fun key _data graph ->
+      ~f:(fun key _data (local_ graph) ->
         Vis.only_when_visible'
           ~visible_attr
           ~hidden_attr
-          (fun _graph ->
-            let%arr key = key in
+          (fun (local_ _graph) ->
+            let%arr key in
             view key, key)
           graph)
       graph
   in
-  let%arr components = components in
+  let%arr components in
   let boxes, debug = components |> Map.data |> List.unzip in
   let boxes = View.vbox ~gap:(`Em 1) boxes in
   let debug =

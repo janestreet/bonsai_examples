@@ -15,7 +15,7 @@ end
 
 module Input_method_selector = Dropdown_menu.Make (Input_method)
 
-let input_kind ~input_method graph =
+let input_kind ~input_method (local_ graph) =
   match%sub input_method with
   | Input_method.Text ->
     String_input.component (module Rpgdice.Roll_spec) ~default_model:"" graph
@@ -24,7 +24,7 @@ let input_kind ~input_method graph =
     result_and_vdom >>| Tuple2.map_fst ~f:Result.return
 ;;
 
-let app graph =
+let app (local_ graph) =
   let build_result ~input ~roller ~input_method_selector =
     Vdom.Node.div
       [ Vdom.Node.div ~attrs:[ Vdom.Attr.id "input" ] [ input_method_selector; input ]
@@ -36,9 +36,7 @@ let app graph =
   in
   let%sub roll_spec, input = input_kind ~input_method graph in
   let roller = Roller.component roll_spec graph in
-  let%arr input = input
-  and roller = roller
-  and input_method_selector = input_method_selector in
+  let%arr input and roller and input_method_selector in
   build_result ~input ~roller ~input_method_selector
 ;;
 

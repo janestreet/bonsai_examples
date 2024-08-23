@@ -49,6 +49,7 @@ let column_helper
   ?(disable_sort = false)
   ?visible
   ?resizable
+  ?(should_be_stacked = false)
   (field : (_, a) Field.t)
   =
   let sort =
@@ -67,11 +68,29 @@ let column_helper
     ?resizable
     ~header:(render_header (Fieldslib.Field.name field))
     ?sort
-    ~cell:(fun ~key:_ ~data _graph ->
-      let%arr data = data in
-      Vdom.Node.div
-        ~attrs:[ cell_attrs ]
-        [ Vdom.Node.text (M.to_string (Field.get field data)) ])
+    ~cell:(fun ~key:_ ~data (local_ _graph) ->
+      let%arr data in
+      match should_be_stacked with
+      | false ->
+        Vdom.Node.div
+          ~attrs:[ cell_attrs ]
+          [ Vdom.Node.text (M.to_string (Field.get field data)) ]
+      | true ->
+        Vdom.Node.div
+          ~attrs:
+            [ cell_attrs
+            ; [%css
+                {|
+                  display: flex;
+                  flex-direction: column;
+                |}]
+            ]
+          [ Vdom.Node.div [ Vdom.Node.text (M.to_string (Field.get field data)) ]
+          ; Vdom.Node.div [ Vdom.Node.text (M.to_string (Field.get field data)) ]
+          ; Vdom.Node.div [ Vdom.Node.text (M.to_string (Field.get field data)) ]
+          ; Vdom.Node.div [ Vdom.Node.text (M.to_string (Field.get field data)) ]
+          ; Vdom.Node.div [ Vdom.Node.text (M.to_string (Field.get field data)) ]
+          ])
     ()
 ;;
 
@@ -92,6 +111,7 @@ let columns ~should_show_position =
   in
   Column.lift
     [ column_helper (module String) Row.Fields.symbol
+    ; column_helper (module String) Row.Fields.symbol ~should_be_stacked:true
     ; column_helper (module Float) Row.Fields.edge
     ; column_helper (module Float) Row.Fields.max_edge
     ; column_helper (module Int) Row.Fields.bsize ~resizable:(Bonsai.return false)
@@ -124,8 +144,8 @@ let columns ~should_show_position =
                    [%compare: Time_ns.t]
                    a.Row.last_fill
                    b.Row.last_fill))
-            ~cell:(fun ~key:_ ~data _graph ->
-              let%arr data = data in
+            ~cell:(fun ~key:_ ~data (local_ _graph) ->
+              let%arr data in
               Vdom.Node.div
                 ~attrs:[ cell_attrs ]
                 [ Vdom.Node.text (Time_ns_option.to_string data.Row.last_fill) ])
@@ -158,7 +178,7 @@ let generic_table_and_focus_attr
   ~get_unlock_focus
   ~attr_of_focus
   data
-  graph
+  (local_ graph)
   =
   let table =
     Table.component
@@ -300,8 +320,10 @@ module Layout_form = struct
       }
     [@@deriving typed_fields]
 
-    let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-      fun typed_field graph ->
+    let form_for_field
+      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      =
+      fun typed_field (local_ graph) ->
       match typed_field with
       | Themed -> Form.Elements.Toggle.bool ~default:true () graph
       | Show_position -> Form.Elements.Toggle.bool ~default:true () graph
@@ -317,7 +339,7 @@ module Layout_form = struct
             ~default:30
             graph
         in
-        let%arr form = form in
+        let%arr form in
         Form.project form ~parse_exn:(fun x -> `Px x) ~unparse:(fun (`Px x) -> x)
       | Num_rows ->
         Form.Elements.Number.int
@@ -334,9 +356,9 @@ module Layout_form = struct
     let label_for_field = `Inferred
   end
 
-  let component graph =
+  let component (local_ graph) =
     let form = Form.Typed.Record.make (module Params) graph in
-    let%arr form = form in
+    let%arr form in
     let values =
       Form.value_or_default
         form
@@ -356,7 +378,7 @@ module Layout_form = struct
 end
 
 module Column_width_form = struct
-  let component ~set_column_width graph =
+  let component ~set_column_width (local_ graph) =
     let open Bonsai.Let_syntax in
     let form =
       Form.Elements.Textbox.int
@@ -367,9 +389,7 @@ module Column_width_form = struct
     in
     let button =
       let theme = View.Theme.current graph in
-      let%arr form = form
-      and theme = theme
-      and set_column_width = set_column_width in
+      let%arr form and theme and set_column_width in
       let value = Form.value form in
       let disabled = Or_error.is_error value in
       let on_click =
@@ -382,8 +402,7 @@ module Column_width_form = struct
       in
       View.button ~disabled theme ~on_click "Set width"
     in
-    let%arr form = form
-    and button = button in
+    let%arr form and button in
     View.hbox [ Form.view_as_vdom form; button ]
   ;;
 end

@@ -11,13 +11,10 @@ let validate : unit -> bool =
 
 let validate = Effect.of_sync_fun validate ()
 
-let driver ~reset_all ~step ~is_done ~set_has_error graph =
+let driver ~reset_all ~step ~is_done ~set_has_error (local_ graph) =
   let get_is_done = Bonsai.peek is_done graph in
   Bonsai.Edge.after_display
-    (let%map get_is_done = get_is_done
-     and reset_all = reset_all
-     and set_has_error = set_has_error
-     and step = step in
+    (let%map get_is_done and reset_all and set_has_error and step in
      let%bind.Effect ok = validate in
      if not ok
      then set_has_error true
@@ -33,13 +30,12 @@ let driver ~reset_all ~step ~is_done ~set_has_error graph =
   Bonsai.return ()
 ;;
 
-let component ~is_running ~reset_all ~step ~is_done graph =
+let component ~is_running ~reset_all ~step ~is_done (local_ graph) =
   let has_error, set_has_error =
     Bonsai.state false ~sexp_of_model:[%sexp_of: Bool.t] ~equal:[%equal: Bool.t] graph
   in
   let active =
-    let%arr is_running = is_running
-    and has_error = has_error in
+    let%arr is_running and has_error in
     is_running && not has_error
   in
   if%sub active

@@ -7,7 +7,7 @@ module Model = struct
   type t = (Rpgdice.Roll_spec.t * Rpgdice.Roll_result.t) option [@@deriving equal, sexp]
 end
 
-let roller_state input graph =
+let roller_state input (local_ graph) =
   Bonsai.state_machine1
     ~sexp_of_model:[%sexp_of: Model.t]
     ~equal:[%equal: Model.t]
@@ -31,11 +31,9 @@ let roller_state input graph =
     graph
 ;;
 
-let component roll_spec graph =
+let component roll_spec (local_ graph) =
   let model, inject = roller_state roll_spec graph in
-  let%arr model = model
-  and inject = inject
-  and roll_spec = roll_spec in
+  let%arr model and inject and roll_spec in
   let roll_result =
     match roll_spec, model with
     | Ok roll_spec, Some (spec, roll) when phys_equal spec roll_spec ->

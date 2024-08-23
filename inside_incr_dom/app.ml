@@ -32,8 +32,7 @@ let on_startup ~schedule_action:_ _model =
 ;;
 
 let apply_action model bonsai_subcomponent =
-  let%map bonsai_subcomponent = bonsai_subcomponent
-  and model = model in
+  let%map bonsai_subcomponent and model in
   fun action state ~schedule_action ->
     match action with
     | Action.Subcomponent_action a ->
@@ -46,8 +45,7 @@ let apply_action model bonsai_subcomponent =
 ;;
 
 let view model bonsai_subcomponent ~inject =
-  let%map bonsai_subcomponent = bonsai_subcomponent
-  and model = model in
+  let%map bonsai_subcomponent and model in
   let on_change _ text = inject (Action.Update_string text) in
   Vdom.Node.div
     [ Vdom.Node.input ~attrs:[ Vdom.Attr.on_input on_change ] ()
@@ -57,7 +55,7 @@ let view model bonsai_subcomponent ~inject =
 ;;
 
 let on_display bonsai_subcomponent =
-  let%map bonsai_subcomponent = bonsai_subcomponent in
+  let%map bonsai_subcomponent in
   let on_display = Component.on_display bonsai_subcomponent in
   fun state ~schedule_action ->
     let schedule_action a = schedule_action (Action.Subcomponent_action a) in
@@ -72,7 +70,7 @@ let create model ~old_model ~inject =
     let inject a = inject (Action.Subcomponent_action a) in
     My_bonsai_component.create ~input ~model ~old_model ~inject
   in
-  let%map model = model
+  let%map model
   and apply_action = apply_action model bonsai_subcomponent
   and view = view model bonsai_subcomponent ~inject
   and on_display = on_display bonsai_subcomponent in

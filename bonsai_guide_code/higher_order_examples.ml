@@ -11,13 +11,13 @@ type t =
 
 let modal
   ~(title : Vdom.Node.t Bonsai.t)
-  ~(content : Bonsai.graph -> Vdom.Node.t Bonsai.t)
-  graph
+  ~(content : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t)
+  (local_ graph)
   : t
   =
   let is_open, set_is_open = Bonsai.state false graph in
   let open_modal =
-    let%arr set_is_open = set_is_open in
+    let%arr set_is_open in
     set_is_open true
   in
   let view =
@@ -26,8 +26,8 @@ let modal
     | true ->
       (* only instantiate [content] here in the [true] branch *)
       let%arr content = content graph
-      and title = title
-      and set_is_open = set_is_open in
+      and title
+      and set_is_open in
       let close_button =
         Vdom.Node.button
           ~attrs:[ Vdom.Attr.on_click (fun _ -> set_is_open false) ]
@@ -57,23 +57,21 @@ let modal
 (* $MDX part-end *)
 
 (* $MDX part-begin=modal_example *)
-let modal_example graph =
+let modal_example (local_ graph) =
   let title = Bonsai.return (Vdom.Node.text "Hi there!") in
-  let content graph =
+  let content (local_ graph) =
     let count, set_count = Bonsai.state 0 graph in
     let on_activate =
-      let%arr count = count
-      and set_count = set_count in
+      let%arr count and set_count in
       set_count (count + 1)
     in
     let () = Bonsai.Edge.lifecycle ~on_activate graph in
-    let%arr count = count in
+    let%arr count in
     Vdom.Node.div
       [ Vdom.Node.text [%string "This modal has been opened %{count#Int} times..."] ]
   in
   let { view = modal_view; open_modal } = modal ~title ~content graph in
-  let%arr modal_view = modal_view
-  and open_modal = open_modal in
+  let%arr modal_view and open_modal in
   Vdom.Node.div
     ~attrs:[ [%css {|height: 400px;|}] ]
     [ modal_view

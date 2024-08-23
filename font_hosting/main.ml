@@ -15,7 +15,7 @@ module Css =
       }
       |}]
 
-let component _graph =
+let component (local_ _graph) =
   Bonsai.return
     (Vdom.Node.div
        ~attrs:[ Css.firacode ]

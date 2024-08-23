@@ -17,8 +17,9 @@ module Person = struct
 
   let label_for_field = `Computed field_to_string
 
-  let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.t =
-    fun typed_field graph ->
+  let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+    =
+    fun typed_field (local_ graph) ->
     match typed_field with
     | Name -> E.Textbox.string ~allow_updates_when_focused:`Always () graph
     | Age -> E.Textbox.int ~allow_updates_when_focused:`Always () graph
@@ -47,8 +48,10 @@ module Dyn = struct
   let label_for_variant = `Computed to_string
   let initial_choice = `First_constructor
 
-  let form_for_variant : type a. a Typed_variant.t -> Bonsai.graph -> a Form.t Bonsai.t =
-    fun typed_field graph ->
+  let form_for_variant
+    : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+    =
+    fun typed_field (local_ graph) ->
     match typed_field with
     | Unit -> Bonsai.return (Form.return ())
     | Integer -> E.Textbox.int ~allow_updates_when_focused:`Always () graph
@@ -102,14 +105,14 @@ module Food = struct
     : type a cmp.
       a Typed_variant.t
       -> (a, cmp) Bonsai.comparator
-      -> Bonsai.graph
+      -> local_ Bonsai.graph
       -> (a, cmp) Set.t Form.t Bonsai.t
     =
-    fun variant (module Cmp) graph ->
+    fun variant (module Cmp) (local_ graph) ->
     match variant with
     | Snack ->
       let checkbox = E.Checkbox.bool ~default:false () graph in
-      let%arr.Bonsai checkbox = checkbox in
+      let%arr.Bonsai checkbox in
       Form.project
         checkbox
         ~parse_exn:(fun is_set ->
@@ -123,7 +126,7 @@ end
 
 let food_form = Form.Typed.Variant.make_set (module Food)
 
-let component graph =
+let component (local_ graph) =
   let open Bonsai.Let_syntax in
   let%arr person = person_form graph
   and dyn = dyn_form graph

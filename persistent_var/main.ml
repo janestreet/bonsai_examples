@@ -18,7 +18,7 @@ let session_storage_var =
     ~default:"This will be saved in session storage!"
 ;;
 
-let display_text_var ~doc storage_var _graph =
+let display_text_var ~doc storage_var (local_ _graph) =
   let set_effect = Bonsai_web.Persistent_var.effect storage_var in
   let%arr value = Bonsai_web.Persistent_var.value storage_var in
   Vdom.Node.div
@@ -34,7 +34,7 @@ let display_text_var ~doc storage_var _graph =
     ]
 ;;
 
-let component graph =
+let component (local_ graph) =
   let local_storage_node =
     display_text_var
       ~doc:
@@ -51,8 +51,7 @@ let component graph =
       session_storage_var
       graph
   in
-  let%arr local_storage_node = local_storage_node
-  and session_storage_node = session_storage_node in
+  let%arr local_storage_node and session_storage_node in
   Vdom.Node.div [ local_storage_node; Vdom.Node.br (); session_storage_node ]
 ;;
 

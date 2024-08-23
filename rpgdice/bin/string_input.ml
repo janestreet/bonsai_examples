@@ -10,7 +10,7 @@ module type Conv = sig
   val to_string_hum : t -> string
 end
 
-let component (type t) (module Conv : Conv with type t = t) ~default_model graph =
+let component (type t) (module Conv : Conv with type t = t) ~default_model (local_ graph) =
   let text, set_text =
     Bonsai.state
       default_model
@@ -18,8 +18,7 @@ let component (type t) (module Conv : Conv with type t = t) ~default_model graph
       ~equal:[%equal: String.t]
       graph
   in
-  let%arr text = text
-  and set_text = set_text in
+  let%arr text and set_text in
   let conv = Or_error.try_with (fun () -> Conv.of_string text) in
   let textbox =
     Vdom.Node.input

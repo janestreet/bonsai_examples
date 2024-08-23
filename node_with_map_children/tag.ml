@@ -7,7 +7,7 @@ type t =
   ; reset : unit Effect.t
   }
 
-let component graph =
+let component (local_ graph) =
   let tag, inject =
     Bonsai.state_machine0
       graph
@@ -21,7 +21,6 @@ let component graph =
         | 1 -> "section"
         | _ -> "header")
   in
-  let%arr tag = tag
-  and inject = inject in
+  let%arr tag and inject in
   { tag; reset = inject () }
 ;;
