@@ -47,7 +47,7 @@ let bonsai graph =
       subwidgets
       graph
   in
-  let%arr widget_result = widget_result in
+  let%arr widget_result in
   let open Virtual_dom.Vdom in
   Node.div
     [ Node.h2 [ Node.text "Selection demo" ]

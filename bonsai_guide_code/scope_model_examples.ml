@@ -16,7 +16,7 @@ let counters_for_users_assoc graph : Vdom.Node.t Bonsai.t =
       ~f:(fun _ _ graph -> State_examples.counter_ui graph)
       graph
   in
-  let%arr counters = counters in
+  let%arr counters in
   Vdom.Node.table
     (counters
      |> Map.to_alist
@@ -43,7 +43,7 @@ let counters_for_users_scoped graph : Vdom.Node.t Bonsai.t =
       graph
   in
   let active_user =
-    let%arr form = form in
+    let%arr form in
     Form.value_or_default form ~default:"Alice"
   in
   Bonsai.scope_model
@@ -53,7 +53,7 @@ let counters_for_users_scoped graph : Vdom.Node.t Bonsai.t =
     ~for_:(fun graph ->
       let%arr counter = State_examples.counter_ui graph
       and name = active_user
-      and form = form in
+      and form in
       Vdom.Node.div
         [ Form.view_as_vdom form; Vdom.Node.p [ Vdom.Node.text name ]; counter ])
 ;;

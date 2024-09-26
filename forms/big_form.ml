@@ -232,6 +232,7 @@ type t =
   ; record_list_as_table : Record_for_list.t list
   ; int_blang : Int_blang.t
   ; password : string
+  ; codemirror_string : string
   }
 [@@deriving typed_fields, sexp_of]
 
@@ -326,6 +327,7 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
       ~to_option_description:(Bonsai.return Rodents.to_description)
       ~handle_unknown_option:(Bonsai.return (fun s -> Some (Rodents.Other s)))
       ~all_options:(Bonsai.return Rodents.all)
+      ~on_hover_item:(Bonsai.return Bonsai_web_ui_query_box.On_hover_item.Do_nothing)
       graph
   | String_option ->
     E.Dropdown.list_opt
@@ -358,8 +360,7 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
         (multi_select >>| Form.value_or_default ~default:[])
         graph
     in
-    let%arr multi_select = multi_select
-    and multi_select2 = multi_select2 in
+    let%arr multi_select and multi_select2 in
     Form.both multi_select multi_select2
     |> Form.project ~parse_exn:snd ~unparse:(fun selected -> selected, selected)
   | String_set ->
@@ -377,8 +378,7 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
       E.Rank.list
         (module String)
         (fun ~source item _graph ->
-          let%arr item = item
-          and source = source in
+          let%arr item and source in
           Vdom.Node.div ~attrs:[ source ] [ Vdom.Node.text item ])
         graph
     in
@@ -393,17 +393,18 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
       ~extra_list_container_attr:(Bonsai.return Query_box_css.list)
       ~selection_to_string:(Bonsai.return Fn.id)
       ~f:(fun query _graph ->
-        let%arr query = query
-        and input = input in
+        let%arr query and input in
         Map.filter_map input ~f:(fun data ->
           if String.is_prefix ~prefix:query data then Some (Vdom.Node.text data) else None))
       ()
+      ~on_hover_item:(Bonsai.return Bonsai_web_ui_query_box.On_hover_item.Do_nothing)
       graph
   | Nested_record -> Nested_record.form graph
   | Record_list_as_table -> Record_for_list.form graph
   | Color_picker -> E.Color_picker.hex () graph
   | Int_blang -> Int_blang.form graph
   | Password -> E.Password.string ~allow_updates_when_focused:`Always () graph
+  | Codemirror_string -> Codemirror_form.Basic.string () graph
 ;;
 
 let form graph =
@@ -424,9 +425,7 @@ let form graph =
 let component graph =
   let form = form graph in
   let editable, toggle_editable = Bonsai.toggle ~default_model:true graph in
-  let%arr editable = editable
-  and toggle_editable = toggle_editable
-  and form = form in
+  let%arr editable and toggle_editable and form in
   let output =
     Vdom.Node.sexp_for_debugging ([%sexp_of: t Or_error.t] (Form.value form))
   in

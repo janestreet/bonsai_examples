@@ -31,6 +31,8 @@ module Example_params = struct
   type t =
     { suggestion_list_kind : Query_box.Suggestion_list_kind.t
     ; expand_direction : Query_box.Expand_direction.t
+    ; on_focus : Query_box.On_focus.t
+    ; on_hover_item : Query_box.On_hover_item.t
     ; max_visible_items : int
     ; input_source : Input_source.t
     ; filter_strategy : Query_box.Filter_strategy.t
@@ -40,6 +42,8 @@ module Example_params = struct
   let default =
     { suggestion_list_kind = Transient_overlay
     ; expand_direction = Down
+    ; on_focus = Select_first_item
+    ; on_hover_item = Bonsai_web_ui_query_box.On_hover_item.Select_hovered_item
     ; max_visible_items = 10
     ; input_source = Small_and_static_list_of_fruits
     ; filter_strategy = Fuzzy_search_and_score
@@ -92,6 +96,10 @@ let component graph =
             Form.Elements.Dropdown.enumerable
               (module Query_box.Suggestion_list_kind)
               graph
+          | On_focus ->
+            Form.Elements.Dropdown.enumerable (module Query_box.On_focus) graph
+          | On_hover_item ->
+            Form.Elements.Dropdown.enumerable (module Query_box.On_hover_item) graph
           | Expand_direction ->
             Form.Elements.Dropdown.enumerable (module Query_box.Expand_direction) graph
           | Max_visible_items ->
@@ -110,6 +118,8 @@ let component graph =
   in
   let%sub { suggestion_list_kind
           ; expand_direction
+          ; on_focus
+          ; on_hover_item
           ; max_visible_items
           ; input_source
           ; filter_strategy
@@ -145,7 +155,7 @@ let component graph =
           graph
       in
       let add_random_item =
-        let%arr inject = inject in
+        let%arr inject in
         let%bind.Effect item =
           Effect.of_sync_fun
             (fun () ->
@@ -175,6 +185,8 @@ let component graph =
         (module String)
         ~suggestion_list_kind
         ~expand_direction
+        ~on_focus
+        ~on_hover_item
         ~max_visible_items
         ~selected_item_attr:(Bonsai.return Css.selected_item)
         ~extra_list_container_attr:(Bonsai.return Css.list_container)
@@ -188,6 +200,8 @@ let component graph =
         (module String)
         ~suggestion_list_kind
         ~expand_direction
+        ~on_focus
+        ~on_hover_item
         ~max_visible_items
         ~selected_item_attr:(Bonsai.return Css.selected_item)
         ~extra_list_container_attr:(Bonsai.return Css.list_container)
@@ -197,8 +211,8 @@ let component graph =
         data
         graph
   in
-  let%arr selected_items = selected_items
-  and query_box = query_box
+  let%arr selected_items
+  and query_box
   and form = form >>| Form.view_as_vdom in
   Node.div
     [ form

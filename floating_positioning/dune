@@ -1,8 +1,8 @@
 (executables
  (modes byte exe)
  (names main)
- (libraries virtual_dom_toplayer.floating_positioning
-   virtual_dom_toplayer.popover bonsai_web bonsai_web_components.web_ui_form
-   core virtual_dom.css_gen js_of_ocaml)
+ (libraries bonsai_web bonsai_web_components.web_ui_form core
+   virtual_dom.css_gen virtual_dom_toplayer.floating_positioning js_of_ocaml
+   virtual_dom_toplayer.popover)
  (preprocess
   (pps ppx_jane js_of_ocaml-ppx bonsai.ppx_bonsai ppx_css ppx_typed_fields)))

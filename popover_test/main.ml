@@ -28,7 +28,7 @@ module Toggle_popover = struct
               graph
           in
           let%arr { wrap; open_ = _; close = _; toggle; is_open = _ } = popover
-          and theme = theme in
+          and theme in
           wrap (View.button theme ~intent:Info ~on_click:toggle "toggle popover")]
     in
     Bonsai.map (vdom graph) ~f:(fun vdom -> vdom, demo)
@@ -67,7 +67,7 @@ module Two_left_click_popovers = struct
               graph
           in
           let%arr { wrap; open_; close = _; toggle = _; is_open = _ } = popover
-          and theme = theme in
+          and theme in
           wrap
             (View.button
                theme

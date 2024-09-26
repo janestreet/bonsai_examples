@@ -33,10 +33,10 @@ module Boxes = struct
            multiple times.
 
            Sometimes, like when interacting with customization APIs that require specific
-           classnames for CSS customization, hashing could get in your way, so you can override
-           hashing behavior by using the optional "~rewrite" parameter.
+           classnames for CSS customization, hashing could get in your way, so you can 
+           disable hashing with the ~dont_hash parameter
       *)
-      ~rewrite:[ "blue", "blue" ]]
+      ~dont_hash:[ "blue"; "container" ]]
 
   let component =
     Vdom.Node.div
@@ -71,8 +71,8 @@ module Themeable = struct
         |}
       (* Sometimes it might be useful to be able to use the same class-name
            defined from another call to [%css stylesheet] which you can do using the
-           "~rewrite" optional flag.*)
-      ~rewrite:[ "container", Boxes.Style.For_referencing.container ]]
+           "~dont_hash" optional flag.*)
+      ~dont_hash:[ "container" ]]
 
   let component ?(style = Style.default) () =
     let module Style = (val style) in

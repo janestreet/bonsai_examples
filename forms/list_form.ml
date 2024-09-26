@@ -120,7 +120,7 @@ module Advanced_list = struct
           | Symbol -> symbol_form
           | Configs ->
             let add_element_text =
-              let%arr symbol_form = symbol_form in
+              let%arr symbol_form in
               let symbol = Form.value_or_default ~default:"" symbol_form in
               sprintf "add config for %s" symbol
             in
@@ -163,8 +163,7 @@ end
 let component graph =
   let simple_list = Simple_list.component graph in
   let advanced_list = Advanced_list.component graph in
-  let%arr simple_list = simple_list
-  and advanced_list = advanced_list in
+  let%arr simple_list and advanced_list in
   let simple_output =
     Vdom.Node.sexp_for_debugging
       [%sexp (Form.value simple_list : Simple_list.t list Or_error.t)]

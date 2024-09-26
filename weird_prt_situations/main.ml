@@ -14,13 +14,13 @@ let columns =
     [ Column.column
         ~header:(header "i")
         ~cell:(fun ~key ~data:_ _graph ->
-          let%arr key = key in
+          let%arr key in
           Vdom.Node.text (Int.to_string key))
         ()
     ; Column.column
         ~header:(header "i * 3")
         ~cell:(fun ~key ~data:_ _graph ->
-          let%arr key = key in
+          let%arr key in
           Vdom.Node.text (Int.to_string (key * 3)))
         ()
     ]
@@ -60,7 +60,7 @@ let component graph =
       graph
   in
   let on_change which =
-    let%map set_focused_table = set_focused_table in
+    let%map set_focused_table in
     function
     | None -> Effect.Ignore
     | Some _ -> set_focused_table which
@@ -89,8 +89,7 @@ let component graph =
       ~equal:[%equal: Table_id.t]
       focused_table
       ~callback:
-        (let%map focus1 = focus1
-         and focus2 = focus2 in
+        (let%map focus1 and focus2 in
          function
          | Table_id.First_table -> Table.Focus.By_row.unfocus focus2
          | Second_table -> Table.Focus.By_row.unfocus focus1)
@@ -98,28 +97,22 @@ let component graph =
   in
   let which_form = Form.Elements.Dropdown.enumerable (module Which) graph in
   let which =
-    let%arr which_form = which_form in
+    let%arr which_form in
     Form.value_or_default ~default:Which.Stacked_tables which_form
   in
   let tables =
     match%sub which with
     | Stacked_tables ->
-      let%arr table1 = table1
-      and table2 = table2 in
+      let%arr table1 and table2 in
       Vdom.Node.div [ Vdom.Node.div [ table1 ]; Vdom.Node.div [ table2 ] ]
     | Separately_scrollable ->
-      let%arr table1 = table1
-      and table2 = table2 in
+      let%arr table1 and table2 in
       Vdom.Node.div
         [ Vdom.Node.div ~attrs:[ Css.table ] [ table1 ]
         ; Vdom.Node.div ~attrs:[ Css.table ] [ table2 ]
         ]
   in
-  let%arr tables = tables
-  and which_form = which_form
-  and focused_table = focused_table
-  and focus1 = focus1
-  and focus2 = focus2 in
+  let%arr tables and which_form and focused_table and focus1 and focus2 in
   let attr =
     Vdom.Attr.many
       [ Vdom.Attr.on_keydown (fun kbc ->

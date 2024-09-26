@@ -19,8 +19,7 @@ let add_counter_component graph =
         let key = Map.length model in
         Map.add_exn model ~key ~data:())
   in
-  let%arr state = state
-  and inject = inject in
+  let%arr state and inject in
   let view =
     Vdom.Node.button
       ~attrs:[ Vdom.Attr.on_click (fun _ -> inject ()) ]
@@ -52,8 +51,7 @@ let single_counter graph =
       | Action.Increment -> model + 1
       | Action.Decrement -> model - 1)
   in
-  let%arr state = state
-  and inject = inject in
+  let%arr state and inject in
   let button label action =
     Vdom.Node.button
       ~attrs:[ Vdom.Attr.on_click (fun _ -> inject action) ]
@@ -75,8 +73,7 @@ let application graph =
   let counters =
     Bonsai.assoc (module Int) map ~f:(fun _key _data -> single_counter) graph
   in
-  let%arr add_button = add_button
-  and counters = counters in
+  let%arr add_button and counters in
   Vdom.Node.div [ add_button; Vdom.Node.div (Map.data counters) ]
 ;;
 

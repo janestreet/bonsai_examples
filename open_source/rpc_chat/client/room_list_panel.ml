@@ -4,7 +4,7 @@ open Bonsai_chat_open_source_common
 open Bonsai.Let_syntax
 
 let component ~room_list ~refresh_rooms ~change_room _graph =
-  let%arr room_list = room_list in
+  let%arr room_list in
   let room_header =
     Vdom.Node.h2
       [ Vdom.Node.text "Rooms"

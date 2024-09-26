@@ -38,7 +38,7 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) graph =
            ~columns
            ~render_cell:(fun col _key data _graph ->
              let%arr { f = T field } = col
-             and data = data in
+             and data in
              let string, float, int =
                Vdom.Node.text, Vdom.Node.textf "%f", Vdom.Node.textf "%d"
              in
@@ -70,7 +70,7 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) graph =
           }
     =
     table
-  and form = form in
+  and form in
   Vdom.Node.div
     ~attrs:
       [ Vdom.Attr.on_keydown (fun kbc ->

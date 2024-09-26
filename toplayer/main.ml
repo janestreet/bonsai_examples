@@ -54,9 +54,7 @@ module Vdom_popover_virtual = struct
           match%sub coords with
           | None -> return [ Vdom.Node.text "Click to place!" ]
           | Some (x, y) ->
-            let%arr x = x
-            and y = y
-            and set_coords = set_coords in
+            let%arr x and y and set_coords in
             let anchor = Floating_positioning_new.Anchor.of_coordinate ~x ~y in
             [ Vdom_toplayer.For_use_in_portals.popover_custom
                 ~position:Right
@@ -71,8 +69,7 @@ module Vdom_popover_virtual = struct
                 [ View.text "remove popover" ]
             ]
         in
-        let%arr contents = contents
-        and set_coords = set_coords in
+        let%arr contents and set_coords in
         Vdom.Node.div
           ~attrs:
             [ [%css
@@ -86,7 +83,7 @@ module Vdom_popover_virtual = struct
             ]
           contents]
     in
-    let%arr vdom = vdom in
+    let%arr vdom in
     vdom, demo
   ;;
 
@@ -417,15 +414,15 @@ module Nested_popovers_remain_open = struct
                     ~alignment:(return Toplayer.Alignment.Start)
                     ~content:(fun ~close graph ->
                       let%arr theme = View.Theme.current graph
-                      and close = close in
+                      and close in
                       View.vbox
                         [ View.text "I am a nested popover"
                         ; View.button theme ~intent:Error ~on_click:close "Close"
                         ])
                     graph
                 in
-                let%arr popover = popover
-                and open_ = open_
+                let%arr popover
+                and open_
                 and theme = View.Theme.current graph in
                 View.button
                   ~attrs:[ popover ]
@@ -437,7 +434,7 @@ module Nested_popovers_remain_open = struct
               let%arr theme = View.Theme.current graph
               and inner_button_1 = button_with_popover graph
               and inner_button_2 = button_with_popover graph
-              and close = close in
+              and close in
               View.vbox
                 [ View.text "Hi, I am a popover"
                 ; inner_button_1
@@ -447,11 +444,11 @@ module Nested_popovers_remain_open = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and popover = popover
-        and open_ = open_ in
+        and popover
+        and open_ in
         View.button theme ~intent:Info ~attrs:[ popover ] ~on_click:open_ "Open Popover"]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -597,11 +594,11 @@ module Giant_toplayer_elements = struct
           Toplayer.Modal.create ~content:(fun ~close:_ _ -> return content) graph
         in
         let%arr theme = View.Theme.current graph
-        and popover = popover
-        and open_popover = open_popover
-        and open_virtual_popover = open_virtual_popover
-        and open_virtual_aligned_popover = open_virtual_aligned_popover
-        and open_modal = open_modal in
+        and popover
+        and open_popover
+        and open_virtual_popover
+        and open_virtual_aligned_popover
+        and open_modal in
         View.hbox
           [ View.text ~attrs:[ View.tooltip_attr' theme [ content ] ] "Tooltip"
           ; View.button ~attrs:[ popover ] theme ~on_click:open_popover "Open Popover"
@@ -613,7 +610,7 @@ module Giant_toplayer_elements = struct
           ; View.button theme ~on_click:open_modal "Open Modal"
           ]]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -657,7 +654,7 @@ module Autofocus_on_open = struct
             ~extra_attrs:(return [ focus_style ])
             ~content:(fun ~close:_ graph ->
               let focus_attr = Effect.Focus.on_activate () graph in
-              let%arr focus_attr = focus_attr in
+              let%arr focus_attr in
               Vdom.Node.input ~attrs:[ focus_attr ] ())
             graph
         in
@@ -682,7 +679,7 @@ module Autofocus_on_open = struct
             ~extra_attrs:(return [ focus_style ])
             ~content:(fun ~close:_ graph ->
               let focus_attr = Effect.Focus.on_activate () graph in
-              let%arr focus_attr = focus_attr in
+              let%arr focus_attr in
               Vdom.Node.input ~attrs:[ focus_attr ] ())
             graph
         in
@@ -693,15 +690,15 @@ module Autofocus_on_open = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and popover_autofocus = popover_autofocus
-        and popover_focus_on_activate = popover_focus_on_activate
-        and popover_no_autofocus = popover_no_autofocus
-        and open_modal_autofocus = open_modal_autofocus
-        and open_modal_focus_on_activate = open_modal_focus_on_activate
-        and open_modal_no_autofocus = open_modal_no_autofocus
-        and open_popover_autofocus = open_popover_autofocus
-        and open_popover_focus_on_activate = open_popover_focus_on_activate
-        and open_popover_no_autofocus = open_popover_no_autofocus in
+        and popover_autofocus
+        and popover_focus_on_activate
+        and popover_no_autofocus
+        and open_modal_autofocus
+        and open_modal_focus_on_activate
+        and open_modal_no_autofocus
+        and open_popover_autofocus
+        and open_popover_focus_on_activate
+        and open_popover_no_autofocus in
         View.vbox
           ~gap:(`Px 4)
           [ View.button
@@ -739,7 +736,7 @@ module Autofocus_on_open = struct
               "Modal without autofocus child"
           ]]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 

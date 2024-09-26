@@ -194,10 +194,7 @@ module Node_data = struct
     =
     fun graph ->
     let collapsed, collapse = Bonsai.toggle ~default_model:true graph in
-    let%arr collapsed = collapsed
-    and id = id
-    and t = t
-    and collapse = collapse in
+    let%arr collapsed and id and t and collapse in
     let status = Status.to_vdom t.status in
     let status_message =
       Vdom.Node.div
@@ -368,9 +365,7 @@ let edge_to_svg
   ~(to_ : Position.t Bonsai.t)
   _graph
   =
-  let%arr edge = edge
-  and from = from
-  and to_ = to_ in
+  let%arr edge and from and to_ in
   let href =
     let from = edge.from |> Id.to_string in
     let to_ = edge.to_ |> Id.to_string in
@@ -457,10 +452,10 @@ let component graph =
     match%sub dag with
     | Ok dag -> dag
     | Error error ->
-      let%arr error = error in
+      let%arr error in
       Vdom.Node.sexp_for_debugging [%message "" ~_:(error : Error.t)]
   in
-  let%arr dag = dag in
+  let%arr dag in
   Vdom.Node.div
     ~attrs:[ Styles.header ]
     [ Vdom.Node.div

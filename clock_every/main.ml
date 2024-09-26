@@ -101,7 +101,7 @@ module Random_time_span = struct
               ()
               graph
           in
-          let%arr form = form in
+          let%arr form in
           Form.project form ~parse_exn:Time_ns.Span.of_sec ~unparse:Time_ns.Span.to_sec
         ;;
 
@@ -280,7 +280,7 @@ let timeline ~now ~(tracks : Bar.t Fdeque.t Track_id.Map.t Bonsai.t) graph =
         [])
   in
   let number_of_tracks =
-    let%arr tracks = tracks in
+    let%arr tracks in
     Map.length (tracks : _ Track_id.Map.t)
   in
   let tracks =
@@ -288,10 +288,7 @@ let timeline ~now ~(tracks : Bar.t Fdeque.t Track_id.Map.t Bonsai.t) graph =
       (module Track_id)
       tracks
       ~f:(fun track_id deque _graph ->
-        let%arr now = now
-        and number_of_tracks = number_of_tracks
-        and deque = deque
-        and track_id = track_id in
+        let%arr now and number_of_tracks and deque and track_id in
         let deque = Fdeque.to_list deque in
         List.map deque ~f:(fun { start_time; end_time; id } ->
           let end_time = Option.value end_time ~default:now in
@@ -314,7 +311,7 @@ let timeline ~now ~(tracks : Bar.t Fdeque.t Track_id.Map.t Bonsai.t) graph =
       graph
   in
   let lines =
-    let%arr now = now in
+    let%arr now in
     let times_where_lines_should_be_on =
       List.init 22 ~f:(fun i ->
         Time_ns.prev_multiple
@@ -340,8 +337,7 @@ let timeline ~now ~(tracks : Bar.t Fdeque.t Track_id.Map.t Bonsai.t) graph =
             ]
           []))
   in
-  let%arr tracks = tracks
-  and lines = lines in
+  let%arr tracks and lines in
   let bars =
     Virtual_dom_svg.(
       Node.g
@@ -391,9 +387,7 @@ let clock
   let%sub { tracks; last_trigger_time; _ } = state in
   let timeline = timeline ~now ~tracks graph in
   let clock_action =
-    let%arr wait_time = wait_time
-    and update_tracks = update_tracks
-    and next_bar_id = next_bar_id in
+    let%arr wait_time and update_tracks and next_bar_id in
     let open Effect.Let_syntax in
     let%bind bar_id = next_bar_id in
     let%bind wait_time = Effect.of_sync_fun Random_time_span.get_wait_time wait_time in
@@ -409,8 +403,7 @@ let clock
       clock_action
       graph
   in
-  let%arr last_trigger_time = last_trigger_time
-  and timeline = timeline in
+  let%arr last_trigger_time and timeline in
   Vdom.Node.div
     ~attrs:[ paper; column ]
     [ Vdom.Node.strong [ Vdom.Node.text title ]
@@ -455,7 +448,7 @@ let immediate_clocks ~wait_time = all_clocks ~trigger_on_activate:true ~wait_tim
 let component graph =
   let time_span_form = Random_time_span.form graph in
   let wait_time =
-    let%arr time_span_form = time_span_form in
+    let%arr time_span_form in
     Form.value_or_default time_span_form ~default:Random_time_span.default
   in
   let now = Bonsai.Clock.now graph in
@@ -467,14 +460,13 @@ let component graph =
       graph
   in
   let delta_time =
-    let%arr initial_time = initial_time
-    and now = now in
+    let%arr initial_time and now in
     Time_ns.sub now (Time_ns.to_span_since_epoch initial_time)
   in
   let immediate_clocks = immediate_clocks ~wait_time ~delta_time graph in
-  let%arr immediate_clocks = immediate_clocks
+  let%arr immediate_clocks
   and wait_time_form = time_span_form
-  and wait_time = wait_time in
+  and wait_time in
   Vdom.Node.div
     ~attrs:[ column ]
     [ Vdom.Node.div

@@ -9,7 +9,7 @@ let hello_world = Vdom.Node.span [ Vdom.Node.text "hello world" ]
 
 (* $MDX part-begin=hello-user *)
 let hello_user (name : string Bonsai.t) : Vdom.Node.t Bonsai.t =
-  let%arr name = name in
+  let%arr name in
   Vdom.Node.span [ Vdom.Node.textf "hello %s" name ]
 ;;
 
@@ -19,7 +19,7 @@ let hello_user (name : string Bonsai.t) : Vdom.Node.t Bonsai.t =
 let hello_textbox graph : Vdom.Node.t Bonsai.t =
   let state, set = Bonsai.state "" graph in
   let%arr message = hello_user state
-  and set = set in
+  and set in
   Vdom.Node.div
     [ Vdom.Node.input ~attrs:[ Vdom.Attr.on_input (fun _ text -> set text) ] (); message ]
 ;;

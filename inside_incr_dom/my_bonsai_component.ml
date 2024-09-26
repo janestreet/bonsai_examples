@@ -23,8 +23,8 @@ module Time_source_inside_of_apply_action = struct
           | `Resting, `Sleep | `Pending, `Poke -> model)
         graph
     in
-    let%map model = model
-    and inject = inject
+    let%map model
+    and inject
     and theme = View.Theme.current graph in
     let text =
       match model with
@@ -54,7 +54,7 @@ include
          in
          let wait_after_display = Bonsai.Edge.wait_after_display graph in
          let print_button =
-           let%arr wait_after_display = wait_after_display in
+           let%arr wait_after_display in
            Vdom.Node.button
              ~attrs:
                [ Vdom.Attr.on_click (fun _ ->
@@ -63,7 +63,7 @@ include
                ]
              [ Vdom.Node.text "Print after display" ]
          in
-         let%arr counters = counters
-         and print_button = print_button
+         let%arr counters
+         and print_button
          and delayer = Time_source_inside_of_apply_action.component graph in
          Vdom.Node.div [ counters; print_button; delayer ]))

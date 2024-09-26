@@ -43,7 +43,7 @@ let component graph =
       ()
       graph
   in
-  let%arr search_bar = search_bar in
+  let%arr search_bar in
   let icons =
     match Form.value search_bar with
     | Error error ->

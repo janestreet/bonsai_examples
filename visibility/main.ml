@@ -62,12 +62,12 @@ let component graph =
           ~visible_attr
           ~hidden_attr
           (fun _graph ->
-            let%arr key = key in
+            let%arr key in
             view key, key)
           graph)
       graph
   in
-  let%arr components = components in
+  let%arr components in
   let boxes, debug = components |> Map.data |> List.unzip in
   let boxes = View.vbox ~gap:(`Em 1) boxes in
   let debug =

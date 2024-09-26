@@ -15,9 +15,7 @@ let component graph =
   in
   let toggle_button =
     let theme = View.Theme.current graph in
-    let%arr toggle = toggle
-    and applied = applied
-    and theme = theme in
+    let%arr toggle and applied and theme in
     View.button
       theme
       ~on_click:toggle
@@ -30,10 +28,10 @@ let component graph =
     | false -> Bonsai.return Vdom.Attr.empty
     | true ->
       let color =
-        let%arr color_form = color_form in
+        let%arr color_form in
         Form.value_or_default color_form ~default:tomato
       in
-      let%arr color = color in
+      let%arr color in
       Inline_css.Private.Dynamic.attr
         [%string
           {|
@@ -42,9 +40,7 @@ let component graph =
         }
       |}]
   in
-  let%arr attr = attr
-  and color_form = color_form
-  and toggle_button = toggle_button in
+  let%arr attr and color_form and toggle_button in
   Vdom.Node.div
     ~attrs:
       [ attr

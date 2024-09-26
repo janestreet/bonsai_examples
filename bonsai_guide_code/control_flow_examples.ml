@@ -8,8 +8,7 @@ let counter ~step graph = State_examples.counter ~step graph |> Tuple2.get1
 (* $MDX part-begin=maybe_show_naive *)
 let maybe_show_naive show graph =
   let counter = counter ~step:(return 1) graph in
-  let%arr counter = counter
-  and show = show in
+  let%arr counter and show in
   match show with
   | false -> Vdom.Node.none_deprecated [@alert "-deprecated"]
   | true -> counter
@@ -19,7 +18,7 @@ let maybe_show_naive show graph =
 
 let show_control f graph =
   let show, toggle = Bonsai.toggle ~default_model:false graph in
-  let%arr toggle = toggle
+  let%arr toggle
   and content = f show graph in
   Vdom.Node.div
     [ Vdom.Node.button
@@ -71,11 +70,11 @@ let show_control_2 f graph =
       graph
   in
   let show =
-    let%arr form = form in
+    let%arr form in
     Form.value_or_default form ~default:`Count_by_1
   in
   let%arr content = f show graph
-  and form = form in
+  and form in
   Vdom.Node.div [ Form.view_as_vdom form; content ]
 ;;
 
@@ -131,11 +130,11 @@ let show_control_var f graph =
       graph
   in
   let show =
-    let%arr form = form in
+    let%arr form in
     Form.value_or_default form ~default:(`Count_by 1)
   in
   let%arr content = f show graph
-  and form = form in
+  and form in
   Vdom.Node.div [ Form.view_as_vdom form; content ]
 ;;
 
@@ -165,11 +164,11 @@ let show_control_2 f graph =
       graph
   in
   let show =
-    let%arr form = form in
+    let%arr form in
     Form.value_or_default form ~default:`Count_by_1
   in
   let%arr content = f show graph
-  and form = form in
+  and form in
   Vdom.Node.div [ Form.view_as_vdom form; content ]
 ;;
 
@@ -183,7 +182,7 @@ let multiple_counters (input : unit Int.Map.t Bonsai.t) graph =
       (module Int)
       input
       ~f:(fun key (_ : unit Bonsai.t) graph ->
-        let%arr key = key
+        let%arr key
         and counter = State_examples.counter_ui graph in
         Vdom.Node.tr
           [ Vdom.Node.td [ Vdom.Node.textf "counter #%d:" key ]
@@ -191,7 +190,7 @@ let multiple_counters (input : unit Int.Map.t Bonsai.t) graph =
           ])
       graph
   in
-  let%arr counters = counters in
+  let%arr counters in
   Vdom.Node.table (Map.data counters)
 ;;
 
@@ -202,12 +201,12 @@ let multiple_counters (input : unit Int.Map.t Bonsai.t) graph =
 let multiple_counters_dynamic graph =
   let counter_view, n = State_examples.counter ~step:(Bonsai.return 1) graph in
   let map_containing_n_entries =
-    let%arr n = n in
+    let%arr n in
     if n <= 0
     then Int.Map.empty
     else List.init n ~f:(fun i -> i, ()) |> Int.Map.of_alist_exn
   in
-  let%arr counter_view = counter_view
+  let%arr counter_view
   and table = multiple_counters map_containing_n_entries graph in
   Vdom.Node.div [ counter_view; table ]
 ;;

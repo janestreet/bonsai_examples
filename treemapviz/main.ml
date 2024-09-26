@@ -240,7 +240,7 @@ let create_treemap ~elements graph =
       ~equal:[%equal: Dimensions.t]
   in
   let tracker =
-    let%arr set_dimensions = set_dimensions in
+    let%arr set_dimensions in
     Bonsai_web_ui_element_size_hooks.Size_tracker.on_change (fun ~width ~height ->
       set_dimensions (Some { Dimensions.height; width }))
   in
@@ -249,7 +249,7 @@ let create_treemap ~elements graph =
     | None -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
     | Some dimensions ->
       let dimensions =
-        let%arr dimensions = dimensions in
+        let%arr dimensions in
         { Dimensions.height = Float.round_nearest_half_to_even dimensions.height
         ; width = Float.round_up dimensions.width
         }
@@ -265,7 +265,7 @@ let create_treemap ~elements graph =
           ~children:Tree.children
           elements
       in
-      let%arr treemap = treemap in
+      let%arr treemap in
       Bonsai_experimental_treemapviz.render treemap ~f:(function
         | No_more_space elements ->
           let length = Nonempty_list.length elements in
@@ -286,8 +286,7 @@ let create_treemap ~elements graph =
                ~attrs:[ Style.full_width ]
                [ View.hbox ~attrs:[ Style.box_title ] [ View.text tree.name ]; children ]))
   in
-  let%arr tracker = tracker
-  and treemap = treemap in
+  let%arr tracker and treemap in
   Vdom.Node.div ~attrs:[ tracker ] [ treemap ]
 ;;
 
@@ -299,8 +298,7 @@ let component graph =
     | true -> create_treemap ~elements:stress_elements graph
   in
   let button =
-    let%arr stress_state = stress_state
-    and toggle_stress = toggle_stress in
+    let%arr stress_state and toggle_stress in
     let text =
       match stress_state with
       | false -> "Show stress test (10k nodes (100 top-nodes with ~100 nodes each))"
@@ -317,8 +315,7 @@ let component graph =
       ; View.text text
       ]
   in
-  let%arr button = button
-  and content = content in
+  let%arr button and content in
   Vdom.Node.div ~attrs:[ Style.top ] [ button; content ]
 ;;
 

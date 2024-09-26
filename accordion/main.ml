@@ -50,7 +50,7 @@ module Accordion_with_controls = struct
             graph
         in
         let%arr { view; is_open; open_; toggle; close } = accordion
-        and theme = theme in
+        and theme in
         let open_button = View.button theme ~disabled:is_open ~on_click:open_ "Open" in
         let toggle_button = View.button theme ~on_click:toggle "Toggle" in
         let close_button =

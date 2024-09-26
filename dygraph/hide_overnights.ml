@@ -106,7 +106,6 @@ let app graph =
       ()
       graph
   in
-  let%arr hide_overnights_graph = hide_overnights_graph
-  and visible_overnights_graphs = visible_overnights_graphs in
+  let%arr hide_overnights_graph and visible_overnights_graphs in
   Vdom.Node.div [ hide_overnights_graph; visible_overnights_graphs ]
 ;;

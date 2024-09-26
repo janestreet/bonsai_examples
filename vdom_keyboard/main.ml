@@ -50,9 +50,7 @@ let component graph =
     Bonsai.state false ~sexp_of_model:[%sexp_of: Bool.t] ~equal:[%equal: Bool.t] graph
   in
   let handler =
-    let%arr add_x = add_x
-    and add_y = add_y
-    and set_show_help = set_show_help in
+    let%arr add_x and add_y and set_show_help in
     let command ?cond ~keys ~description f =
       let handler =
         let open Keyboard_event_handler.Handler in
@@ -124,7 +122,7 @@ let component graph =
   let help_view =
     match%sub show_help with
     | true ->
-      let%arr handler = handler in
+      let%arr handler in
       Vdom.Node.div
         ~attrs:[ Css.help_container ]
         [ Help_text.view
@@ -133,10 +131,7 @@ let component graph =
         ]
     | false -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
   in
-  let%arr x = x
-  and y = y
-  and handler = handler
-  and help_view = help_view in
+  let%arr x and y and handler and help_view in
   let view =
     Vdom.Node.div
       [ Vdom.Node.div

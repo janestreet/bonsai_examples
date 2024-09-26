@@ -15,18 +15,12 @@ let component graph =
     Stepper.component ~before_state ~after_state graph
   in
   let reset_all =
-    let%arr reset_before = reset_before
-    and reset_after = reset_after
-    and reset_tag = reset_tag
-    and reset_attr = reset_attr in
+    let%arr reset_before and reset_after and reset_tag and reset_attr in
     Effect.Many [ reset_before; reset_after; reset_tag; reset_attr ]
   in
   let%sub () = Automator.component ~is_running ~step ~is_done ~reset_all graph in
   let comparison = Comparison.view ~tag ~attr state graph in
-  let%arr before_view = before_view
-  and after_view = after_view
-  and tweener = tweener
-  and comparison = comparison in
+  let%arr before_view and after_view and tweener and comparison in
   Vdom.Node.div ~attrs:[ Style.app ] [ before_view; after_view; tweener; comparison ]
 ;;
 

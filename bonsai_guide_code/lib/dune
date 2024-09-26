@@ -1,9 +1,8 @@
 (library
  (name bonsai_guide_code_lib)
- (libraries bonsai_web bonsai_web_test.async
-   bonsai_web_components.web_ui_form async_js.async_test uri_parsing
-   async_kernel async_rpc_kernel bonsai_web_test core
-   polling_state_rpc.diffable_polling_state_rpc_response polling_state_rpc
-   time_ago.vdom)
+ (libraries async_js.async_test async_kernel async_rpc_kernel bonsai_web
+   bonsai_web_test bonsai_web_test.async bonsai_web_components.web_ui_form
+   core polling_state_rpc.diffable_polling_state_rpc_response
+   polling_state_rpc uri_parsing time_ago.vdom)
  (preprocess
   (pps js_of_ocaml-ppx ppx_css bonsai.ppx_bonsai ppx_jane ppx_typed_fields)))

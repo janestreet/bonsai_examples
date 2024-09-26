@@ -91,9 +91,7 @@ let double_number_app graph =
     Rpc_effect.Rpc.dispatcher double_rpc ~where_to_connect graph
   in
   let number, set_number = Bonsai.state 1 graph in
-  let%arr dispatch_double_rpc = dispatch_double_rpc
-  and number = number
-  and set_number = set_number in
+  let%arr dispatch_double_rpc and number and set_number in
   Vdom.Node.div
     [ Vdom.Node.div [ Vdom.Node.text [%string "The number is: %{number#Int}"] ]
     ; Vdom.Node.button
@@ -129,11 +127,11 @@ let zone_form graph =
   in
   let form = Form.Dynamic.with_default (Bonsai.return "America/New_York") form graph in
   let value =
-    let%arr form = form in
+    let%arr form in
     Form.value_or_default ~default:"America/New_York" form
   in
   let view =
-    let%arr form = form in
+    let%arr form in
     Form.view_as_vdom form
   in
   value, view
@@ -153,7 +151,7 @@ let current_time_app graph =
       graph
   in
   let%arr { last_ok_response; last_error; inflight_query = _; refresh = _ } = poll
-  and zone_view = zone_view in
+  and zone_view in
   let text =
     match last_ok_response with
     | Some (zone, current_time) ->

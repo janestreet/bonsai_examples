@@ -20,31 +20,6 @@ let () =
 |}
 ;;
 
-module Fruit_sexp_grammar_auto_complete = struct
-  module Fruit = struct
-    type t =
-      | Apple
-      | Blueberry
-      | Banana
-      | Pineapple
-      | Custom of string
-    [@@deriving sexp, equal, sexp_grammar]
-  end
-
-  module Query = struct
-    type t = Fruit.t Blang.t [@@deriving sexp, equal, sexp_grammar]
-  end
-
-  let codemirror_editor =
-    Codemirror.with_sexp_grammar_autocompletion
-      ~include_non_exhaustive_hint:false
-      ~extra_extension:
-        (State.Extension.of_list
-           [ Basic_setup.basic_setup; Codemirror_rainbow_parentheses.extension () ])
-      (Bonsai.return Query.t_sexp_grammar)
-  ;;
-end
-
 module Ocaml_syntax_highlighting = struct
   let doc =
     {|open! Core
@@ -385,9 +360,7 @@ end
 
 module Which_language = struct
   type t =
-    (* Fruit is the blang language defined above *)
     | Ocaml
-    | Fruit
     | Fsharp
     | Markdown
     | Sml
@@ -404,7 +377,6 @@ module Which_language = struct
   [@@deriving enumerate, sexp, equal, compare]
 
   let to_string = function
-    | Fruit -> "Fruit-based blang with autocomplete"
     | Fsharp -> "F# syntax highlighting"
     | Markdown -> "Markdown syntax highlighting"
     | Ocaml -> "OCaml syntax highlighting"
@@ -423,7 +395,7 @@ module Which_language = struct
 end
 
 let no_theme_picker x =
-  let%arr x = x in
+  let%arr x in
   None, x
 ;;
 
@@ -435,7 +407,7 @@ let component graph =
       graph
   in
   let chosen_language =
-    let%arr language_picker = language_picker in
+    let%arr language_picker in
     Form.value language_picker |> Or_error.ok_exn
   in
   let%sub theme_picker, codemirror =
@@ -444,9 +416,6 @@ let component graph =
        is optimized for showing off the ease with which people can create different
        codemirror editors, so we do the less-preferred option. *)
     match%sub chosen_language with
-    | Which_language.Fruit ->
-      no_theme_picker
-        (Fruit_sexp_grammar_auto_complete.codemirror_editor ~name:"fruit" graph)
     | Fsharp ->
       no_theme_picker (Fsharp_syntax_highlighting.codemirror_editor ~name:"fsharp" graph)
     | Markdown ->
@@ -461,7 +430,7 @@ let component graph =
         |> Bonsai.map ~f:(Form.label "theme")
       in
       let chosen_theme =
-        let%arr theme_picker = theme_picker in
+        let%arr theme_picker in
         Form.value theme_picker |> Or_error.ok_exn
       in
       let c =
@@ -470,8 +439,7 @@ let component graph =
           ~theme:chosen_theme
           graph
       in
-      let%arr c = c
-      and theme_picker = theme_picker in
+      let%arr c and theme_picker in
       Some theme_picker, c
     | Sml ->
       no_theme_picker @@ Sml_syntax_highlighting.codemirror_editor ~name:"sml" graph
@@ -499,12 +467,10 @@ let component graph =
       no_theme_picker @@ Xml_syntax_highlighting.codemirror_editor ~name:"xml" graph
   in
   let codemirror_view =
-    let%arr codemirror = codemirror in
+    let%arr codemirror in
     Codemirror.view codemirror
   in
-  let%arr codemirror_view = codemirror_view
-  and language_picker = language_picker
-  and theme_picker = theme_picker in
+  let%arr codemirror_view and language_picker and theme_picker in
   Vdom.Node.div
     [ Vdom.Node.text "Choose your editor extension:"
     ; Vdom.Node.div

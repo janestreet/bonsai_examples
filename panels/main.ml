@@ -40,8 +40,7 @@ module Ids = struct
         ~default_model:State.default
         ~apply_action
     in
-    let%arr state = state
-    and inject = inject in
+    let%arr state and inject in
     Result.
       { ids = State.ids state
       ; inject_remove = (fun x -> inject (`Remove x))
@@ -51,7 +50,7 @@ module Ids = struct
 end
 
 let panel_component id (_ : unit Bonsai.t) _graph =
-  let%arr id = id in
+  let%arr id in
   Node.div [ Node.textf !"Hello, world %{Id}!" id ]
 ;;
 

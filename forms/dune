@@ -3,7 +3,8 @@
  (names main)
  (libraries bonsai_web bonsai_web_ui_codemirror_form
    bonsai_web_components.web_ui_file bonsai_web_components.web_ui_form
-   ppx_typed_fields.typed_variants_lib core virtual_dom.css_gen js_of_ocaml
-   ppx_typed_fields.typed_fields_lib)
+   bonsai_web_components.web_ui_query_box core virtual_dom.css_gen
+   js_of_ocaml ppx_typed_fields.typed_fields_lib
+   ppx_typed_fields.typed_variants_lib virtual_dom.input_widgets)
  (preprocess
   (pps js_of_ocaml-ppx ppx_typed_fields bonsai.ppx_bonsai ppx_css ppx_jane)))

@@ -92,15 +92,14 @@ let component graph =
       ~store_set:(Bonsai.return (Persistent_var.effect form_store))
       ~store_value:(Persistent_var.value form_store)
       ~interactive_value:
-        (let%map form = form in
+        (let%map form in
          Form.value_or_default form ~default:Parameters.default)
       ~interactive_set:
-        (let%map form = form in
+        (let%map form in
          Form.set form)
       graph
   in
-  let%arr theme = theme
-  and form = form in
+  let%arr theme and form in
   let button_group { Parameters.disabled; thinking; pressed; group; size } =
     let attr =
       Vdom.Attr.many

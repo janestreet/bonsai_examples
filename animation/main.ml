@@ -32,10 +32,7 @@ let component graph =
   let get_forward = Bonsai.peek forward graph in
   let get_interpolator = Bonsai.peek interpolator graph in
   let get_things_started =
-    let%arr animate = animate
-    and get_forward = get_forward
-    and get_interpolator = get_interpolator
-    and set_forward = set_forward in
+    let%arr animate and get_forward and get_interpolator and set_forward in
     let rec switch_directions () =
       let%bind.Effect forward =
         match%bind.Effect get_forward with
@@ -55,9 +52,7 @@ let component graph =
     switch_directions ()
   in
   let () = Bonsai.Edge.lifecycle ~on_activate:get_things_started graph in
-  let%arr value = value
-  and text_picker = text_picker
-  and interpolator_form = interpolator_form in
+  let%arr value and text_picker and interpolator_form in
   let margin = Vdom.Attr.style (Css_gen.margin_left (`Px_float value)) in
   let color =
     let v = Float.to_int (value /. 100.0 *. 255.0) in

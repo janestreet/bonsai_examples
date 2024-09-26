@@ -109,7 +109,7 @@ module Food = struct
     match variant with
     | Snack ->
       let checkbox = E.Checkbox.bool ~default:false () graph in
-      let%arr.Bonsai checkbox = checkbox in
+      let%arr.Bonsai checkbox in
       Form.project
         checkbox
         ~parse_exn:(fun is_set ->

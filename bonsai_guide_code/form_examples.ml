@@ -9,7 +9,7 @@ let textbox_value graph =
   let textbox =
     Form.Elements.Textbox.string ~allow_updates_when_focused:`Always () graph
   in
-  let%arr textbox = textbox in
+  let%arr textbox in
   let view = Form.view textbox in
   let value = Form.value textbox in
   Vdom.Node.div
@@ -28,8 +28,7 @@ let labelled_textbox (label : string Bonsai.t) graph
   let textbox =
     Form.Elements.Textbox.string ~allow_updates_when_focused:`Always () graph
   in
-  let%arr textbox = textbox
-  and label = label in
+  let%arr textbox and label in
   Form.map_view textbox ~f:(fun view ->
     View.hbox ~gap:(`Px 5) [ Vdom.Node.text label; view ])
 ;;
@@ -50,7 +49,7 @@ let display_error error =
 
 let int_with_error_display graph =
   let textbox = Form.Elements.Textbox.int ~allow_updates_when_focused:`Always () graph in
-  let%arr textbox = textbox in
+  let%arr textbox in
   Form.map_view textbox ~f:(fun view ->
     let error_display =
       match Form.value textbox with
@@ -92,7 +91,7 @@ let with_submit_button (form : ('a, 'view) Form.t) ~(on_submit : 'a -> unit Effe
 (* $MDX part-begin=textbox_with_submit *)
 let textbox_with_submit graph =
   let textbox = int_with_error_display graph in
-  let%arr textbox = textbox in
+  let%arr textbox in
   with_submit_button textbox ~on_submit:(fun value -> Effect.alert (Int.to_string value))
 ;;
 
@@ -111,7 +110,7 @@ let form_set graph =
   let textbox =
     Form.Elements.Textbox.string ~allow_updates_when_focused:`Always () graph
   in
-  let%arr textbox = textbox in
+  let%arr textbox in
   Vdom.Node.div
     [ View.hbox ~gap:(`Px 5) [ Vdom.Node.text "my textbox"; Form.view textbox ]
     ; Vdom.Node.button
@@ -139,8 +138,7 @@ let big_tuple_form graph : ((int * float) * (string * bool), Vdom.Node.t) Form.t
     and bool = Form.Elements.Checkbox.bool ~default:false () graph in
     Form.both string bool
   in
-  let%arr int_and_float = int_and_float
-  and string_and_bool = string_and_bool in
+  let%arr int_and_float and string_and_bool in
   Form.both int_and_float string_and_bool
   |> Form.map_view ~f:(fun ((int_view, float_view), (string_view, bool_view)) ->
     View.vbox
@@ -295,8 +293,7 @@ module Variant = struct
             | Ok (_which_clause, clause_form) -> Form.view clause_form
             | Error err -> Vdom.Node.sexp_for_debugging [%message (err : Error.t)]
           in
-          let%arr clause_view = clause_view
-          and picker = picker in
+          let%arr clause_view and picker in
           View.vbox [ View.hbox [ View.text "Pick a constructor:"; picker ]; clause_view ]
         ;;
       end)
@@ -321,7 +318,7 @@ let view_record_and_variant_form : Bonsai.graph -> Vdom.Node.t Bonsai.t =
     and variant_form = Variant.form graph in
     Form.both record_form variant_form
   in
-  let%arr form = form in
+  let%arr form in
   let record_view, variant_view = Form.view form in
   View.vbox
     [ Vdom.Node.h4 [ View.text "Record" ]
@@ -342,7 +339,7 @@ let () = Util.run view_record_and_variant_form ~id:"record_and_variant_form"
 (* $MDX part-begin=int_textbox *)
 let int graph : (int, Vdom.Node.t) Form.t Bonsai.t =
   let form = Form.Elements.Textbox.string ~allow_updates_when_focused:`Always () graph in
-  let%arr form = form in
+  let%arr form in
   Form.project form ~parse_exn:Int.of_string ~unparse:Int.to_string
 ;;
 

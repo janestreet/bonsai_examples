@@ -63,7 +63,8 @@ module Url_var : sig
   (* $MDX part-begin=url_var_from_uri_parsing *)
   module Typed : sig
     val make
-      :  ?on_fallback_raises:'a
+      :  ?navigation:[ `Ignore | `Intercept ]
+      -> ?on_fallback_raises:'a
       -> ?encoding_behavior:Uri_parsing.Percent_encoding_behavior.t
       -> (module T with type t = 'a)
       -> 'a Uri_parsing.Versioned_parser.t

@@ -7,8 +7,7 @@ let to_vdom_node_map ~with_key map graph =
     (module Int)
     map
     ~f:(fun key data _graph ->
-      let%arr key = key
-      and data = data in
+      let%arr key and data in
       let key = Int.to_string key in
       let text = Vdom.Node.textf "%s" key in
       let key = if with_key then Some key else None in
@@ -21,10 +20,7 @@ let make_comparison_list node = Vdom.Node.div ~attrs:[ Style.comparison_list ] [
 let view ~tag ~attr nodes graph =
   let nodes_with_key = to_vdom_node_map ~with_key:true nodes graph in
   let nodes_without_key = to_vdom_node_map ~with_key:false nodes graph in
-  let%arr nodes_with_key = nodes_with_key
-  and nodes_without_key = nodes_without_key
-  and tag = tag
-  and attr = attr in
+  let%arr nodes_with_key and nodes_without_key and tag and attr in
   let with_key_via_alist =
     Vdom.Node.create tag ~attrs:[ attr ] (Map.data nodes_with_key)
   in

@@ -6,8 +6,7 @@ let counter graph =
   let current_value, set_value =
     Bonsai.state 0 ~sexp_of_model:[%sexp_of: Int.t] ~equal:[%equal: Int.t] graph
   in
-  let%arr current_value = current_value
-  and set_value = set_value in
+  let%arr current_value and set_value in
   Vdom.Node.div
     [ Vdom.Node.textf "%d" current_value
     ; Vdom.Node.button
@@ -22,8 +21,7 @@ let counter graph =
 let two_counters graph =
   let counter_1 = counter graph in
   let counter_2 = counter graph in
-  let%arr counter_1 = counter_1
-  and counter_2 = counter_2 in
+  let%arr counter_1 and counter_2 in
   Vdom.Node.div [ counter_1; counter_2 ]
 ;;
 

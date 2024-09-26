@@ -4,7 +4,7 @@ open Bonsai.Let_syntax
 
 let my_component graph =
   let theme = View.Theme.current graph in
-  let%arr theme = theme in
+  let%arr theme in
   View.vbox
     ~cross_axis_alignment:Center
     ~gap:(`Em 1)

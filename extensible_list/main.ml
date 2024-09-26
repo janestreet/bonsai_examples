@@ -15,8 +15,7 @@ let component graph =
   let%sub { contents; append; _ } =
     Extendy.component' Bonsai_web_counters_example.single_counter ~wrap_remove graph
   in
-  let%arr contents = contents
-  and append = append in
+  let%arr contents and append in
   let views = Map.data contents in
   Vdom.Node.div
     (Vdom.Node.button

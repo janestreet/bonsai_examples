@@ -1,7 +1,7 @@
 (executables
  (modes byte exe)
  (names graph_generator)
- (libraries bonsai_examples_mouse_position_lib bonsai bonsai_web core)
+ (libraries bonsai bonsai_examples_mouse_position_lib bonsai_web core)
  (preprocess
   (pps ppx_jane ppx_pattern_bind)))
 

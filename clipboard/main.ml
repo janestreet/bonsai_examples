@@ -7,7 +7,7 @@ module Form = Bonsai_web_ui_form.With_automatic_view
 let component graph =
   let form = Form.Elements.Textbox.string ~allow_updates_when_focused:`Never () graph in
   let copy_button =
-    let%arr form = form in
+    let%arr form in
     Vdom.Node.button
       ~attrs:
         [ Vdom.Attr.on_click (fun _ ->
@@ -25,7 +25,7 @@ let component graph =
      the above button implementation as a reference if you'd like clipboard copying
      behavior in your app. *)
   let legacy_copy_button =
-    let%arr form = form in
+    let%arr form in
     Vdom.Node.button
       ~attrs:
         [ Vdom.Attr.on_click (fun _ ->
@@ -38,7 +38,7 @@ let component graph =
       [ Vdom.Node.text "copy to clipboard (legacy behaviour)" ]
   in
   let paste_button =
-    let%arr form = form in
+    let%arr form in
     Vdom.Node.button
       ~attrs:
         [ Vdom.Attr.on_click (fun _ ->
@@ -73,10 +73,7 @@ let component graph =
         ]
       [ Vdom.Node.text "copy blob to clipboard (paste into rich editor to see)" ]
   in
-  let%arr form = form
-  and copy_button = copy_button
-  and legacy_copy_button = legacy_copy_button
-  and paste_button = paste_button in
+  let%arr form and copy_button and legacy_copy_button and paste_button in
   Vdom.Node.div
     [ Form.view_as_vdom form
     ; copy_button

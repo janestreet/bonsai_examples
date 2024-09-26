@@ -85,7 +85,7 @@ module Record = struct
             Multiple.list (float ~allow_updates_when_focused:`Never ()) graph
           | Optional_string ->
             let form = string ~allow_updates_when_focused:`Never () graph in
-            let%arr form = form in
+            let%arr form in
             Form.optional form ~is_some:(fun x -> not (String.equal x "")) ~none:""
           | Many_locations -> Multiple.list Location.form_of_t graph
           | Nested -> Location.form_of_t graph
@@ -208,7 +208,7 @@ module T = struct
             let text =
               Form.Elements.Textbox.string ~allow_updates_when_focused:`Never () graph
             in
-            let%arr text = text in
+            let%arr text in
             Form.optional
               text
               ~is_some:(function
@@ -254,19 +254,20 @@ let%expect_test _ =
     |}]
 ;;
 
+let navigation = `Intercept
 let fallback _exn _components = T.Unable_to_parse
 
 let component ~url_var graph =
   let url_value = Url_var.value url_var in
   let modify_history, toggle_modify_history = Bonsai.toggle ~default_model:true graph in
   let set_url_var =
-    let%arr modify_history = modify_history in
+    let%arr modify_history in
     let how = if modify_history then `Push else `Replace in
     fun query -> Url_var.set_effect url_var query ~how
   in
   let form = T.form_of_t graph in
   let store_value =
-    let%arr url_value = url_value in
+    let%arr url_value in
     Some url_value
   in
   let%sub () =
@@ -280,24 +281,27 @@ let component ~url_var graph =
   in
   let update_button =
     let update_effect =
-      let%arr modify_history = modify_history in
+      let%arr modify_history in
       let how = if modify_history then `Push else `Replace in
       fun ~f -> Url_var.update_effect url_var ~how ~f
     in
-    let%arr update_effect = update_effect in
+    let%arr update_effect in
     Vdom.Node.button
       ~attrs:[ Vdom.Attr.on_click (fun _ -> update_effect ~f:(fun _ -> Homepage)) ]
       [ Vdom.Node.text "Go to homepage via [update]" ]
   in
-  let%arr form = form
+  let%arr form
   and url = url_value
-  and modify_history = modify_history
-  and toggle_modify_history = toggle_modify_history
-  and update_button = update_button in
+  and modify_history
+  and toggle_modify_history
+  and update_button in
   let saved_to_history_text =
     if modify_history
     then "History is being saved in your browser"
     else "History is not being saved in your browser"
+  in
+  let link ~href text =
+    Vdom.Node.a ~attrs:[ Vdom.Attr.href href ] [ Vdom.Node.text text ]
   in
   View.vbox
     [ Vdom.Node.text
@@ -312,6 +316,21 @@ let component ~url_var graph =
             [ Vdom.Node.text "Toggle history saving" ]
         ]
     ; View.hbox [ update_button ]
+    ; Vdom.Node.text
+        "Here are some plain links that should also update the URL var state:"
+    ; Vdom.Node.p
+        [ link ~href:"/" "Go home via <a/> tag"
+        ; link ~href:"/variant/post" "Go to variant page"
+        ; link
+            ~href:"/query_variant?page=a&query_variant.a=12345"
+            "Go with query parameters"
+        ; link
+            ~href:"/some-invalid-page-oohhooh"
+            "Going to invalid page triggers normal page reload"
+        ; link
+            ~href:"https://www.janestreet.com/join-jane-street/open-roles/"
+            "Going elsewhere also works normally"
+        ]
     ; Vdom.Node.text "Here's what the parsed query as a sexp looks like:"
     ; Vdom.Node.code [ Vdom.Node.sexp_for_debugging (T.sexp_of_t url) ]
     ]

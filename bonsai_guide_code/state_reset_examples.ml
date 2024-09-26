@@ -20,8 +20,7 @@ let two_counters graph =
 
 let reset_ui graph ~f =
   let view, reset = Bonsai.with_model_resetter ~f graph in
-  let%arr view = view
-  and reset = reset in
+  let%arr view and reset in
   Vdom.Node.div
     [ view
     ; Vdom.Node.button
@@ -42,7 +41,7 @@ let resettable_counters_from_inside graph =
     ~f:(fun ~reset graph ->
       let%arr counter1 = State_examples.counter_ui graph
       and counter2 = State_examples.counter_ui graph
-      and reset = reset in
+      and reset in
       Vdom.Node.div
         ~attrs:
           [ [%css
@@ -102,7 +101,7 @@ end
 let connection_status graph conn : [ `Connected | `Connecting | `Disconnected ] Bonsai.t =
   let status, set_status = Bonsai.state `Disconnected graph in
   let register_status_change =
-    let%arr set_status = set_status in
+    let%arr set_status in
     Connection.on_status_change conn set_status
   in
   let () = Bonsai.Edge.lifecycle ~on_activate:register_status_change graph in
@@ -121,7 +120,7 @@ let connection_status_ui graph =
     | `Connecting -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Connecting" ])
     | `Disconnected -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Disconnected" ])
   in
-  let%arr connection_status = connection_status in
+  let%arr connection_status in
   Vdom.Node.div [ connection_status ]
 ;;
 
@@ -147,7 +146,7 @@ let connection_status graph conn : [ `Connected | `Connecting | `Disconnected ] 
     Bonsai.state ~reset:(fun model_when_reset -> model_when_reset) `Disconnected graph
   in
   let register_status_change =
-    let%arr set_status = set_status in
+    let%arr set_status in
     Connection.on_status_change conn set_status
   in
   let () = Bonsai.Edge.lifecycle ~on_activate:register_status_change graph in
@@ -163,7 +162,7 @@ let connection_status_ui graph =
     | `Connecting -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Connecting" ])
     | `Disconnected -> Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Disconnected" ])
   in
-  let%arr connection_status = connection_status in
+  let%arr connection_status in
   Vdom.Node.div [ connection_status ]
 ;;
 
@@ -287,13 +286,13 @@ let order_manager (exchange : Exchange.t) graph =
       graph
   in
   let subscribe_to_exchange =
-    let%arr inject_action = inject_action in
+    let%arr inject_action in
     Exchange.subscribe exchange (fun (Fill order_id) ->
       inject_action (Received_fill order_id))
   in
   let () = Bonsai.Edge.lifecycle ~on_activate:subscribe_to_exchange graph in
   let inject_new_order =
-    let%arr inject_action = inject_action in
+    let%arr inject_action in
     inject_action Create_ui_order
   in
   let open_orders =
@@ -312,9 +311,7 @@ let order_manager (exchange : Exchange.t) graph =
 (* $MDX part-begin=trading_ui *)
 let trading_ui exchange graph =
   let open_orders, filled_orders, inject_new_order = order_manager exchange graph in
-  let%arr open_orders = open_orders
-  and filled_orders = filled_orders
-  and inject_new_order = inject_new_order in
+  let%arr open_orders and filled_orders and inject_new_order in
   Vdom.Node.div
     [ Vdom.Node.text [%string "Open orders:"]
     ; Vdom.Node.sexp_for_debugging [%sexp (open_orders : Order_id.Set.t)]
@@ -362,13 +359,13 @@ let order_manager (exchange : Exchange.t) graph =
   in
   (* $MDX part-end *)
   let subscribe_to_exchange =
-    let%arr inject_action = inject_action in
+    let%arr inject_action in
     Exchange.subscribe exchange (fun (Fill order_id) ->
       inject_action (Received_fill order_id))
   in
   let () = Bonsai.Edge.lifecycle ~on_activate:subscribe_to_exchange graph in
   let inject_new_order =
-    let%arr inject_action = inject_action in
+    let%arr inject_action in
     inject_action Create_ui_order
   in
   let open_orders =
@@ -385,9 +382,7 @@ let order_manager (exchange : Exchange.t) graph =
 (* $MDX part-begin=trading_ui *)
 let trading_ui exchange graph =
   let open_orders, filled_orders, inject_new_order = order_manager exchange graph in
-  let%arr open_orders = open_orders
-  and filled_orders = filled_orders
-  and inject_new_order = inject_new_order in
+  let%arr open_orders and filled_orders and inject_new_order in
   Vdom.Node.div
     [ Vdom.Node.text [%string "Open orders:"]
     ; Vdom.Node.sexp_for_debugging [%sexp (open_orders : Order_id.Set.t)]

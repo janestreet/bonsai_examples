@@ -51,8 +51,7 @@ let component graph =
       session_storage_var
       graph
   in
-  let%arr local_storage_node = local_storage_node
-  and session_storage_node = session_storage_node in
+  let%arr local_storage_node and session_storage_node in
   Vdom.Node.div [ local_storage_node; Vdom.Node.br (); session_storage_node ]
 ;;
 

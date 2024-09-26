@@ -16,18 +16,16 @@ let lifecycle_demo graph =
     | true ->
       Bonsai.Edge.lifecycle
         ~on_activate:
-          (let%arr log = log in
+          (let%arr log in
            log "🚀")
         ~on_deactivate:
-          (let%arr log = log in
+          (let%arr log in
            log "🔥")
         graph;
       Vdom.Node.text [%string "Active!!!!"] |> Bonsai.return
     | false -> Vdom.Node.text "Nothing to see here..." |> Bonsai.return
   in
-  let%arr log_val = log_val
-  and toggle_show = toggle_show
-  and main_view = main_view in
+  let%arr log_val and toggle_show and main_view in
   Vdom.Node.(
     div
       [ div

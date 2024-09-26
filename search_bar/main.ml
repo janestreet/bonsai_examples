@@ -77,8 +77,8 @@ let set_model_component graph =
 
 let to_server_input input graph =
   let current_user, inject_set_model = set_model_component graph in
-  let%arr current_user = current_user
-  and inject_set_model = inject_set_model
+  let%arr current_user
+  and inject_set_model
   and all_users = input >>| Input.all_users in
   let choices = all_users |> Map.data |> List.map ~f:Search_bar.Username.of_user_info in
   let on_select username =
@@ -91,8 +91,7 @@ let component input graph =
   let%sub current_user, search_bar_input = to_server_input input graph in
   let selected = selected_display current_user graph in
   let search_bar = Search_bar.component search_bar_input graph in
-  let%arr selected = selected
-  and search_bar = search_bar in
+  let%arr selected and search_bar in
   Vdom.Node.div [ search_bar; selected ]
 ;;
 

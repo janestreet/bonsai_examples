@@ -21,7 +21,7 @@ module Popover = struct
             ~alignment:(return Toplayer.Alignment.Start)
             ~content:(fun ~close graph ->
               let%arr theme = View.Theme.current graph
-              and close = close in
+              and close in
               View.vbox
                 [ View.text "Hi, I am a popover"
                 ; View.button theme ~on_click:close "Close Popover"
@@ -29,8 +29,8 @@ module Popover = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and popover_anchor = popover_anchor
-        and open_ = open_ in
+        and popover_anchor
+        and open_ in
         View.button
           theme
           ~intent:Info
@@ -38,7 +38,7 @@ module Popover = struct
           ~on_click:Effect.Ignore
           "Open Popover"]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -65,8 +65,8 @@ module Nested_popover = struct
                       View.text "I am a nested popover" |> Bonsai.return)
                     graph
                 in
-                let%arr popover = popover
-                and open_ = open_
+                let%arr popover
+                and open_
                 and theme = View.Theme.current graph in
                 View.button
                   ~attrs:[ popover ]
@@ -81,8 +81,8 @@ module Nested_popover = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and popover = popover
-        and open_ = open_ in
+        and popover
+        and open_ in
         View.button
           theme
           ~intent:Info
@@ -90,7 +90,7 @@ module Nested_popover = struct
           ~on_click:Effect.Ignore
           "Open Popover"]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -113,8 +113,8 @@ module Popover_with_arrow = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and popover_anchor = popover_anchor
-        and open_ = open_ in
+        and popover_anchor
+        and open_ in
         View.button
           theme
           ~intent:Info
@@ -122,7 +122,7 @@ module Popover_with_arrow = struct
           ~on_click:Effect.Ignore
           "Open Popover"]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -172,12 +172,12 @@ module Popover_close_on_click = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and popover1_anchor = popover1_anchor
-        and popover2_anchor = popover2_anchor
-        and popover3_anchor = popover3_anchor
-        and open_1 = open_1
-        and open_2 = open_2
-        and open_3 = open_3 in
+        and popover1_anchor
+        and popover2_anchor
+        and popover3_anchor
+        and open_1
+        and open_2
+        and open_3 in
         View.button
           theme
           ~intent:Info
@@ -190,7 +190,7 @@ module Popover_close_on_click = struct
           ~on_click:Effect.Ignore
           "Open Popovers"]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -210,8 +210,7 @@ module Old_popover = struct
       [%demo
         let theme = View.Theme.current graph in
         let popover_content ~close _graph =
-          let%arr close = close
-          and theme = theme in
+          let%arr close and theme in
           View.button theme ~on_click:close "Close popover"
         in
         let popover =
@@ -224,7 +223,7 @@ module Old_popover = struct
             graph
         in
         let%arr { wrap; open_; close = _; toggle = _; is_open = _ } = popover
-        and theme = theme in
+        and theme in
         wrap (View.button theme ~intent:Info ~on_click:open_ "Open Popover")]
     in
     Bonsai.map vdom ~f:(fun vdom -> vdom, demo)
@@ -251,7 +250,7 @@ module Old_context_menu_popover = struct
             ~direction:(Bonsai.return Bonsai_web_ui_popover.Direction.Right)
             ~alignment:(Bonsai.return Bonsai_web_ui_popover.Alignment.Center)
             ~popover:(fun ~close:_ _graph ->
-              let%arr theme = theme in
+              let%arr theme in
               View.vbox
                 [ View.text "Context Menu"
                 ; View.button theme ~intent:Success ~on_click:Effect.Ignore "Action 1"

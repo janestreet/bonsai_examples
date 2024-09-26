@@ -19,7 +19,7 @@ module Modal = struct
           Toplayer.Modal.create
             ~content:(fun ~close graph ->
               let%arr theme = View.Theme.current graph
-              and close = close in
+              and close in
               View.vbox
                 [ View.text "Hi, I am a modal"
                 ; View.button theme ~on_click:close "Close Modal"
@@ -27,10 +27,10 @@ module Modal = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and open_ = open_ in
+        and open_ in
         View.button theme ~intent:Info ~on_click:open_ "Open Modal"]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -58,10 +58,10 @@ module Modal_lock_body_scroll = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and open_ = open_ in
+        and open_ in
         View.button theme ~intent:Info ~on_click:open_ "Open Modal"]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -83,7 +83,7 @@ module Nested_modals = struct
                 Toplayer.Modal.create
                   ~content:(fun ~close graph ->
                     let%arr theme = View.Theme.current graph
-                    and close = close in
+                    and close in
                     View.vbox
                       [ View.text "Hi, I am a modal"
                       ; View.button theme ~on_click:close "Close Modal"
@@ -91,8 +91,8 @@ module Nested_modals = struct
                   graph
               in
               let%arr theme = View.Theme.current graph
-              and close = close
-              and open_inner = open_inner in
+              and close
+              and open_inner in
               View.vbox
                 [ View.text "Hi, I am a modal"
                 ; View.button theme ~on_click:open_inner "Open Inner Modal"
@@ -101,10 +101,10 @@ module Nested_modals = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and open_ = open_ in
+        and open_ in
         View.button theme ~intent:Info ~on_click:open_ "Open Modal"]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -132,7 +132,7 @@ module Modal_and_popover_interactions = struct
             ~close_on_click_outside:(return Toplayer.Close_on_click_outside.No)
             ~content:(fun ~close graph ->
               let%arr theme = View.Theme.current graph
-              and close = close in
+              and close in
               View.vbox
                 [ View.text "Hi, I am a popover"
                 ; View.button theme ~on_click:close "Close Popover"
@@ -147,7 +147,7 @@ module Modal_and_popover_interactions = struct
                 Toplayer.Popover.create
                   ~content:(fun ~close graph ->
                     let%arr theme = View.Theme.current graph
-                    and close = close in
+                    and close in
                     View.vbox
                       [ View.text "Inner Popover"
                       ; View.button theme ~on_click:close "Close Popover"
@@ -155,11 +155,11 @@ module Modal_and_popover_interactions = struct
                   graph
               in
               let%arr theme = View.Theme.current graph
-              and open_popover = open_popover
-              and popover_attr = popover_attr
-              and close = close
-              and open_outer = open_outer
-              and outer_is_open = outer_is_open in
+              and open_popover
+              and popover_attr
+              and close
+              and open_outer
+              and outer_is_open in
               View.vbox
                 [ View.text "Hi, I am a modal"
                 ; View.button
@@ -175,9 +175,9 @@ module Modal_and_popover_interactions = struct
             graph
         in
         let%arr theme = View.Theme.current graph
-        and open_modal = open_modal
-        and open_popover = open_popover
-        and popover_attr = popover_attr in
+        and open_modal
+        and open_popover
+        and popover_attr in
         View.hbox
           [ View.button theme ~intent:Info ~on_click:open_modal "Open Modal"
           ; View.button
@@ -188,7 +188,7 @@ module Modal_and_popover_interactions = struct
               "Open Popover"
           ]]
     in
-    let%arr computation = computation in
+    let%arr computation in
     computation, demo
   ;;
 
@@ -212,7 +212,7 @@ module Old_modal = struct
             | 1 -> "Got ya!"
             | n -> sprintf "Got ya %d times!" n
           in
-          let%arr got_ya = got_ya in
+          let%arr got_ya in
           Vdom.Node.div
             [ Vdom.Node.text "Surprise!"; Vdom.Node.br (); Vdom.Node.text got_ya ]
         in
@@ -233,10 +233,7 @@ module Old_modal = struct
         let state, set_state =
           Bonsai.state 1 ~sexp_of_model:[%sexp_of: Int.t] ~equal:[%equal: Int.t] graph
         in
-        let%arr state = state
-        and set_state = set_state
-        and modal_1 = modal_1
-        and modal_2 = modal_2 in
+        let%arr state and set_state and modal_1 and modal_2 in
         Vdom.Node.div
           [ Vdom.Node.button
               ~attrs:[ Vdom.Attr.on_click (fun _ -> modal_1.show ()) ]

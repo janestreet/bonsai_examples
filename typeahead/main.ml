@@ -55,7 +55,7 @@ let components graph =
   let typeahead_single ?handle_unknown_option () =
     Typeahead.create
       ~on_select_change:
-        (let%map inject_all_options = inject_all_options in
+        (let%map inject_all_options in
          fun favourite_pokemon ->
            Option.value_map
              favourite_pokemon
@@ -70,6 +70,8 @@ let components graph =
       ~all_options:(Bonsai.return Pokemon.all)
       (module Pokemon)
       ~equal:[%equal: Pokemon.t]
+      ~attr_merge_behavior:
+        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let%sub { selected = favourite_pokemon; view = typeahead_single_vdom; _ } =
     typeahead_single () graph
@@ -79,8 +81,7 @@ let components graph =
       (module Pokemon)
       ~to_string:(Bonsai.return Pokemon.to_string)
       ~on_set_change:
-        (let%map inject_all_options = inject_all_options
-         and favourite_pokemon = favourite_pokemon in
+        (let%map inject_all_options and favourite_pokemon in
          fun not_good_pokemon ->
            (* Remove the favourite pokemon if it exists. *)
            let all_pokemon =
@@ -92,6 +93,8 @@ let components graph =
       ~placeholder:"Select many pokemon"
       ~all_options
       graph
+      ~attr_merge_behavior:
+        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let%sub { view = typeahead_single_with_custom_input_vdom; _ } =
     typeahead_single
@@ -111,6 +114,8 @@ let components graph =
            Option.some_if (String.contains ~pos:0 input 'B') (Pokemon.of_string input)))
       ~all_options
       (module Pokemon)
+      ~attr_merge_behavior:
+        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let%sub { view = typeahead_multi_with_empty_options_vdom; _ } =
     typeahead_multi_with_custom_input ~all_options:(Bonsai.return []) graph
@@ -118,11 +123,11 @@ let components graph =
   let%sub { view = typeahead_multi_with_custom_input_vdom; _ } =
     typeahead_multi_with_custom_input ~all_options:(Bonsai.return Pokemon.all) graph
   in
-  let%arr typeahead_single_vdom = typeahead_single_vdom
-  and typeahead_multi_vdom = typeahead_multi_vdom
-  and typeahead_single_with_custom_input_vdom = typeahead_single_with_custom_input_vdom
-  and typeahead_multi_with_empty_options_vdom = typeahead_multi_with_empty_options_vdom
-  and typeahead_multi_with_custom_input_vdom = typeahead_multi_with_custom_input_vdom in
+  let%arr typeahead_single_vdom
+  and typeahead_multi_vdom
+  and typeahead_single_with_custom_input_vdom
+  and typeahead_multi_with_empty_options_vdom
+  and typeahead_multi_with_custom_input_vdom in
   Vdom.Node.create
     "main"
     [ Vdom.Node.section

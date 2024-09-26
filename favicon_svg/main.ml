@@ -100,18 +100,18 @@ let component graph =
       ~equal:[%equal: String.t]
       graph
   in
-  let%arr text = text
-  and inject_text = inject_text
-  and size = size
-  and inject_size = inject_size
-  and pos_x = pos_x
-  and inject_pos_x = inject_pos_x
-  and pos_y = pos_y
-  and inject_pos_y = inject_pos_y
-  and fg_color = fg_color
-  and inject_fg_color = inject_fg_color
-  and bg_color = bg_color
-  and inject_bg_color = inject_bg_color in
+  let%arr text
+  and inject_text
+  and size
+  and inject_size
+  and pos_x
+  and inject_pos_x
+  and pos_y
+  and inject_pos_y
+  and fg_color
+  and inject_fg_color
+  and bg_color
+  and inject_bg_color in
   let open Vdom in
   let text_box =
     Vdom_input_widgets.Entry.text

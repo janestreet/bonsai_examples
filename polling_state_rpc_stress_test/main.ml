@@ -62,9 +62,7 @@ let component graph =
             key
             graph
         in
-        let%arr key = key
-        and inject = inject
-        and response = response in
+        let%arr key and inject and response in
         Vdom.Node.div
           [ Vdom.Node.button
               ~attrs:[ Vdom.Attr.on_click (fun _ -> inject (`Remove key)) ]
@@ -76,8 +74,7 @@ let component graph =
           ])
       graph
   in
-  let%arr items = items
-  and inject = inject in
+  let%arr items and inject in
   Vdom.Node.div
     [ Vdom.Node.button
         ~attrs:[ Vdom.Attr.on_click (fun _ -> inject `Add) ]

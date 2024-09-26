@@ -2,5 +2,6 @@
  (name bonsai_examples_mouse_position_common)
  (preprocess
   (pps ppx_jane ppx_diff.ppx_diff))
- (libraries async_kernel polling_state_rpc async_rpc_kernel
-   polling_state_rpc.diffable_polling_state_rpc_response core username_kernel))
+ (libraries async_kernel async_rpc_kernel core
+   polling_state_rpc.diffable_polling_state_rpc_response polling_state_rpc
+   username_kernel))

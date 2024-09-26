@@ -131,9 +131,7 @@ let header_component ~inject graph =
   let state, set_state =
     Bonsai.state "" ~sexp_of_model:[%sexp_of: String.t] ~equal:[%equal: String.t] graph
   in
-  let%arr state = state
-  and set_state = set_state
-  and inject = inject in
+  let%arr state and set_state and inject in
   let custom_input =
     let handle_enter evt =
       match Js_of_ocaml.Dom_html.Keyboard_code.of_event evt with
@@ -163,10 +161,7 @@ let todo_item_component
   let editing, set_editing =
     Bonsai.state false ~sexp_of_model:[%sexp_of: Bool.t] ~equal:[%equal: Bool.t] graph
   in
-  let%arr inject = inject
-  and todo = todo
-  and editing = editing
-  and set_editing = set_editing in
+  let%arr inject and todo and editing and set_editing in
   let is_complete_checkbox =
     let handle_clicked _ _ =
       if todo.completed
@@ -232,7 +227,7 @@ let todo_item_component
 
 let todo_list (model : Model.t Bonsai.t) ~inject graph =
   let filtered_model =
-    let%map model = model
+    let%map model
     and hash = Url_hash.get () in
     Map.filter model ~f:(fun todo ->
       match hash with
@@ -241,7 +236,7 @@ let todo_list (model : Model.t Bonsai.t) ~inject graph =
       | _ -> true)
   in
   let active_count =
-    let%map model = model in
+    let%map model in
     Map.count model ~f:(fun todo -> not todo.completed)
   in
   let todo_items =
@@ -251,9 +246,7 @@ let todo_list (model : Model.t Bonsai.t) ~inject graph =
       ~f:(fun _id todo -> todo_item_component ~inject todo)
       graph
   in
-  let%arr todo_items = todo_items
-  and active_count = active_count
-  and inject = inject in
+  let%arr todo_items and active_count and inject in
   let toggle_all =
     let handle_clicked _ _ =
       inject (Toggle_all { active_todo_ids = Map.key_set todo_items })
@@ -287,9 +280,9 @@ let footer_component
   ~(inject : (Action.t -> unit Effect.t) Bonsai.t)
   _graph
   =
-  let%arr inject = inject
+  let%arr inject
   and active, completed =
-    let%map state = state in
+    let%map state in
     let completed = Map.filter state ~f:(fun e -> e.completed) in
     let active = Map.filter state ~f:(fun e -> not e.completed) in
     active, completed
@@ -354,9 +347,7 @@ let root_component graph =
   let header_component = header_component ~inject graph in
   let todo_list = todo_list ~inject state graph in
   let footer_component = footer_component state ~inject graph in
-  let%arr header_component = header_component
-  and todo_list = todo_list
-  and footer_component = footer_component in
+  let%arr header_component and todo_list and footer_component in
   let app =
     Node.section
       ~attrs:[ Style.todoapp ]

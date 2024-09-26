@@ -29,12 +29,10 @@ let effect_focus_onactivate graph =
     | false -> return Vdom.Node.none
     | true ->
       let autofocus = Effect.Focus.on_activate () graph in
-      let%arr autofocus = autofocus in
+      let%arr autofocus in
       Vdom.Node.input ~attrs:[ autofocus ] ()
   in
-  let%arr visible = visible
-  and set_visible = set_visible
-  and subview = subview in
+  let%arr visible and set_visible and subview in
   Vdom.Node.div
     [ Vdom.Node.button
         ~attrs:[ Vdom.Attr.on_click (fun _ -> set_visible (not visible)) ]
@@ -57,7 +55,7 @@ let autofocus graph =
         return (Vdom.Node.input ~attrs:[ Vdom.Attr.autofocus true ] ()))
       graph
   in
-  let%arr open_ = open_ in
+  let%arr open_ in
   Vdom.Node.div
     [ Vdom.Node.button
         ~attrs:[ Vdom.Attr.on_click (fun _ -> open_) ]

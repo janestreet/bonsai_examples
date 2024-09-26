@@ -1,7 +1,7 @@
 (executables
  (modes byte exe)
  (names main)
- (libraries core bonsai_web bonsai_web_ui_modal
-   bonsai_web_components.web_ui_gallery bonsai_web_components.web_ui_toplayer)
+ (libraries bonsai_web bonsai_web_components.web_ui_gallery
+   bonsai_web_ui_modal bonsai_web_components.web_ui_toplayer core)
  (preprocess
   (pps bonsai.ppx_bonsai ppx_css ppx_jane js_of_ocaml-ppx ppx_demo)))

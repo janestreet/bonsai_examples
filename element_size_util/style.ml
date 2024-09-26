@@ -75,4 +75,4 @@ include
         border: 2px solid red;
       }
       |}
-    ~rewrite:[ "--js-form-unfocused-color", "--js-form-unfocused-color" ]]
+    ~dont_hash:[ "--js-form-unfocused-color" ]]

@@ -32,8 +32,7 @@ let component graph =
       ~default_model
       ~apply_action
   in
-  let%arr state = state
-  and inject = inject in
+  let%arr state and inject in
   let button text action =
     Node.button ~attrs:[ Attr.on_click (fun _ -> inject action) ] [ Node.text text ]
   in

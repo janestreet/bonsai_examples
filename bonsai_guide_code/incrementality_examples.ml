@@ -15,8 +15,7 @@ let () = Util.run_vdom_val (int_view (Bonsai.return 5)) ~id:"int_view"
 
 (* $MDX part-begin=sum_and_display *)
 let sum_and_display (a : int Bonsai.t) (b : int Bonsai.t) : Vdom.Node.t Bonsai.t =
-  let%arr a = a
-  and b = b in
+  let%arr a and b in
   Vdom.Node.textf "%d + %d = %d" a b (a + b)
 ;;
 
@@ -51,9 +50,7 @@ let () = ignore analyze_list
 
 (* $MDX part-begin=incremental_f_inefficient *)
 let exp_and_divide (a : float Bonsai.t) (b : float Bonsai.t) (c : float Bonsai.t) =
-  let%arr a = a
-  and b = b
-  and c = c in
+  let%arr a and b and c in
   (a ** b) /. c
 ;;
 
@@ -63,12 +60,10 @@ let () = ignore exp_and_divide
 (* $MDX part-begin=incremental_f_efficient *)
 let exp_and_divide (a : float Bonsai.t) (b : float Bonsai.t) (c : float Bonsai.t) =
   let dividend =
-    let%arr a = a
-    and b = b in
+    let%arr a and b in
     a ** b
   in
-  let%arr dividend = dividend
-  and c = c in
+  let%arr dividend and c in
   dividend /. c
 ;;
 

@@ -116,7 +116,7 @@ module Config = struct
 
   let offset_form graph =
     let base = Form.Typed.Record.make (module Offset) graph in
-    let%map base = base in
+    let%map base in
     Form.project
       base
       ~parse_exn:(fun { main_axis; cross_axis } ->
@@ -207,12 +207,12 @@ let with_dom_anchor shift popovers graph =
     Bonsai.Clock.every
       ~when_to_start_next_effect:`Every_multiple_of_period_non_blocking
       (Time_ns.Span.of_int_ms interval_ms)
-      (let%map move = move in
+      (let%map move in
        move ())
       graph
   in
   let%map left, top = anchor_pos
-  and popovers = popovers in
+  and popovers in
   let popover_attrs =
     List.mapi
       popovers
@@ -247,7 +247,7 @@ let with_dom_anchor shift popovers graph =
 
 let with_virtual_anchor coords popovers =
   let%map { Config.Virtual.x; y; width; height } = coords
-  and popovers = popovers in
+  and popovers in
   let popover_nodes =
     List.mapi
       popovers
@@ -289,13 +289,12 @@ let component graph =
   let body =
     match%sub Bonsai.map form ~f:Form.value with
     | Error e ->
-      let%map e = e in
+      let%map e in
       View.text (Error.to_string_hum e)
     | Ok { anchor_type = Dom shift; popovers } -> with_dom_anchor shift popovers graph
     | Ok { anchor_type = Virtual coords; popovers } -> with_virtual_anchor coords popovers
   in
-  let%map form = form
-  and body = body in
+  let%map form and body in
   let form_div =
     Vdom.Node.div
       ~attrs:

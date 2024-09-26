@@ -168,7 +168,7 @@ module Html_no_string_interpolation = struct
         let age = 2 in
         {%html|
             <div>
-              <h1>Hello %{name#String}! Your age is %{age#Int}.</h1>
+              <h1>Hello #{name}! Your age is %{age#Int}.</h1>
             </div>
           |}]
     in

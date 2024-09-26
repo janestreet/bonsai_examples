@@ -16,8 +16,7 @@ let component
   graph
   =
   let state, set_state = Bonsai.state_opt graph ~sexp_of_model:[%sexp_of: M.t] ~equal in
-  let%arr state = state
-  and set_state = set_state in
+  let%arr state and set_state in
   let input = node_creator state set_state in
   let debug = state |> [%sexp_of: M.t option] |> Sexp.to_string_hum |> Vdom.Node.text in
   let clear_button =
@@ -65,8 +64,7 @@ let component graph =
           ())
       graph
   in
-  let%arr number_input = number_input
-  and string_input = string_input in
+  let%arr number_input and string_input in
   Vdom.Node.div [ number_input; string_input ]
 ;;
 

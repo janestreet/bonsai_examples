@@ -26,7 +26,7 @@ let component graph =
           ~with_:(fun tab _graph ->
             match tab with
             | A ->
-              let%arr change_tab = change_tab in
+              let%arr change_tab in
               Vdom.Node.button
                 ~attrs:[ Vdom.Attr.on_click (fun _ -> change_tab T.C) ]
                 [ Vdom.Node.text "jump to c" ]
@@ -35,7 +35,7 @@ let component graph =
           graph)
       graph
   in
-  let%arr contents = contents in
+  let%arr contents in
   Tabs.Result.combine_trivially contents
 ;;
 

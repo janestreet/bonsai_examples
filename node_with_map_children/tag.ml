@@ -21,7 +21,6 @@ let component graph =
         | 1 -> "section"
         | _ -> "header")
   in
-  let%arr tag = tag
-  and inject = inject in
+  let%arr tag and inject in
   { tag; reset = inject () }
 ;;

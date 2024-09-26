@@ -50,7 +50,7 @@ let () = Util.run_vdom button' ~id:"view_button"
 (* $MDX part-begin=button_get_theme *)
 let error_button graph =
   let theme = View.Theme.current graph in
-  let%arr theme = theme in
+  let%arr theme in
   View.button theme ~intent:Error ~on_click:do_thing "Error button"
 ;;
 
@@ -70,7 +70,7 @@ let () = Util.run app ~id:"set_theme"
 (* $MDX part-begin=theme_toggle *)
 let themed_theme_toggler ~toggle_dark graph =
   let%arr theme = View.Theme.current graph
-  and toggle_dark = toggle_dark
+  and toggle_dark
   and error_button = error_button graph in
   View.hbox [ View.button theme ~on_click:toggle_dark "Toggle Dark Mode"; error_button ]
 ;;
@@ -78,12 +78,11 @@ let themed_theme_toggler ~toggle_dark graph =
 let app graph =
   let theme_style, set_theme_style = Bonsai.state Kado.Style.Dark graph in
   let theme =
-    let%arr theme_style = theme_style in
+    let%arr theme_style in
     Kado.theme ~style:theme_style ~version:V1 ()
   in
   let toggle_dark =
-    let%arr theme_style = theme_style
-    and set_theme_style = set_theme_style in
+    let%arr theme_style and set_theme_style in
     set_theme_style
       (match theme_style with
        | Dark -> Light

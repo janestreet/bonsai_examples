@@ -36,9 +36,7 @@ let app graph =
   in
   let%sub roll_spec, input = input_kind ~input_method graph in
   let roller = Roller.component roll_spec graph in
-  let%arr input = input
-  and roller = roller
-  and input_method_selector = input_method_selector in
+  let%arr input and roller and input_method_selector in
   build_result ~input ~roller ~input_method_selector
 ;;
 

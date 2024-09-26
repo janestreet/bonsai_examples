@@ -16,8 +16,7 @@ let scale : Bonsai.graph -> (Scale.t * Vdom.Node.t) Bonsai.t =
   let scale, set_scale =
     Bonsai.state `log ~sexp_of_model:[%sexp_of: Scale.t] ~equal:[%equal: Scale.t] graph
   in
-  let%arr scale = scale
-  and set_scale = set_scale in
+  let%arr scale and set_scale in
   let view =
     Vdom_input_widgets.Dropdown.of_enum
       ~merge_behavior:Legacy_dont_merge
@@ -75,7 +74,6 @@ let app graph =
       ()
       graph
   in
-  let%arr graph_view = graph_view
-  and scale_view = scale_view in
+  let%arr graph_view and scale_view in
   Vdom.Node.div [ graph_view; Vdom.Node.textf "y-axis scale: "; scale_view ]
 ;;

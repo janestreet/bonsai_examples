@@ -81,12 +81,12 @@ module Interpolation = struct
     in
     let form = Form.Typed.Record.make (module Parameters) graph in
     let data =
-      let%arr form = form in
+      let%arr form in
       Form.value_or_default
         form
         ~default:{ Parameters.color = Parameters.tomato_color; width = 2; height = 2 }
     in
-    let%arr form = form
+    let%arr form
     and { color; width; height } = data in
     let color = Css_gen.Color.to_string_css color in
     let width = [%string "%{width#Int}rem"] in
@@ -126,12 +126,12 @@ module Typed_interpolation = struct
     in
     let form = Form.Typed.Record.make (module Parameters) graph in
     let data =
-      let%arr form = form in
+      let%arr form in
       Form.value_or_default
         form
         ~default:{ Parameters.color = Parameters.tomato_color; width = 2; height = 2 }
     in
-    let%arr form = form
+    let%arr form
     and { color; width; height } = data in
     let color : Css_gen.Color.t =
       let (`Hex c) = color in
@@ -207,12 +207,12 @@ module Stylesheet_interpolation = struct
     in
     let form = Form.Typed.Record.make (module Parameters) graph in
     let data =
-      let%arr form = form in
+      let%arr form in
       Form.value_or_default
         form
         ~default:{ Parameters.color = Parameters.tomato_color; width = 2; height = 2 }
     in
-    let%arr form = form
+    let%arr form
     and { color; width; height } = data in
     let color : Css_gen.Color.t =
       let (`Hex c) = color in

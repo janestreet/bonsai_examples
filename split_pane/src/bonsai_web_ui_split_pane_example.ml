@@ -73,7 +73,7 @@ let create_demo ~parameters graph =
       ~second_panel
       graph
   in
-  let%arr pane = pane in
+  let%arr pane in
   let view =
     Node.div ~attrs:[ Styles.resize_pane ] [ Bonsai_web_ui_split_pane.to_vdom pane ]
   in
@@ -103,8 +103,7 @@ let create_parameters_form graph =
         | Error _ -> false)
       graph
   in
-  let%arr last_ok = last_ok
-  and form = form in
+  let%arr last_ok and form in
   let form_vdom = Bonsai_web_ui_auto_generated.view_as_vdom form in
   let error =
     match Bonsai_web_ui_form.With_automatic_view.value form with
@@ -124,13 +123,10 @@ let app graph =
   let%sub parameters, parameters_form = create_parameters_form graph in
   let%sub demo, inject_set_size = create_demo ~parameters graph in
   let inject_reset =
-    let%arr parameters = parameters
-    and inject_set_size = inject_set_size in
+    let%arr parameters and inject_set_size in
     inject_set_size parameters.initial_size
   in
-  let%arr parameters_form = parameters_form
-  and demo = demo
-  and inject_reset = inject_reset in
+  let%arr parameters_form and demo and inject_reset in
   Node.div
     ~attrs:[ Styles.container ]
     [ Node.div ~attrs:[ Styles.demo ] [ demo ]

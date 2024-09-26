@@ -9,4 +9,4 @@
  (targets todomvc.ml todomvc.mli todomvc__generated.ml todomvc__generated.mli)
  (deps todomvc.css)
  (action
-  (bash "%{bin:css_inliner} %{deps} \"((rewrite ()))\"")))
+  (bash "%{bin:css_inliner} %{deps} \"()\"")))

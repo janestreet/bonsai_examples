@@ -1,6 +1,6 @@
 (library
  (name bonsai_chat_open_source_common)
  (public_name bonsai_examples.example_chat_open_source_native_common)
- (libraries core async_kernel async_rpc_kernel)
+ (libraries async_kernel async_rpc_kernel core)
  (preprocess
   (pps ppx_jane)))

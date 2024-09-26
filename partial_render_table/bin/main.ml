@@ -17,7 +17,7 @@ let component ~theme_picker graph =
     PRT_example.Layout_form.component graph
   in
   let data =
-    let%arr num_rows = num_rows in
+    let%arr num_rows in
     PRT_example.Row.many_random num_rows
   in
   let%sub { table
@@ -58,29 +58,24 @@ let component ~theme_picker graph =
   in
   let toggle_focus_lock_button =
     let on_click =
-      let%arr focus_is_locked = focus_is_locked
-      and lock_focus = lock_focus
-      and unlock_focus = unlock_focus in
+      let%arr focus_is_locked and lock_focus and unlock_focus in
       if focus_is_locked then unlock_focus else lock_focus
     in
     let theme = View.Theme.current graph in
-    let%arr on_click = on_click
-    and focus_is_locked = focus_is_locked
-    and theme = theme in
+    let%arr on_click and focus_is_locked and theme in
     let text = if focus_is_locked then "Unlock focus" else "Lock focus" in
     View.button theme ~on_click text
   in
   let form_view =
     let width_form = PRT_example.Column_width_form.component ~set_column_width graph in
-    let%arr form_view = form_view
-    and width_form = width_form in
+    let%arr form_view and width_form in
     View.vbox [ form_view; width_form ]
   in
-  let%arr form_view = form_view
-  and table = table
-  and focus_attr = focus_attr
-  and theme_picker = theme_picker
-  and toggle_focus_lock_button = toggle_focus_lock_button in
+  let%arr form_view
+  and table
+  and focus_attr
+  and theme_picker
+  and toggle_focus_lock_button in
   Vdom.Node.div
     ~attrs:[ focus_attr ]
     [ theme_picker; form_view; toggle_focus_lock_button; table ]
@@ -91,4 +86,4 @@ let component_with_theme graph =
   View.Theme.set_for_app theme (component ~theme_picker) graph
 ;;
 
-let () = Bonsai_web.Start.start component_with_theme ~enable_bonsai_telemetry_beta:true
+let () = Bonsai_web.Start.start component_with_theme ~enable_bonsai_telemetry_beta:Enabled

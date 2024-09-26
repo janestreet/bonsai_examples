@@ -150,7 +150,7 @@ let form graph =
   in
   let all = Form.Dynamic.with_default (Bonsai.return initial_params) all graph in
   let value =
-    let%arr all = all in
+    let%arr all in
     (match Form.value all with
      | Error e -> print_s [%message (e : Error.t)]
      | _ -> ());
@@ -166,10 +166,7 @@ let form graph =
   in
   let view =
     let theme = View.Theme.current graph in
-    let%arr shared = shared
-    and for_gradient = for_gradient
-    and for_overlay = for_overlay
-    and theme = theme in
+    let%arr shared and for_gradient and for_overlay and theme in
     View.hbox
       ~gap:(`Em 1)
       ~main_axis_alignment:Center

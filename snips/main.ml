@@ -91,7 +91,7 @@ module Shared_code = struct
 
   let prepare graph =
     let theme = View.Theme.current graph in
-    let%arr theme = theme in
+    let%arr theme in
     let { View.Constants.intent = { info; error; warning; success }
         ; primary
         ; extreme_primary_border
@@ -143,7 +143,7 @@ module Markup = struct
     | Ds of (string option * (Bonsai.graph -> (Vdom.Node.t * string) Bonsai.t)) list
 
   let remove_layout_comments code _graph =
-    let%arr code = code in
+    let%arr code in
     String.split_lines code
     |> List.filter ~f:(Fn.non (String.is_substring ~substring:"remove-this-line"))
     |> String.concat ~sep:"\n"
@@ -186,7 +186,7 @@ module Markup = struct
           let r =
             Gallery.make_demo' ~hide_html:true ~ocaml_label:None ~demo ~code () graph
           in
-          let%arr r = r in
+          let%arr r in
           ocaml_label, r)
         |> Bonsai.all
         |> Bonsai.map ~f:(fun demos ->
@@ -574,7 +574,7 @@ let component graph =
            |> List.map ~f:(fun x -> x graph))
       in
       let attr =
-        let%arr theme = theme in
+        let%arr theme in
         let border =
           View.extreme_primary_border_color theme |> Css_gen.Color.to_string_css
         in
@@ -593,9 +593,7 @@ let component graph =
           nodes
           graph
       in
-      let%arr theme_picker = theme_picker
-      and attr = attr
-      and body = body in
+      let%arr theme_picker and attr and body in
       let header =
         Vdom.Node.div
           ~attrs:[ Shared_code.Style.header ]

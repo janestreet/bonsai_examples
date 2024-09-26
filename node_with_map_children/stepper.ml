@@ -111,22 +111,22 @@ let component
       ~equal:[%equal: Input.t]
       input
       ~callback:
-        (let%map inject = inject in
+        (let%map inject in
          fun _ -> inject Restart)
       graph
   in
   let help_open, toggle_help = Bonsai.toggle ~default_model:false graph in
   let is_automating, toggle_automating = Bonsai.toggle ~default_model:false graph in
   let ff_button =
-    let%arr toggle_automating = toggle_automating in
+    let%arr toggle_automating in
     Style.fast_forward `Dark ~on_click:toggle_automating
   in
-  let%arr state = state
-  and inject = inject
-  and help_open = help_open
-  and toggle_help = toggle_help
-  and is_automating = is_automating
-  and ff_button = ff_button in
+  let%arr state
+  and inject
+  and help_open
+  and toggle_help
+  and is_automating
+  and ff_button in
   let header =
     Vdom.Node.div
       ~attrs:[ Style.header ]

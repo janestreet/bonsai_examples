@@ -29,9 +29,7 @@ let component graph =
       ~apply_action:(fun (_ : _ Bonsai.Apply_action_context.t) index () ->
         (index + 1) mod generation_count)
   in
-  let%arr form = form
-  and index = index
-  and incr = incr in
+  let%arr form and index and incr in
   let button =
     Vdom.Node.button
       ~attrs:

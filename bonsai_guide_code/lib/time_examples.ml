@@ -21,8 +21,7 @@ let approx_current_time graph =
 (* $MDX part-begin=vdom_time_ago *)
 let vdom_time_ago graph =
   let time_since, set_time_since = Bonsai.state (Time_ns.now ()) graph in
-  let%arr time_since = time_since
-  and set_time_since = set_time_since in
+  let%arr time_since and set_time_since in
   Vdom.Node.div
     [ Vdom.Node.button
         ~attrs:[ Vdom.Attr.on_click (fun _ -> set_time_since (Time_ns.now ())) ]
@@ -77,11 +76,10 @@ let clock_every_demo graph =
     ~when_to_start_next_effect:`Every_multiple_of_period_blocking
     ~trigger_on_activate:false
     (Time_ns.Span.of_sec 1.0)
-    (let%arr count = count
-     and set_count = set_count in
+    (let%arr count and set_count in
      set_count (count + 1))
     graph;
-  let%arr count = count in
+  let%arr count in
   Vdom.Node.text [%string "Seconds since you opened the page: %{count#Int}"]
 ;;
 

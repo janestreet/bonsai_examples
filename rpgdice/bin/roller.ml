@@ -33,9 +33,7 @@ let roller_state input graph =
 
 let component roll_spec graph =
   let model, inject = roller_state roll_spec graph in
-  let%arr model = model
-  and inject = inject
-  and roll_spec = roll_spec in
+  let%arr model and inject and roll_spec in
   let roll_result =
     match roll_spec, model with
     | Ok roll_spec, Some (spec, roll) when phys_equal spec roll_spec ->

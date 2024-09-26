@@ -43,8 +43,7 @@ let emails_bonsai ~name ~new_emails ~read_email_effect =
     and (new_emails : int) = (new_emails : int Bonsai.t) in
     message_vdom ~name ~new_emails
   in
-  let%arr message = message
-  and read_email_effect = read_email_effect in
+  let%arr message and read_email_effect in
   Vdom.Node.div [ message; read_email_button ~on_click:read_email_effect ]
 ;;
 
@@ -66,8 +65,7 @@ let emails_stateful ~name graph =
     Bonsai.state default_count graph
   in
   let read_email_effect =
-    let%arr count = count
-    and set_count = set_count in
+    let%arr count and set_count in
     set_count (count - 1)
   in
   emails_bonsai ~name ~new_emails:count ~read_email_effect

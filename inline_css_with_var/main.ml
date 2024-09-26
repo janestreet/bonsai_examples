@@ -13,7 +13,7 @@ module Style =
         border: 3px solid black;
       }
       |}
-    ~rewrite:[ "--my-color", "--my-color"; "--radius", "--radius" ]]
+    ~dont_hash:[ "--my-color"; "--radius" ]]
 
 let component =
   let red_box =

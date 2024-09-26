@@ -120,7 +120,7 @@ let uri_form ~default graph =
         ()
         graph
     in
-    let%arr form = form in
+    let%arr form in
     let uri_form =
       Form.project form ~parse_exn:Uri.of_string ~unparse:(fun x ->
         Uri.to_string (Uri.with_host x (Some "my-app.com")))
@@ -150,7 +150,7 @@ let typed_url_form
         (module M)
         graph
     in
-    let%arr form = form in
+    let%arr form in
     Form.project
       form
       ~parse_exn:(fun a ->
@@ -202,18 +202,18 @@ let component (type a) (t : a t) graph =
   in
   let uri_form = uri_form ~default:(Bonsai.return t.starting_components) graph in
   let uri_form_value =
-    let%map uri_form = uri_form in
+    let%map uri_form in
     Form.value uri_form
   in
   let uri_form_set =
-    let%map uri_form = uri_form in
+    let%map uri_form in
     fun new_components ->
       match new_components with
       | Ok x -> if is_same_as_fallback x then Effect.return () else Form.set uri_form x
       | Error _ -> Effect.return ()
   in
   let uri_form_set_even_if_same_as_callback =
-    let%map uri_form = uri_form in
+    let%map uri_form in
     fun new_components ->
       match new_components with
       | Ok x -> Form.set uri_form x
@@ -228,11 +228,11 @@ let component (type a) (t : a t) graph =
       graph
   in
   let typed_url_form_value =
-    let%map typed_url_form = typed_url_form in
+    let%map typed_url_form in
     Form.value typed_url_form
   in
   let typed_url_form_set =
-    let%map typed_url_form = typed_url_form in
+    let%map typed_url_form in
     fun x ->
       match x with
       | Ok x -> Form.set typed_url_form x
@@ -253,11 +253,11 @@ let component (type a) (t : a t) graph =
       ~interactive_value:uri_form_value
       graph
   in
-  let%arr uri_form = uri_form
-  and typed_url_form = typed_url_form
-  and typed_url_form_set = typed_url_form_set
-  and uri_form_value = uri_form_value
-  and uri_form_set_even_if_same_as_callback = uri_form_set_even_if_same_as_callback in
+  let%arr uri_form
+  and typed_url_form
+  and typed_url_form_set
+  and uri_form_value
+  and uri_form_set_even_if_same_as_callback in
   let buttons =
     List.map t.example_urls ~f:(fun (name, element) ->
       let result =

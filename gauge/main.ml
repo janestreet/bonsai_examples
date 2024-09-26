@@ -89,8 +89,7 @@ let ticker graph =
   in
   let%sub () =
     let effect =
-      let%arr increase = increase
-      and increment = increment in
+      let%arr increase and increment in
       Effect.Many [ increase (); increment () ]
     in
     Bonsai.Clock.every
@@ -101,15 +100,14 @@ let ticker graph =
       graph;
     Bonsai.return ()
   in
-  let%arr percentage = percentage
-  and color_index = color_index in
+  let%arr percentage and color_index in
   Percent.of_percentage (Int.to_float percentage), color_index
 ;;
 
 let component graph =
   let%sub percentage, color_index = ticker graph in
   let gauge1 =
-    let%arr percentage = percentage in
+    let%arr percentage in
     Gauge.create ~radius percentage
   in
   let gauge2 =
@@ -124,22 +122,19 @@ let component graph =
       then Tailwind_colors.red600
       else Tailwind_colors.red500
     in
-    let%arr percentage = percentage in
+    let%arr percentage in
     Gauge.create ~percent_to_color ~radius percentage
   in
   let gauge3 =
     let percent_to_color =
-      let%arr color_index = color_index in
+      let%arr color_index in
       let color = Array.get colors (color_index % Array.length colors) in
       Fn.const (`Hex color)
     in
-    let%arr percent_to_color = percent_to_color
-    and percentage = percentage in
+    let%arr percent_to_color and percentage in
     Gauge.create ~percent_to_color ~radius percentage
   in
-  let%arr gauge1 = gauge1
-  and gauge2 = gauge2
-  and gauge3 = gauge3 in
+  let%arr gauge1 and gauge2 and gauge3 in
   Node.div
     ~attrs:[ Styles.column ]
     [ Node.strong [ Node.text "Gauges" ]

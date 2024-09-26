@@ -7,6 +7,7 @@ module T = struct
     ; age : int
     ; market_on_gold : int * int
     ; likes_cats : bool [@default true]
+    ; should_do_thing : bool [@sexp.bool]
     }
   [@@deriving sexp, sexp_grammar, quickcheck]
 

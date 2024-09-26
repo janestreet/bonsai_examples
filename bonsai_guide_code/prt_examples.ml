@@ -68,7 +68,7 @@ module _ = struct
           let%arr { num_owned; _ } = data in
           Vdom.Node.text (string_of_int num_owned))
       ~render_header:(fun col _graph ->
-        let%arr col = col in
+        let%arr col in
         let name =
           match col with
           | Symbol -> Vdom.Node.text "Symbol"
@@ -107,7 +107,7 @@ module _ = struct
   module Sort_kind = Table.Columns.Dynamic_experimental.Sort_kind
 
   let sorts (col_id : Col_id.t Bonsai.t) _graph =
-    let%arr col_id = col_id in
+    let%arr col_id in
     match col_id with
     | Symbol ->
       Some
@@ -139,7 +139,7 @@ module _ = struct
           let%arr { num_owned; _ } = data in
           Vdom.Node.text (string_of_int num_owned))
       ~render_header:(fun col _graph ->
-        let%arr col = col in
+        let%arr col in
         let name =
           match col with
           | Symbol -> Vdom.Node.text "Symbol"
@@ -269,7 +269,7 @@ module _ = struct
       ~columns:all_columns
       ~render_cell:(fun col _key data _graph ->
         let%arr { f = T field } = col
-        and data = data in
+        and data in
         let value = Row.Typed_field.get field data in
         match field with
         | Symbol -> Vdom.Node.text value
@@ -306,7 +306,7 @@ module _ = struct
         ~columns:all_columns
         ~render_cell:(fun col _key data _graph ->
           let%arr { f = T field } = col
-          and data = data in
+          and data in
           let value = Row.Typed_field.get field data in
           match field with
           | Symbol -> Vdom.Node.text value
@@ -314,7 +314,7 @@ module _ = struct
           | Num_owned -> Vdom.Node.textf "%d" value)
         ~render_header:(fun col _graph ->
           let%arr ({ f = T field } as col) = col
-          and sortable_state = sortable_state in
+          and sortable_state in
           Column.Sortable.Header.Expert.default_click_handler
             ~sortable:true
             ~column_id:col
