@@ -67,6 +67,7 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) graph =
           ; num_filtered_rows
           ; focus
           ; set_column_width = _
+          ; column_widths = _
           }
     =
     table

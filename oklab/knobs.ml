@@ -56,10 +56,10 @@ module For_gradient = struct
           match typed_field with
           | Steps ->
             Form.Elements.Range.int
-              ~min:1
-              ~max:200
-              ~default:50
-              ~step:1
+              ~min:(Bonsai.return 1)
+              ~max:(Bonsai.return 200)
+              ~default:(Bonsai.return 50)
+              ~step:(Bonsai.return 1)
               ~allow_updates_when_focused:`Never
               ()
               graph
@@ -92,19 +92,19 @@ module For_overlay = struct
           match typed_field with
           | Left_alpha ->
             Form.Elements.Range.float
-              ~min:0.0
-              ~max:1.0
-              ~default:0.5
-              ~step:0.01
+              ~min:(Bonsai.return 0.0)
+              ~max:(Bonsai.return 1.0)
+              ~default:(Bonsai.return 0.5)
+              ~step:(Bonsai.return 0.01)
               ~allow_updates_when_focused:`Never
               ()
               graph
           | Right_alpha ->
             Form.Elements.Range.float
-              ~min:0.0
-              ~max:1.0
-              ~default:0.5
-              ~step:0.01
+              ~min:(Bonsai.return 0.0)
+              ~max:(Bonsai.return 1.0)
+              ~default:(Bonsai.return 0.5)
+              ~step:(Bonsai.return 0.01)
               ~allow_updates_when_focused:`Never
               ()
               graph

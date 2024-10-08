@@ -163,6 +163,7 @@ type t =
   ; lock_focus : unit Ui_effect.t
   ; unlock_focus : unit Ui_effect.t
   ; focus_is_locked : bool
+  ; column_widths : (Indexed_column_id.t * [ `Px_float of float ]) list
   }
 
 let generic_table_and_focus_attr
@@ -199,6 +200,7 @@ let generic_table_and_focus_attr
           ; num_filtered_rows
           ; focus
           ; set_column_width
+          ; column_widths
           }
     =
     table
@@ -210,6 +212,7 @@ let generic_table_and_focus_attr
   ; lock_focus = get_lock_focus focus
   ; unlock_focus = get_unlock_focus focus
   ; focus_is_locked = get_focus_is_locked focus
+  ; column_widths = Lazy.force column_widths
   }
 ;;
 
@@ -329,12 +332,12 @@ module Layout_form = struct
       | Row_height ->
         let form =
           Form.Elements.Range.int
-            ~min:0
-            ~max:100
-            ~step:1
+            ~min:(Bonsai.return 0)
+            ~max:(Bonsai.return 100)
+            ~step:(Bonsai.return 1)
             ~allow_updates_when_focused:`Never
             ()
-            ~default:30
+            ~default:(Bonsai.return 30)
             graph
         in
         let%arr form in

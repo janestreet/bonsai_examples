@@ -196,68 +196,6 @@ module Modal_and_popover_interactions = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-module Old_modal = struct
-  let name = "Modal"
-  let description = {|  |}
-
-  let view graph =
-    let vdom, demo =
-      [%demo
-        let modal_1_contents _graph =
-          Bonsai.return (Vdom.Node.div [ Vdom.Node.text "Surprise!" ])
-        in
-        let modal_2_contents n _graph =
-          let got_ya =
-            match%arr n with
-            | 1 -> "Got ya!"
-            | n -> sprintf "Got ya %d times!" n
-          in
-          let%arr got_ya in
-          Vdom.Node.div
-            [ Vdom.Node.text "Surprise!"; Vdom.Node.br (); Vdom.Node.text got_ya ]
-        in
-        let modal_1 =
-          Bonsai_web_ui_modal.create
-            (module Unit)
-            (fun _ ~hide_self:_ -> modal_1_contents)
-            ~equal:[%equal: Unit.t]
-            graph
-        in
-        let modal_2 =
-          Bonsai_web_ui_modal.create
-            (module Int)
-            (fun n ~hide_self:_ -> modal_2_contents n)
-            ~equal:[%equal: Int.t]
-            graph
-        in
-        let state, set_state =
-          Bonsai.state 1 ~sexp_of_model:[%sexp_of: Int.t] ~equal:[%equal: Int.t] graph
-        in
-        let%arr state and set_state and modal_1 and modal_2 in
-        Vdom.Node.div
-          [ Vdom.Node.button
-              ~attrs:[ Vdom.Attr.on_click (fun _ -> modal_1.show ()) ]
-              [ Vdom.Node.text "Click me!" ]
-          ; modal_1.view
-          ; Vdom.Node.br ()
-          ; Vdom.Node.button
-              ~attrs:
-                [ Vdom.Attr.on_click (fun _ ->
-                    let%bind.Effect () = set_state (state + 1) in
-                    modal_2.show state)
-                ; {%css|margin-top: 10px;|}
-                ]
-              [ Vdom.Node.text "Click me multiple times!" ]
-          ; modal_2.view
-          ]]
-    in
-    Bonsai.map vdom ~f:(fun vdom -> vdom, demo)
-  ;;
-
-  let selector = None
-  let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
-end
-
 let component graph =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
   View.Theme.set_for_app
@@ -271,10 +209,6 @@ let component graph =
            ; Gallery.make_demo (module Nested_modals)
            ; Gallery.make_demo (module Modal_and_popover_interactions)
            ] )
-       ; ( "Bonsai_web_ui_modal"
-         , {|  `Bonsai_web_ui_modal` is an older implementation of modals; new apps should
-         use the toplayer version instead. |}
-         , [ Gallery.make_demo (module Old_modal) ] )
        ])
     graph
 ;;

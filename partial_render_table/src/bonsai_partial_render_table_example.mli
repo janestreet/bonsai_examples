@@ -12,6 +12,9 @@ type t =
   ; lock_focus : unit Ui_effect.t
   ; unlock_focus : unit Ui_effect.t
   ; focus_is_locked : bool
+  ; column_widths :
+      (Bonsai_web_ui_partial_render_table.Indexed_column_id.t * [ `Px_float of float ])
+        list
   }
 
 val component

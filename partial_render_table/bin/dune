@@ -2,6 +2,7 @@
  (modes byte exe)
  (names main)
  (libraries bonsai_partial_render_table_example bonsai_web
-   bonsai_web_components.web_ui_gallery core)
+   bonsai_web_components.web_ui_gallery
+   bonsai_web_components.web_ui_partial_render_table core)
  (preprocess
   (pps bonsai.ppx_bonsai ppx_jane)))

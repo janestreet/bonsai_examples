@@ -26,6 +26,7 @@ let component ~theme_picker graph =
           ; lock_focus
           ; unlock_focus
           ; focus_is_locked
+          ; column_widths
           }
     =
     match%sub cell_based_highlighting with
@@ -75,10 +76,19 @@ let component ~theme_picker graph =
   and table
   and focus_attr
   and theme_picker
-  and toggle_focus_lock_button in
+  and toggle_focus_lock_button
+  and column_widths in
+  let column_widths =
+    Vdom.Node.sexp_for_debugging
+      [%sexp
+        (column_widths
+         : (Bonsai_web_ui_partial_render_table.Indexed_column_id.t
+           * [ `Px_float of float ])
+             list)]
+  in
   Vdom.Node.div
     ~attrs:[ focus_attr ]
-    [ theme_picker; form_view; toggle_focus_lock_button; table ]
+    [ theme_picker; form_view; toggle_focus_lock_button; column_widths; table ]
 ;;
 
 let component_with_theme graph =

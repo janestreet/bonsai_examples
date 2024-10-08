@@ -93,10 +93,10 @@ module Random_time_span = struct
         let time_span_form ~max ~default graph =
           let form =
             Form.Elements.Range.float
-              ~min:0.0
-              ~max
-              ~step:0.1
-              ~default
+              ~min:(Bonsai.return 0.0)
+              ~max:(Bonsai.return max)
+              ~step:(Bonsai.return 0.1)
+              ~default:(Bonsai.return default)
               ~allow_updates_when_focused:`Never
               ()
               graph
@@ -114,10 +114,10 @@ module Random_time_span = struct
           | Chance_of_getting_extra_duration ->
             Form.Elements.Range.float
               ~allow_updates_when_focused:`Never
-              ~min:0.0
-              ~max:1.0
-              ~step:0.1
-              ~default:default_chance_of_getting_extra_duration
+              ~min:(Bonsai.return 0.0)
+              ~max:(Bonsai.return 1.0)
+              ~step:(Bonsai.return 0.1)
+              ~default:(Bonsai.return default_chance_of_getting_extra_duration)
               ()
               graph
         ;;

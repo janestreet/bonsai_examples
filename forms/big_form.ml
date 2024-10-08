@@ -255,12 +255,12 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
   | Int_from_range ->
     E.Range.int
       ~allow_updates_when_focused:`Always
-      ~min:0
-      ~max:100
-      ~default:0
-      ~left_label:(Vdom.Node.text "Apple 🍎")
-      ~right_label:(Vdom.Node.text "Banana 🍌")
-      ~step:1
+      ~min:(Bonsai.return 0)
+      ~max:(Bonsai.return 100)
+      ~default:(Bonsai.return 0)
+      ~left_label:(Bonsai.return (Vdom.Node.text "Apple 🍎"))
+      ~right_label:(Bonsai.return (Vdom.Node.text "Banana 🍌"))
+      ~step:(Bonsai.return 1)
       ()
       graph
   | String_from_text -> E.Textbox.string ~allow_updates_when_focused:`Always () graph
