@@ -3,8 +3,7 @@
  (names main)
  (libraries bonsai_web bonsai_web_components.web_ui_codemirror
    bonsai_web_components.web_ui_form bonsai_web_components.codemirror
-   codemirror_rainbow_parentheses ppx_css.inline_css
    bonsai_web_components.codemirror_themes core virtual_dom.css_gen
-   virtual_dom)
+   ppx_css.inline_css virtual_dom)
  (preprocess
   (pps bonsai.ppx_bonsai ppx_jane)))

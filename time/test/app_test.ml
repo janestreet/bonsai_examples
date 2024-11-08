@@ -5,7 +5,7 @@ open Bonsai_time_example
 
 (* $MDX part-begin=test-clock-component *)
 let%expect_test _ =
-  let handle = Handle.create (Result_spec.vdom Fn.id) component in
+  let handle = Handle.create (Result_spec.vdom Fn.id) testable_bonsai_clock in
   Handle.show handle;
   [%expect {| 1970-01-01 00:00:00.000000000Z |}];
   Handle.advance_clock_by handle (Time_ns.Span.of_sec 2.0);

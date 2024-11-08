@@ -3,5 +3,4 @@
  (libraries bonsai bonsai_web bonsai_web_components.web_ui_form
    bonsai_web_components.web_ui_url_var core uri_parsing)
  (preprocess
-  (pps ppx_jane ppx_css ppx_demo js_of_ocaml-ppx ppx_typed_fields
-    bonsai.ppx_bonsai)))
+  (pps ppx_jane ppx_css ppx_demo js_of_ocaml-ppx bonsai.ppx_bonsai)))

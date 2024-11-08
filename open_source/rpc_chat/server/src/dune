@@ -1,8 +1,9 @@
 (library
  (name bonsai_chat_open_source_native)
  (public_name bonsai_examples.example_chat_open_source_native)
- (libraries async_extra.async_bus bonsai_chat_open_source_common async
-   async_rpc_websocket core_kernel.bus cohttp cohttp-async core uri)
+ (libraries async async_extra.async_bus async_rpc_websocket
+   bonsai_chat_open_source_common core_kernel.bus cohttp cohttp-async core
+   uri)
  (preprocess
   (pps ppx_jane)))
 

@@ -20,31 +20,6 @@ let () =
 |}
 ;;
 
-module Fruit_sexp_grammar_auto_complete = struct
-  module Fruit = struct
-    type t =
-      | Apple
-      | Blueberry
-      | Banana
-      | Pineapple
-      | Custom of string
-    [@@deriving sexp, equal, sexp_grammar]
-  end
-
-  module Query = struct
-    type t = Fruit.t Blang.t [@@deriving sexp, equal, sexp_grammar]
-  end
-
-  let codemirror_editor =
-    Codemirror.with_sexp_grammar_autocompletion
-      ~include_non_exhaustive_hint:false
-      ~extra_extension:
-        (State.Extension.of_list
-           [ Basic_setup.basic_setup; Codemirror_rainbow_parentheses.extension () ])
-      (Bonsai.return Query.t_sexp_grammar)
-  ;;
-end
-
 module Ocaml_syntax_highlighting = struct
   let doc =
     {|open! Core
@@ -385,9 +360,7 @@ end
 
 module Which_language = struct
   type t =
-    (* Fruit is the blang language defined above *)
     | Ocaml
-    | Fruit
     | Fsharp
     | Markdown
     | Sml
@@ -404,7 +377,6 @@ module Which_language = struct
   [@@deriving enumerate, sexp, equal, compare]
 
   let to_string = function
-    | Fruit -> "Fruit-based blang with autocomplete"
     | Fsharp -> "F# syntax highlighting"
     | Markdown -> "Markdown syntax highlighting"
     | Ocaml -> "OCaml syntax highlighting"
@@ -444,9 +416,6 @@ let component (local_ graph) =
        is optimized for showing off the ease with which people can create different
        codemirror editors, so we do the less-preferred option. *)
     match%sub chosen_language with
-    | Which_language.Fruit ->
-      no_theme_picker
-        (Fruit_sexp_grammar_auto_complete.codemirror_editor ~name:"fruit" graph)
     | Fsharp ->
       no_theme_picker (Fsharp_syntax_highlighting.codemirror_editor ~name:"fsharp" graph)
     | Markdown ->

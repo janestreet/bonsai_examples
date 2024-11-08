@@ -1,5 +1,5 @@
 (library
  (name bonsai_time_example)
- (libraries bonsai_web core)
+ (libraries bonsai_web core time_now)
  (preprocess
-  (pps ppx_jane bonsai.ppx_bonsai)))
+  (pps ppx_jane bonsai.ppx_bonsai ppx_html)))

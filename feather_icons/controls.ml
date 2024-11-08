@@ -27,10 +27,10 @@ module Range =
 let size_slider =
   Form.Elements.Range.int
     ~extra_attrs:(Bonsai.return [ Range.class_ ])
-    ~min:12
-    ~max:100
-    ~default:default.size
-    ~step:8
+    ~min:(Bonsai.return 12)
+    ~max:(Bonsai.return 100)
+    ~default:(Bonsai.return default.size)
+    ~step:(Bonsai.return 8)
     ~allow_updates_when_focused:`Never
     ()
 ;;
@@ -38,10 +38,10 @@ let size_slider =
 let stroke_width_slider =
   Form.Elements.Range.float
     ~extra_attrs:(Bonsai.return [ Range.class_ ])
-    ~min:0.5
-    ~max:3.
-    ~default:default.stroke_width
-    ~step:0.25
+    ~min:(Bonsai.return 0.5)
+    ~max:(Bonsai.return 3.)
+    ~default:(Bonsai.return default.stroke_width)
+    ~step:(Bonsai.return 0.25)
     ~allow_updates_when_focused:`Never
     ()
 ;;

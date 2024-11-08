@@ -4,4 +4,4 @@
  (libraries bonsai_web bonsai_web_components.web_ui_form
    bonsai_web_components.web_ui_query_box core)
  (preprocess
-  (pps ppx_jane bonsai.ppx_bonsai ppx_css ppx_typed_fields)))
+  (pps ppx_jane bonsai.ppx_bonsai ppx_css)))

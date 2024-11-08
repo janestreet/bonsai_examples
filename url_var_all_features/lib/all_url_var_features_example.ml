@@ -257,6 +257,7 @@ let%expect_test _ =
     |}]
 ;;
 
+let navigation = `Intercept
 let fallback _exn _components = T.Unable_to_parse
 
 let component ~url_var (local_ graph) =
@@ -302,6 +303,9 @@ let component ~url_var (local_ graph) =
     then "History is being saved in your browser"
     else "History is not being saved in your browser"
   in
+  let link ~href text =
+    Vdom.Node.a ~attrs:[ Vdom.Attr.href href ] [ Vdom.Node.text text ]
+  in
   View.vbox
     [ Vdom.Node.text
         "Change form to update the URL's query! Change the URL's query to update the \
@@ -315,6 +319,21 @@ let component ~url_var (local_ graph) =
             [ Vdom.Node.text "Toggle history saving" ]
         ]
     ; View.hbox [ update_button ]
+    ; Vdom.Node.text
+        "Here are some plain links that should also update the URL var state:"
+    ; Vdom.Node.p
+        [ link ~href:"/" "Go home via <a/> tag"
+        ; link ~href:"/variant/post" "Go to variant page"
+        ; link
+            ~href:"/query_variant?page=a&query_variant.a=12345"
+            "Go with query parameters"
+        ; link
+            ~href:"/some-invalid-page-oohhooh"
+            "Going to invalid page triggers normal page reload"
+        ; link
+            ~href:"https://www.janestreet.com/join-jane-street/open-roles/"
+            "Going elsewhere also works normally"
+        ]
     ; Vdom.Node.text "Here's what the parsed query as a sexp looks like:"
     ; Vdom.Node.code [ Vdom.Node.sexp_for_debugging (T.sexp_of_t url) ]
     ]

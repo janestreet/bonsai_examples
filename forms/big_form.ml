@@ -240,6 +240,7 @@ type t =
   ; record_list_as_table : Record_for_list.t list
   ; int_blang : Int_blang.t
   ; password : string
+  ; codemirror_string : string
   }
 [@@deriving typed_fields, sexp_of]
 
@@ -262,12 +263,12 @@ let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t 
   | Int_from_range ->
     E.Range.int
       ~allow_updates_when_focused:`Always
-      ~min:0
-      ~max:100
-      ~default:0
-      ~left_label:(Vdom.Node.text "Apple 🍎")
-      ~right_label:(Vdom.Node.text "Banana 🍌")
-      ~step:1
+      ~min:(Bonsai.return 0)
+      ~max:(Bonsai.return 100)
+      ~default:(Bonsai.return 0)
+      ~left_label:(Bonsai.return (Vdom.Node.text "Apple 🍎"))
+      ~right_label:(Bonsai.return (Vdom.Node.text "Banana 🍌"))
+      ~step:(Bonsai.return 1)
       ()
       graph
   | String_from_text -> E.Textbox.string ~allow_updates_when_focused:`Always () graph
@@ -334,6 +335,7 @@ let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t 
       ~to_option_description:(Bonsai.return Rodents.to_description)
       ~handle_unknown_option:(Bonsai.return (fun s -> Some (Rodents.Other s)))
       ~all_options:(Bonsai.return Rodents.all)
+      ~on_hover_item:(Bonsai.return Bonsai_web_ui_query_box.On_hover_item.Do_nothing)
       graph
   | String_option ->
     E.Dropdown.list_opt
@@ -395,7 +397,7 @@ let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t 
     in
     E.Query_box.create
       (module String)
-      ~selected_item_attr:(Bonsai.return Query_box_css.selected_item)
+      ~focused_item_attr:(Bonsai.return Query_box_css.selected_item)
       ~extra_list_container_attr:(Bonsai.return Query_box_css.list)
       ~selection_to_string:(Bonsai.return Fn.id)
       ~f:(fun query (local_ _graph) ->
@@ -403,12 +405,14 @@ let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t 
         Map.filter_map input ~f:(fun data ->
           if String.is_prefix ~prefix:query data then Some (Vdom.Node.text data) else None))
       ()
+      ~on_hover_item:(Bonsai.return Bonsai_web_ui_query_box.On_hover_item.Do_nothing)
       graph
   | Nested_record -> Nested_record.form graph
   | Record_list_as_table -> Record_for_list.form graph
   | Color_picker -> E.Color_picker.hex () graph
   | Int_blang -> Int_blang.form graph
   | Password -> E.Password.string ~allow_updates_when_focused:`Always () graph
+  | Codemirror_string -> Codemirror_form.Basic.string () graph
 ;;
 
 let form (local_ graph) =

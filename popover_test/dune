@@ -2,6 +2,6 @@
  (modes byte exe)
  (names main)
  (libraries async_js bonsai_web bonsai_web_components.web_ui_gallery
-   bonsai_web_components.web_ui_popover core)
+   bonsai_web_components.web_ui_popover_deprecated core)
  (preprocess
   (pps ppx_jane js_of_ocaml-ppx bonsai.ppx_bonsai ppx_css ppx_demo)))

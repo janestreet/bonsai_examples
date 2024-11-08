@@ -6,6 +6,7 @@ module T : sig
   type t [@@deriving sexp, equal]
 end
 
+val navigation : [ `Ignore | `Intercept ]
 val fallback : Exn.t -> Bonsai_web_ui_url_var.Components.t -> T.t
 val versioned_parser : T.t Bonsai_web_ui_url_var.Typed.Versioned_parser.t
 

@@ -70,6 +70,8 @@ let components (local_ graph) =
       ~all_options:(Bonsai.return Pokemon.all)
       (module Pokemon)
       ~equal:[%equal: Pokemon.t]
+      ~attr_merge_behavior:
+        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let%sub { selected = favourite_pokemon; view = typeahead_single_vdom; _ } =
     typeahead_single () graph
@@ -91,6 +93,8 @@ let components (local_ graph) =
       ~placeholder:"Select many pokemon"
       ~all_options
       graph
+      ~attr_merge_behavior:
+        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let%sub { view = typeahead_single_with_custom_input_vdom; _ } =
     typeahead_single
@@ -110,6 +114,8 @@ let components (local_ graph) =
            Option.some_if (String.contains ~pos:0 input 'B') (Pokemon.of_string input)))
       ~all_options
       (module Pokemon)
+      ~attr_merge_behavior:
+        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let%sub { view = typeahead_multi_with_empty_options_vdom; _ } =
     typeahead_multi_with_custom_input ~all_options:(Bonsai.return []) graph

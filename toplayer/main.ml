@@ -4,6 +4,8 @@ open! Bonsai.Let_syntax
 module Gallery = Bonsai_web_ui_gallery
 module Toplayer = Bonsai_web_ui_toplayer
 
+let () = Vdom_toplayer.For_debugging_frame_delay.mark_events := true
+
 module Vdom_popover = struct
   let name = "Popover"
 

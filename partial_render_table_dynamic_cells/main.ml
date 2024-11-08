@@ -1,10 +1,6 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Table = Bonsai_web_ui_partial_render_table.Basic
-module Indexed_column_id = Bonsai_web_ui_partial_render_table.Indexed_column_id
-module Form = Bonsai_web_ui_form.With_automatic_view
-module Row = Row
 
 module Time_ns_option = struct
   type t = Time_ns.t option [@@deriving compare]
@@ -33,6 +29,9 @@ module type S = sig
   val to_string : t -> string
 end
 
+module Prt = Bonsai_web_ui_partial_render_table
+module Indexed_column_id = Prt.Indexed_column_id
+module Table = Prt.Basic
 module Column = Table.Columns.Dynamic_cells
 
 let cell_attrs =
@@ -163,13 +162,14 @@ type t =
   ; lock_focus : unit Ui_effect.t
   ; unlock_focus : unit Ui_effect.t
   ; focus_is_locked : bool
+  ; column_widths : (Indexed_column_id.t * [ `Px_float of float ]) list
   }
 
 let generic_table_and_focus_attr
   ?filter
   ~row_height
-  ~theming
-  ~autosize
+  ~styling
+  ~resize_column_widths_to_fit
   ~multisort_columns_when
   ~should_show_position
   ~focus
@@ -184,8 +184,8 @@ let generic_table_and_focus_attr
     Table.component
       (module String)
       ?filter
-      ~theming
-      ~autosize
+      ~styling
+      ~resize_column_widths_to_fit
       ~multisort_columns_when
       ~focus
       ~row_height
@@ -199,6 +199,8 @@ let generic_table_and_focus_attr
           ; num_filtered_rows
           ; focus
           ; set_column_width
+          ; column_widths
+          ; key_rank = _
           }
     =
     table
@@ -210,15 +212,16 @@ let generic_table_and_focus_attr
   ; lock_focus = get_lock_focus focus
   ; unlock_focus = get_unlock_focus focus
   ; focus_is_locked = get_focus_is_locked focus
+  ; column_widths = Lazy.force column_widths
   }
 ;;
 
-let component
+let table
   ?filter
   ~focus_kind
   ~row_height
-  ~theming
-  ~autosize
+  ~styling
+  ~resize_column_widths_to_fit
   ~multisort_columns_when
   ~should_show_position
   data
@@ -229,8 +232,8 @@ let component
     generic_table_and_focus_attr
       ?filter
       ~row_height
-      ~theming
-      ~autosize
+      ~styling
+      ~resize_column_widths_to_fit
       ~multisort_columns_when
       ~should_show_position
       ~focus:(By_row { on_change = Bonsai.return (Fn.const Effect.Ignore) })
@@ -259,8 +262,8 @@ let component
     generic_table_and_focus_attr
       ?filter
       ~row_height
-      ~theming
-      ~autosize
+      ~styling
+      ~resize_column_widths_to_fit
       ~multisort_columns_when
       ~should_show_position
       ~focus:(By_cell { on_change = Bonsai.return (Fn.const Effect.Ignore) })
@@ -298,6 +301,8 @@ let component
       data
 ;;
 
+module Forms = Bonsai_web_ui_form.With_automatic_view
+
 module Layout_form = struct
   module Multisort_columns_when = struct
     type t =
@@ -308,71 +313,81 @@ module Layout_form = struct
     [@@deriving sexp, equal, enumerate, compare]
   end
 
+  module Styling = struct
+    type t =
+      | From_theme
+      | Explicit_tomato_header
+      | Legacy_unsafe_raw_classnames
+    [@@deriving sexp, equal, enumerate, compare]
+  end
+
   module Params = struct
     type t =
-      { themed : bool
+      { styling : Styling.t
       ; show_position : bool
       ; cell_based_highlighting : bool
       ; row_height : [ `Px of int ]
       ; num_rows : int
       ; multisort_columns_when : Multisort_columns_when.t
-      ; autosize : bool
+      ; resize_column_widths_to_fit : bool
       }
     [@@deriving typed_fields]
 
     let form_for_field
-      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Forms.t Bonsai.t
       =
       fun typed_field (local_ graph) ->
       match typed_field with
-      | Themed -> Form.Elements.Toggle.bool ~default:true () graph
-      | Show_position -> Form.Elements.Toggle.bool ~default:true () graph
-      | Cell_based_highlighting -> Form.Elements.Toggle.bool ~default:false () graph
+      | Styling -> Forms.Elements.Dropdown.enumerable (module Styling) graph
+      | Show_position -> Forms.Elements.Toggle.bool ~default:true () graph
+      | Cell_based_highlighting -> Forms.Elements.Toggle.bool ~default:false () graph
       | Row_height ->
         let form =
-          Form.Elements.Range.int
-            ~min:0
-            ~max:100
-            ~step:1
+          Forms.Elements.Range.int
+            ~min:(Bonsai.return 0)
+            ~max:(Bonsai.return 100)
+            ~step:(Bonsai.return 1)
             ~allow_updates_when_focused:`Never
             ()
-            ~default:30
+            ~default:(Bonsai.return 30)
             graph
         in
         let%arr form in
-        Form.project form ~parse_exn:(fun x -> `Px x) ~unparse:(fun (`Px x) -> x)
+        Forms.project form ~parse_exn:(fun x -> `Px x) ~unparse:(fun (`Px x) -> x)
       | Num_rows ->
-        Form.Elements.Number.int
+        Forms.Elements.Number.int
           ~allow_updates_when_focused:`Never
           ~default:10_000
           ~step:1
           ()
           graph
       | Multisort_columns_when ->
-        Form.Elements.Dropdown.enumerable (module Multisort_columns_when) graph
-      | Autosize -> Form.Elements.Toggle.bool ~default:false () graph
+        Forms.Elements.Dropdown.enumerable (module Multisort_columns_when) graph
+      | Resize_column_widths_to_fit -> Forms.Elements.Toggle.bool ~default:false () graph
     ;;
 
     let label_for_field = `Inferred
   end
 
   let component (local_ graph) =
-    let form = Form.Typed.Record.make (module Params) graph in
+    let form = Forms.Typed.Record.make (module Params) graph in
     let%arr form in
     let values =
-      Form.value_or_default
+      Forms.value_or_default
         form
         ~default:
-          { themed = true
+          { styling = From_theme
           ; show_position = true
           ; row_height = `Px 30
           ; num_rows = 10_000
           ; cell_based_highlighting = false
           ; multisort_columns_when = `Shift_click
-          ; autosize = false
+          ; resize_column_widths_to_fit = false
           }
     in
-    let view = Vdom.Node.div ~attrs:[ Style.form_container ] [ Form.view_as_vdom form ] in
+    let view =
+      Vdom.Node.div ~attrs:[ Style.form_container ] [ Forms.view_as_vdom form ]
+    in
     view, values
   ;;
 end
@@ -381,7 +396,7 @@ module Column_width_form = struct
   let component ~set_column_width (local_ graph) =
     let open Bonsai.Let_syntax in
     let form =
-      Form.Elements.Textbox.int
+      Forms.Elements.Textbox.int
         ~placeholder:(Bonsai.return "Symbol column width")
         ~allow_updates_when_focused:`Always
         ()
@@ -390,7 +405,7 @@ module Column_width_form = struct
     let button =
       let theme = View.Theme.current graph in
       let%arr form and theme and set_column_width in
-      let value = Form.value form in
+      let value = Forms.value form in
       let disabled = Or_error.is_error value in
       let on_click =
         match value with
@@ -403,6 +418,113 @@ module Column_width_form = struct
       View.button ~disabled theme ~on_click "Set width"
     in
     let%arr form and button in
-    View.hbox [ Form.view_as_vdom form; button ]
+    View.hbox [ Forms.view_as_vdom form; button ]
   ;;
 end
+
+let component ~theme_picker (local_ graph) =
+  let%sub ( form_view
+          , { styling
+            ; show_position
+            ; row_height
+            ; num_rows
+            ; cell_based_highlighting
+            ; multisort_columns_when
+            ; resize_column_widths_to_fit
+            } )
+    =
+    Layout_form.component graph
+  in
+  let data =
+    let%arr num_rows in
+    Row.many_random num_rows
+  in
+  let%sub { table
+          ; focus_attr
+          ; set_column_width
+          ; lock_focus
+          ; unlock_focus
+          ; focus_is_locked
+          ; column_widths
+          }
+    =
+    let custom_styling =
+      let theme = View.Theme.current graph in
+      let%arr theme in
+      View.For_components.Prt.styling theme
+      |> Bonsai_web_ui_partial_render_table_styling.Expert.map ~f:(fun s ->
+        { s with
+          header_cell = Vdom.Attr.combine s.header_cell {%css|background-color: tomato;|}
+        })
+    in
+    let render ~cell_based_highlighting styling =
+      let focus_kind = if cell_based_highlighting then `Cell else `Row in
+      let styling =
+        match styling with
+        | Layout_form.Styling.Legacy_unsafe_raw_classnames ->
+          Prt.Which_styling.Legacy_unsafe_raw_classnames
+        | From_theme -> From_theme
+        | Explicit_tomato_header -> This_one custom_styling
+      in
+      table
+        ~multisort_columns_when
+        ~focus_kind
+        ~styling
+        ~should_show_position:show_position
+        ~row_height
+        ~resize_column_widths_to_fit
+        data
+        graph
+    in
+    match%sub cell_based_highlighting, styling with
+    | false, Legacy_unsafe_raw_classnames ->
+      render ~cell_based_highlighting:false Legacy_unsafe_raw_classnames
+    | false, From_theme -> render ~cell_based_highlighting:false From_theme
+    | false, Explicit_tomato_header ->
+      render ~cell_based_highlighting:false Explicit_tomato_header
+    | true, Legacy_unsafe_raw_classnames ->
+      render ~cell_based_highlighting:true Legacy_unsafe_raw_classnames
+    | true, From_theme -> render ~cell_based_highlighting:true From_theme
+    | true, Explicit_tomato_header ->
+      render ~cell_based_highlighting:true Explicit_tomato_header
+  in
+  let toggle_focus_lock_button =
+    let on_click =
+      let%arr focus_is_locked and lock_focus and unlock_focus in
+      if focus_is_locked then unlock_focus else lock_focus
+    in
+    let theme = View.Theme.current graph in
+    let%arr on_click and focus_is_locked and theme in
+    let text = if focus_is_locked then "Unlock focus" else "Lock focus" in
+    View.button theme ~on_click text
+  in
+  let form_view =
+    let width_form = Column_width_form.component ~set_column_width graph in
+    let%arr form_view and width_form in
+    View.vbox [ form_view; width_form ]
+  in
+  let%arr form_view
+  and table
+  and focus_attr
+  and theme_picker
+  and toggle_focus_lock_button
+  and column_widths in
+  let column_widths =
+    Vdom.Node.sexp_for_debugging
+      [%sexp
+        (column_widths
+         : (Bonsai_web_ui_partial_render_table.Indexed_column_id.t
+           * [ `Px_float of float ])
+             list)]
+  in
+  Vdom.Node.div
+    ~attrs:[ focus_attr ]
+    [ theme_picker; form_view; toggle_focus_lock_button; column_widths; table ]
+;;
+
+let component_with_theme (local_ graph) =
+  let%sub theme, theme_picker = Bonsai_web_ui_gallery.Theme_picker.component () graph in
+  View.Theme.set_for_app theme (component ~theme_picker) graph
+;;
+
+let () = Bonsai_web.Start.start component_with_theme

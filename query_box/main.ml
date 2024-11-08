@@ -31,6 +31,8 @@ module Example_params = struct
   type t =
     { suggestion_list_kind : Query_box.Suggestion_list_kind.t
     ; expand_direction : Query_box.Expand_direction.t
+    ; on_focus : Query_box.On_focus.t
+    ; on_hover_item : Query_box.On_hover_item.t
     ; max_visible_items : int
     ; input_source : Input_source.t
     ; filter_strategy : Query_box.Filter_strategy.t
@@ -40,6 +42,8 @@ module Example_params = struct
   let default =
     { suggestion_list_kind = Transient_overlay
     ; expand_direction = Down
+    ; on_focus = Focus_first_item
+    ; on_hover_item = Bonsai_web_ui_query_box.On_hover_item.Focus_hovered_item
     ; max_visible_items = 10
     ; input_source = Small_and_static_list_of_fruits
     ; filter_strategy = Fuzzy_search_and_score
@@ -94,6 +98,10 @@ let component (local_ graph) =
             Form.Elements.Dropdown.enumerable
               (module Query_box.Suggestion_list_kind)
               graph
+          | On_focus ->
+            Form.Elements.Dropdown.enumerable (module Query_box.On_focus) graph
+          | On_hover_item ->
+            Form.Elements.Dropdown.enumerable (module Query_box.On_hover_item) graph
           | Expand_direction ->
             Form.Elements.Dropdown.enumerable (module Query_box.Expand_direction) graph
           | Max_visible_items ->
@@ -112,6 +120,8 @@ let component (local_ graph) =
   in
   let%sub { suggestion_list_kind
           ; expand_direction
+          ; on_focus
+          ; on_hover_item
           ; max_visible_items
           ; input_source
           ; filter_strategy
@@ -177,8 +187,10 @@ let component (local_ graph) =
         (module String)
         ~suggestion_list_kind
         ~expand_direction
+        ~on_focus
+        ~on_hover_item
         ~max_visible_items
-        ~selected_item_attr:(Bonsai.return Css.selected_item)
+        ~focused_item_attr:(Bonsai.return Css.selected_item)
         ~extra_list_container_attr:(Bonsai.return Css.list_container)
         ~extra_input_attr:(Bonsai.return (Attr.placeholder "Filter Fruits"))
         ~filter_strategy:Fuzzy_search_and_score
@@ -190,8 +202,10 @@ let component (local_ graph) =
         (module String)
         ~suggestion_list_kind
         ~expand_direction
+        ~on_focus
+        ~on_hover_item
         ~max_visible_items
-        ~selected_item_attr:(Bonsai.return Css.selected_item)
+        ~focused_item_attr:(Bonsai.return Css.selected_item)
         ~extra_list_container_attr:(Bonsai.return Css.list_container)
         ~extra_input_attr:(Bonsai.return (Attr.placeholder "Filter Fruits"))
         ~filter_strategy:Fuzzy_match
