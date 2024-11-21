@@ -6,5 +6,4 @@
    bonsai_web_components.feather_icon bonsai_web_components.tailwind_colors
    virtual_dom.svg)
  (preprocess
-  (pps js_of_ocaml-ppx ppx_typed_fields ppx_jane ppx_css ppx_demo
-    bonsai.ppx_bonsai)))
+  (pps js_of_ocaml-ppx ppx_jane ppx_css ppx_demo bonsai.ppx_bonsai)))

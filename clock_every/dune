@@ -4,4 +4,4 @@
  (libraries async_kernel bonsai.extra bonsai_web
    bonsai_web_components.web_ui_form core virtual_dom.svg)
  (preprocess
-  (pps ppx_jane bonsai.ppx_bonsai ppx_css js_of_ocaml-ppx ppx_typed_fields)))
+  (pps ppx_jane bonsai.ppx_bonsai ppx_css js_of_ocaml-ppx)))

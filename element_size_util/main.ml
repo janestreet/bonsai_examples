@@ -15,14 +15,6 @@ module Page = struct
   [@@deriving enumerate, sexp, compare, equal]
 end
 
-module Size = struct
-  type t =
-    { width : float
-    ; height : float
-    }
-  [@@deriving sexp, equal]
-end
-
 let bulk_size_component graph =
   let state = Size_hooks.Bulk_size_tracker.component (module Int) Prune_stale graph in
   let%arr sizes, size_attr = state in
@@ -90,21 +82,55 @@ let position graph =
     ]
 ;;
 
+let bordered_text width text =
+  let width = Int.to_string (Float.to_int width) ^ "px" in
+  Vdom.Node.div
+    ~attrs:
+      [ [%css
+          {|
+            width: %{width};
+            border: 2px solid red;
+            margin-top: 2px;
+            margin-bottom: 2px;
+          |}]
+      ]
+    [ Vdom.Node.text text ]
+;;
+
 let size_component graph =
-  let size, inject_size =
-    Bonsai.state_opt graph ~sexp_of_model:[%sexp_of: Size.t] ~equal:[%equal: Size.t]
+  let dimensions, inject_dimensions =
+    Bonsai.state
+      { Size_hooks.Size_tracker.Dimensions.border_box = { width = 100.; height = 100. }
+      ; content_box = { width = 100.; height = 100. }
+      }
+      graph
+      ~sexp_of_model:[%sexp_of: Size_hooks.Size_tracker.Dimensions.t]
+      ~equal:[%equal: Size_hooks.Size_tracker.Dimensions.t]
   in
-  let%arr size and inject_size in
+  let%arr dimensions and inject_dimensions in
   Vdom.Node.div
     [ Vdom.Node.h3 [ Vdom.Node.text "Resize me!" ]
     ; Vdom.Node.div
         ~key:"resizable-using-css"
         ~attrs:
           [ Style.resizable_using_css
-          ; Size_hooks.Size_tracker.on_change (fun ~width ~height ->
-              inject_size (Some Size.{ width; height }))
+          ; Size_hooks.Size_tracker.on_change inject_dimensions
           ]
-        [ Vdom.Node.textf !"%{sexp:Size.t option}" size ]
+        ([ [ Vdom.Node.div
+               [ [%sexp (dimensions : Size_hooks.Size_tracker.Dimensions.t)]
+                 |> Sexp.to_string
+                 |> Vdom.Node.text
+               ]
+           ; bordered_text
+               dimensions.border_box.width
+               "Width of this equals border width of the parent container"
+           ; bordered_text
+               dimensions.content_box.width
+               "Width of this equals content width of the parent container"
+           ]
+         ; List.init 100 ~f:(fun _ -> Vdom.Node.div [ Vdom.Node.textf "Some text" ])
+         ]
+         |> List.concat)
     ]
 ;;
 

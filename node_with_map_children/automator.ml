@@ -6,7 +6,10 @@ open Js_of_ocaml
 (* defined in ./validate.js *)
 
 let validate : unit -> bool =
-  Js.Unsafe.get Js.Unsafe.global (Js.string "domNodeColorValidator")
+  fun () ->
+  Js.Unsafe.fun_call
+    (Js.Unsafe.get Js.Unsafe.global (Js.string "domNodeColorValidator"))
+    [||]
 ;;
 
 let validate = Effect.of_sync_fun validate ()

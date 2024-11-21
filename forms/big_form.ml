@@ -389,7 +389,7 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
     in
     E.Query_box.create
       (module String)
-      ~selected_item_attr:(Bonsai.return Query_box_css.selected_item)
+      ~focused_item_attr:(Bonsai.return Query_box_css.selected_item)
       ~extra_list_container_attr:(Bonsai.return Query_box_css.list)
       ~selection_to_string:(Bonsai.return Fn.id)
       ~f:(fun query _graph ->

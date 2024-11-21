@@ -7,4 +7,4 @@
    js_of_ocaml ppx_typed_fields.typed_fields_lib
    ppx_typed_fields.typed_variants_lib virtual_dom.input_widgets)
  (preprocess
-  (pps js_of_ocaml-ppx ppx_typed_fields bonsai.ppx_bonsai ppx_css ppx_jane)))
+  (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_css ppx_jane)))

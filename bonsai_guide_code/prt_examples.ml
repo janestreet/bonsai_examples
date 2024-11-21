@@ -4,7 +4,7 @@ open! Bonsai_web
 open! Bonsai.Let_syntax
 
 (* $MDX part-begin=row_type *)
-
+(* Our "row key" type is [Symbol.t], which we implement as a string. *)
 module Symbol = String
 
 module Row = struct
@@ -12,6 +12,7 @@ module Row = struct
     { symbol : Symbol.t
     ; price : float
     ; num_owned : int
+    ; last_updated : Time_ns.t
     }
   [@@deriving sexp, compare, equal, bin_io, typed_fields]
 end
@@ -24,8 +25,13 @@ let row_generator =
   let%bind symbol_len = Int.gen_incl 2 8 in
   let%map price = Float.gen_incl (-1000.0) 10_000.0
   and num_owned = Int.gen_incl (-1_000) 1_000
-  and symbol = String.gen_with_length symbol_len Char.gen_uppercase in
-  { Row.symbol; price; num_owned }
+  and symbol = String.gen_with_length symbol_len Char.gen_uppercase
+  and last_updated =
+    Time_ns.gen_uniform_incl
+      (Time_ns.sub (Time_ns.now ()) (Time_ns.Span.of_day 1.))
+      (Time_ns.now ())
+  in
+  { Row.symbol; price; num_owned; last_updated }
 ;;
 
 let full_data ?seed ~num_rows () : Row.t Symbol.Map.t =
@@ -36,8 +42,7 @@ let full_data ?seed ~num_rows () : Row.t Symbol.Map.t =
 ;;
 
 module _ = struct
-  (* $MDX part-begin=dynamic_experimental_variant_col_id *)
-  module Table = Bonsai_web_ui_partial_render_table.Basic
+  (* $MDX part-begin=variant_col_id *)
 
   module Col_id = struct
     module T = struct
@@ -45,28 +50,76 @@ module _ = struct
         | Symbol
         | Price
         | Num_owned
-      [@@deriving sexp, compare]
+        | Last_updated
+      [@@deriving sexp, compare, enumerate]
     end
 
     include T
     include Comparator.Make (T)
   end
 
-  let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
-    Table.Columns.Dynamic_experimental.build
+  (* $MDX part-end *)
+
+  (* $MDX part-begin=variant_structure *)
+  module Structure = Bonsai_web_ui_partial_render_table.Column_structure
+
+  let structure =
+    Structure.Group.(
+      [ leaf Col_id.Symbol
+      ; group
+          ~label:(return {%html|Position|})
+          [ leaf Col_id.Price; leaf Col_id.Num_owned ]
+      ; leaf Col_id.Last_updated
+      ]
+      |> lift)
+  ;;
+
+  (* $MDX part-end *)
+
+  let s' = structure
+
+  (* $MDX part-begin=flat_structure *)
+  let structure = Structure.flat Col_id.all
+
+  (* $MDX part-end *)
+  let () = ignore structure
+  let structure = s'
+
+  (* $MDX part-begin=variant_structure_mods *)
+  let structure =
+    structure
+    |> Structure.with_initial_widths
+         ~f:
+           (Bonsai.return (function
+             | Col_id.Symbol -> `Px 75
+             | Last_updated -> `Px 150
+             | _ -> Structure.default_initial_width))
+    |> Structure.with_is_resizable
+         ~f:
+           (Bonsai.return (function
+             | Col_id.Symbol | Price -> true
+             | Num_owned | Last_updated -> false))
+  ;;
+
+  (* $MDX part-end *)
+
+  (* $MDX part-begin=variant_columns *)
+  module Table = Bonsai_web_ui_partial_render_table.Basic
+
+  let columns : (Symbol.t, Row.t, Col_id.t) Table.New_columns.t =
+    Table.New_columns.build
       (module Col_id)
-      ~columns:(Bonsai.return [ Col_id.Symbol; Price; Num_owned ])
-      ~render_cell:(fun col _key data _graph ->
-        match%sub col with
-        | Symbol ->
-          let%arr { Row.symbol; _ } = data in
-          Vdom.Node.text symbol
-        | Price ->
-          let%arr { price; _ } = data in
-          Vdom.Node.text (sprintf "%.2f" price)
-        | Num_owned ->
-          let%arr { num_owned; _ } = data in
-          Vdom.Node.text (string_of_int num_owned))
+      ~columns:structure
+      ~render_cell:
+        (Stateful_rows
+           (fun _key data _graph ->
+             let%arr { Row.symbol; price; num_owned; last_updated } = data in
+             fun col ->
+               match col with
+               | Col_id.Symbol -> Vdom.Node.text symbol
+               | Price -> Vdom.Node.text (sprintf "%.2f" price)
+               | Num_owned -> Vdom.Node.text (string_of_int num_owned)
+               | Last_updated -> Vdom.Node.text (Time_ns.to_string last_updated)))
       ~render_header:(fun col _graph ->
         let%arr col in
         let name =
@@ -74,13 +127,14 @@ module _ = struct
           | Symbol -> Vdom.Node.text "Symbol"
           | Price -> Vdom.Node.text "Price"
           | Num_owned -> Vdom.Node.text "Num_owned"
+          | Last_updated -> Vdom.Node.text "Last Updated"
         in
-        Table.Columns.Dynamic_columns.Sortable.Header.with_icon name)
+        Table.New_columns.Sortable.Header.with_icon name)
   ;;
 
   (* $MDX part-end *)
 
-  (* $MDX part-begin=dynamic_experimental_table_no_focus *)
+  (* $MDX part-begin=table_no_focus *)
   let component graph ~data =
     let table =
       Table.component
@@ -98,13 +152,11 @@ module _ = struct
   (* $MDX part-end *)
 
   let () =
-    Util.run
-      (component ~data:(Bonsai.return (full_data ~num_rows:1000 ())))
-      ~id:"dynamic_experimental"
+    Util.run (component ~data:(Bonsai.return (full_data ~num_rows:1000 ()))) ~id:"prt"
   ;;
 
-  (* $MDX part-begin=dynamic_experimental_sort_variant *)
-  module Sort_kind = Table.Columns.Dynamic_experimental.Sort_kind
+  (* $MDX part-begin=sort_variant *)
+  module Sort_kind = Bonsai_web_ui_partial_render_table.Sort_kind
 
   let sorts (col_id : Col_id.t Bonsai.t) _graph =
     let%arr col_id in
@@ -118,26 +170,27 @@ module _ = struct
         (Sort_kind.reversible ~forward:(fun (_a_key, a) (_b_key, b) ->
            [%compare: float] a.Row.price b.Row.price))
     | Num_owned -> None
+    | Last_updated ->
+      Some
+        (Sort_kind.reversible ~forward:(fun (_a_key, a) (_b_key, b) ->
+           [%compare: Time_ns.t] a.Row.last_updated b.Row.last_updated))
   ;;
 
   (* $MDX part-end *)
 
   let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
-    Table.Columns.Dynamic_experimental.build
+    Table.New_columns.build
       (module Col_id)
       ~sorts
-      ~columns:(Bonsai.return [ Col_id.Symbol; Price; Num_owned ])
-      ~render_cell:(fun col _key data _graph ->
-        match%sub col with
-        | Symbol ->
-          let%arr { Row.symbol; _ } = data in
-          Vdom.Node.text symbol
-        | Price ->
-          let%arr { price; _ } = data in
-          Vdom.Node.text (sprintf "%.2f" price)
-        | Num_owned ->
-          let%arr { num_owned; _ } = data in
-          Vdom.Node.text (string_of_int num_owned))
+      ~columns:structure
+      ~render_cell:
+        (Pure
+           (return (fun col _key { Row.symbol; price; num_owned; last_updated } ->
+              match col with
+              | Col_id.Symbol -> Vdom.Node.text symbol
+              | Price -> Vdom.Node.text (sprintf "%.2f" price)
+              | Num_owned -> Vdom.Node.text (string_of_int num_owned)
+              | Last_updated -> Vdom.Node.text (Time_ns.to_string last_updated))))
       ~render_header:(fun col _graph ->
         let%arr col in
         let name =
@@ -145,6 +198,7 @@ module _ = struct
           | Symbol -> Vdom.Node.text "Symbol"
           | Price -> Vdom.Node.text "Price"
           | Num_owned -> Vdom.Node.text "Num_owned"
+          | Last_updated -> Vdom.Node.text "Last Updated"
         in
         Table.Columns.Dynamic_columns.Sortable.Header.with_icon name)
   ;;
@@ -164,12 +218,10 @@ module _ = struct
   ;;
 
   let () =
-    Util.run
-      (component ~data:(Bonsai.return (full_data ~num_rows:1000 ())))
-      ~id:"dynamic_experimental_sort"
+    Util.run (component ~data:(Bonsai.return (full_data ~num_rows:1000 ()))) ~id:"sort"
   ;;
 
-  (* $MDX part-begin=dynamic_experimental_focus_variant *)
+  (* $MDX part-begin=focus_variant *)
   let component graph ~data =
     let table =
       Table.component
@@ -226,13 +278,95 @@ module _ = struct
   let () =
     Util.run
       (component ~data:(Bonsai.return (full_data ~num_rows:1000 ())))
-      ~id:"dynamic_experimental_focus_variant"
+      ~id:"focus_variant"
+  ;;
+
+  let component graph ~data =
+    (* $MDX part-begin=prt_styling *)
+    let table =
+      Table.component
+        (module Symbol)
+        ~styling:
+          (This_one
+             (Bonsai.return
+                (Bonsai_web_ui_partial_render_table_styling.create
+                   { colors =
+                       { page_bg = `Hex "#f0f4f8"
+                       ; page_fg = `Hex "#333333"
+                       ; header_bg = `Hex "#2c3e50"
+                       ; header_fg = `Hex "#ecf0f1"
+                       ; row_even_bg = `Hex "#ffffff"
+                       ; row_even_fg = `Hex "#333333"
+                       ; row_odd_bg = `Hex "#e8eef2"
+                       ; row_odd_fg = `Hex "#333333"
+                       ; cell_focused_bg = `Hex "#3498db"
+                       ; cell_focused_fg = `Hex "#ffffff"
+                       ; row_focused_bg = `Hex "#d6eaf8"
+                       ; row_focused_fg = `Hex "#2980b9"
+                       ; row_focused_border = `Hex "#2980b9"
+                       ; header_header_border = `Hex "#34495e"
+                       ; body_body_border = `Hex "#bdc3c7"
+                       ; header_body_border = `Hex "#7f8c8d"
+                       }
+                   })))
+        ~focus:
+          (Table.Focus.By_cell
+             { on_change =
+                 Bonsai.return (fun (_ : (Symbol.t * Col_id.t) option) -> Effect.Ignore)
+             })
+        ~row_height:(Bonsai.return (`Px 30))
+        ~columns
+        data
+        graph
+    in
+    (* $MDX part-end *)
+    let%arr { view; focus; num_filtered_rows; _ } = table in
+    Vdom.Node.div
+      ~attrs:
+        [ Vdom.Attr.on_keydown (fun kbc ->
+            let binding =
+              let current_or_first_column =
+                match Table.Focus.By_cell.focused focus with
+                | None -> Col_id.Symbol
+                | Some (_, c) -> c
+              in
+              match Js_of_ocaml.Dom_html.Keyboard_code.of_event kbc with
+              | ArrowDown | KeyJ -> Some (Table.Focus.By_cell.focus_down focus)
+              | ArrowUp | KeyK -> Some (Table.Focus.By_cell.focus_up focus)
+              | ArrowLeft | KeyH -> Some (Table.Focus.By_cell.focus_left focus)
+              | ArrowRight | KeyL -> Some (Table.Focus.By_cell.focus_right focus)
+              | PageDown -> Some (Table.Focus.By_cell.page_down focus)
+              | PageUp -> Some (Table.Focus.By_cell.page_up focus)
+              | Escape -> Some (Table.Focus.By_cell.unfocus focus)
+              | Home ->
+                Some (Table.Focus.By_cell.focus_index focus 0 current_or_first_column)
+              | End ->
+                Some
+                  (Table.Focus.By_cell.focus_index
+                     focus
+                     num_filtered_rows
+                     current_or_first_column)
+              | _ -> None
+            in
+            match binding with
+            | Some b -> Effect.Many [ Effect.Prevent_default; b ]
+            | None -> Effect.Ignore)
+          (* Allows browser focus to be set on the table. *)
+        ; Vdom.Attr.tabindex 0 (* Unsets default browser styling for focused elements. *)
+        ; {%css|outline: none;|}
+        ]
+      [ view ]
+  ;;
+
+  let () =
+    Util.run
+      (component ~data:(Bonsai.return (full_data ~num_rows:1000 ())))
+      ~id:"prt_styling"
   ;;
 end
 
 module _ = struct
-  (* $MDX part-begin=dynamic_experimental_typed_fields_col_id *)
-  module Table = Bonsai_web_ui_partial_render_table.Basic
+  (* $MDX part-begin=typed_fields_col_id *)
 
   module Col_id = struct
     include Row.Typed_field.Packed
@@ -240,8 +374,23 @@ module _ = struct
   end
   (* $MDX part-end *)
 
-  (* $MDX part-begin=dynamic_experimental_typed_fields_sorts *)
-  module Sort_kind = Table.Columns.Dynamic_experimental.Sort_kind
+  (* $MDX part-begin=typed_fields_structure *)
+  module Structure = Bonsai_web_ui_partial_render_table.Column_structure
+
+  let structure =
+    let open Structure.Group in
+    let pack_leaf x = leaf (Col_id.pack x) in
+    [ pack_leaf Symbol
+    ; group ~label:(return {%html|Position|}) [ pack_leaf Price; pack_leaf Num_owned ]
+    ; pack_leaf Last_updated
+    ]
+    |> lift
+  ;;
+
+  (* $MDX part-end *)
+
+  (* $MDX part-begin=typed_fields_sorts *)
+  module Sort_kind = Bonsai_web_ui_partial_render_table.Sort_kind
 
   let sort (type a) (module S : Comparable with type t = a) (field : a Row.Typed_field.t) =
     Some
@@ -255,26 +404,28 @@ module _ = struct
     | Symbol -> sort (module String) field
     | Price -> sort (module Float) field
     | Num_owned -> None
+    | Last_updated -> sort (module Time_ns) field
   ;;
 
   (* $MDX part-end *)
 
-  (* $MDX part-begin=dynamic_experimental_typed_fields_columns *)
-  let all_columns = Bonsai.return Row.Typed_field.Packed.all
+  (* $MDX part-begin=typed_fields_columns *)
+  module Table = Bonsai_web_ui_partial_render_table.Basic
 
-  let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
-    Table.Columns.Dynamic_experimental.build
+  let columns : (Symbol.t, Row.t, Col_id.t) Table.New_columns.t =
+    Table.New_columns.build
       (module Col_id)
       ~sorts
-      ~columns:all_columns
-      ~render_cell:(fun col _key data _graph ->
-        let%arr { f = T field } = col
-        and data in
-        let value = Row.Typed_field.get field data in
-        match field with
-        | Symbol -> Vdom.Node.text value
-        | Price -> Vdom.Node.textf "%f" value
-        | Num_owned -> Vdom.Node.textf "%d" value)
+      ~columns:structure
+      ~render_cell:
+        (Pure
+           (return (fun { Col_id.f = T field } _key data ->
+              let value = Row.Typed_field.get field data in
+              match field with
+              | Symbol -> Vdom.Node.text value
+              | Price -> Vdom.Node.text (sprintf "%.2f" value)
+              | Num_owned -> Vdom.Node.text (string_of_int value)
+              | Last_updated -> Vdom.Node.text (Time_ns.to_string value))))
       ~render_header:(fun col _graph ->
         let%arr { f = T field } = col in
         Table.Columns.Dynamic_columns.Sortable.Header.with_icon
@@ -289,37 +440,40 @@ end
 module _ = struct
   (* $MDX part-begin=server_side_columns *)
   module Table = Bonsai_web_ui_partial_render_table.Expert
-  module Column = Table.Columns.Dynamic_experimental
 
   module Col_id = struct
     include Row.Typed_field.Packed
     include Comparator.Make (Row.Typed_field.Packed)
   end
 
-  let all_columns = Bonsai.return Row.Typed_field.Packed.all
+  module Structure = Bonsai_web_ui_partial_render_table.Column_structure
 
   let component graph ~data =
-    let sortable_state = Column.Sortable.state ~equal:[%equal: Col_id.t] () graph in
-    let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
-      Column.build
+    (* We need to create the sortable state outside of the table. *)
+    let sortable_state =
+      Table.New_columns.Sortable.state ~equal:[%equal: Col_id.t] () graph
+    in
+    let columns : (Symbol.t, Row.t, Col_id.t) Table.New_columns.t =
+      Table.New_columns.build
         (module Col_id)
-        ~columns:all_columns
-        ~render_cell:(fun col _key data _graph ->
-          let%arr { f = T field } = col
-          and data in
-          let value = Row.Typed_field.get field data in
-          match field with
-          | Symbol -> Vdom.Node.text value
-          | Price -> Vdom.Node.textf "%f" value
-          | Num_owned -> Vdom.Node.textf "%d" value)
+        ~columns:(Structure.flat Col_id.all)
+        ~render_cell:
+          (Pure
+             (return (fun { Col_id.f = T field } _key data ->
+                let value = Row.Typed_field.get field data in
+                match field with
+                | Symbol -> Vdom.Node.text value
+                | Price -> Vdom.Node.text (sprintf "%.2f" value)
+                | Num_owned -> Vdom.Node.text (string_of_int value)
+                | Last_updated -> Vdom.Node.text (Time_ns.to_string value))))
         ~render_header:(fun col _graph ->
           let%arr ({ f = T field } as col) = col
           and sortable_state in
-          Column.Sortable.Header.Expert.default_click_handler
+          Table.New_columns.Sortable.Header.Expert.default_click_handler
             ~sortable:true
             ~column_id:col
             sortable_state
-            (Column.Sortable.Header.with_icon
+            (Table.New_columns.Sortable.Header.with_icon
                (Vdom.Node.text (Row.Typed_field.name field))))
     in
     (* $MDX part-end *)

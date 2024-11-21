@@ -2,6 +2,6 @@
  (names main)
  (modes js)
  (libraries async_js async_kernel bonsai_chat_open_source_common bonsai_web
-   core_kernel.composition_infix core js_of_ocaml virtual_dom.input_widgets)
+   base.composition_infix core js_of_ocaml virtual_dom.input_widgets)
  (preprocess
   (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_jane)))

@@ -6,5 +6,4 @@
    ppx_typed_fields.typed_fields_lib ppx_typed_fields.typed_variants_lib uri
    uri_parsing)
  (preprocess
-  (pps ppx_jane ppx_css ppx_demo js_of_ocaml-ppx ppx_typed_fields
-    bonsai.ppx_bonsai)))
+  (pps ppx_jane ppx_css ppx_demo js_of_ocaml-ppx bonsai.ppx_bonsai)))

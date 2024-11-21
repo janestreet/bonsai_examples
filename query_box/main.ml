@@ -42,8 +42,8 @@ module Example_params = struct
   let default =
     { suggestion_list_kind = Transient_overlay
     ; expand_direction = Down
-    ; on_focus = Select_first_item
-    ; on_hover_item = Bonsai_web_ui_query_box.On_hover_item.Select_hovered_item
+    ; on_focus = Focus_first_item
+    ; on_hover_item = Bonsai_web_ui_query_box.On_hover_item.Focus_hovered_item
     ; max_visible_items = 10
     ; input_source = Small_and_static_list_of_fruits
     ; filter_strategy = Fuzzy_search_and_score
@@ -188,7 +188,7 @@ let component graph =
         ~on_focus
         ~on_hover_item
         ~max_visible_items
-        ~selected_item_attr:(Bonsai.return Css.selected_item)
+        ~focused_item_attr:(Bonsai.return Css.selected_item)
         ~extra_list_container_attr:(Bonsai.return Css.list_container)
         ~extra_input_attr:(Bonsai.return (Attr.placeholder "Filter Fruits"))
         ~filter_strategy:Fuzzy_search_and_score
@@ -203,7 +203,7 @@ let component graph =
         ~on_focus
         ~on_hover_item
         ~max_visible_items
-        ~selected_item_attr:(Bonsai.return Css.selected_item)
+        ~focused_item_attr:(Bonsai.return Css.selected_item)
         ~extra_list_container_attr:(Bonsai.return Css.list_container)
         ~extra_input_attr:(Bonsai.return (Attr.placeholder "Filter Fruits"))
         ~filter_strategy:Fuzzy_match

@@ -4,4 +4,4 @@
  (libraries bonsai_web bonsai_web_components.web_ui_gallery
    bonsai_web_ui_notifications core core_kernel.nonempty_list)
  (preprocess
-  (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_jane ppx_demo ppx_typed_fields)))
+  (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_jane ppx_demo)))

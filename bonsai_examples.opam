@@ -17,10 +17,12 @@ depends: [
   "async_kernel"
   "async_rpc_kernel"
   "async_rpc_websocket"
+  "base"
   "bonsai"
   "bonsai_web"
   "core"
   "core_kernel"
+  "ocaml-embed-file"
   "ppx_jane"
   "virtual_dom"
   "cohttp"              {>= "2.5.6"}
@@ -28,7 +30,6 @@ depends: [
   "dune"                {>= "3.11.0"}
   "js_of_ocaml"         {>= "5.1.1" & < "5.7.0"}
   "js_of_ocaml-ppx"     {>= "5.1.1" & < "5.7.0"}
-  "ocaml-embed-file"
   "uri"                 {>= "3.0.0"}
 ]
 available: arch != "arm32" & arch != "x86_32"
