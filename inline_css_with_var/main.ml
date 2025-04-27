@@ -12,7 +12,7 @@ module Style =
         border-radius: var(--radius);
         border: 3px solid black;
       }
-      |}
+    |}
     ~dont_hash:[ "--my-color"; "--radius" ]]
 
 let component =
@@ -35,6 +35,7 @@ let component =
 ;;
 
 let () =
-  Bonsai_web.Start.start (fun (local_ _graph) ->
-    Bonsai.return (Vdom.Node.div [ component ]))
+  Bonsai_web.Start.start
+    (fun (local_ _graph) -> Bonsai.return (Vdom.Node.div [ component ]))
+    ~enable_bonsai_telemetry:Enabled
 ;;

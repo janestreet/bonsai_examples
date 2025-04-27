@@ -44,25 +44,3 @@ let effect_focus_onactivate (local_ graph) =
 (* $MDX part-end *)
 
 let () = Util.run effect_focus_onactivate ~id:"effect_focus_onactivate"
-
-(* $MDX part-begin=autofocus *)
-module Toplayer = Bonsai_web_ui_toplayer
-
-let autofocus (local_ graph) =
-  let { Toplayer.Controls.open_; _ } =
-    Toplayer.Modal.create
-      ~content:(fun ~close:_ _ ->
-        return (Vdom.Node.input ~attrs:[ Vdom.Attr.autofocus true ] ()))
-      graph
-  in
-  let%arr open_ in
-  Vdom.Node.div
-    [ Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> open_) ]
-        [ Vdom.Node.text "open modal" ]
-    ]
-;;
-
-(* $MDX part-end *)
-
-let () = Util.run autofocus ~id:"autofocus"

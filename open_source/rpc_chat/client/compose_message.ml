@@ -36,7 +36,7 @@ let build_result ~send_message ~textbox_content ~set_textbox_content =
 let component ~send_message (local_ graph) =
   let open Bonsai.Let_syntax in
   let textbox_content, set_textbox_content =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: String.t]
       ~equal:[%equal: String.t]

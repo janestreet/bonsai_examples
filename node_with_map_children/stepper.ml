@@ -72,7 +72,7 @@ let component
     { Input.before; after }
   in
   let state, inject =
-    Bonsai.state_machine1
+    Bonsai.state_machine_with_input
       ~sexp_of_model:[%sexp_of: Model.t]
       ~equal:[%equal: Model.t]
       ~sexp_of_action:[%sexp_of: Action.t]
@@ -156,16 +156,16 @@ let component
                 match diff with
                 | Add (k, color) ->
                   [ Vdom.Node.span [ Vdom.Node.textf "add %d" k ]
-                  ; Style.chip color (Vdom.Node.none_deprecated [@alert "-deprecated"])
+                  ; Style.chip color Vdom.Node.none
                   ]
                 | Remove (k, color) ->
                   [ Vdom.Node.span [ Vdom.Node.textf "rem %d" k ]
-                  ; Style.chip color (Vdom.Node.none_deprecated [@alert "-deprecated"])
+                  ; Style.chip color Vdom.Node.none
                   ]
                 | Change (k, before, after) ->
                   [ Vdom.Node.span [ Vdom.Node.textf "chg %d" k ]
-                  ; Style.chip before (Vdom.Node.none_deprecated [@alert "-deprecated"])
-                  ; Style.chip after (Vdom.Node.none_deprecated [@alert "-deprecated"])
+                  ; Style.chip before Vdom.Node.none
+                  ; Style.chip after Vdom.Node.none
                   ]
               in
               let classes = [ Style.diff ] in
@@ -189,7 +189,7 @@ let component
               ]
             []
         ]
-    else Vdom.Node.none_deprecated [@alert "-deprecated"]
+    else Vdom.Node.none
   in
   let view = Vdom.Node.div ~attrs:[ Style.color_list ] [ header; debug; body ] in
   { state = state.cur; is_done; view; step = inject Step; is_automating }

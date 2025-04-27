@@ -2,7 +2,8 @@ open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
 module Form = Bonsai_web_ui_form.With_manual_view
-module Shared = Bonsai_web_ui_partial_render_table_configs_for_testing
+open Bonsai_web_ui_partial_render_table_configs_for_testing
+module Config = All_apis_configs
 module Snips = Bonsai_experimental_snips
 
 module Which_api = struct
@@ -21,22 +22,22 @@ module Which_api = struct
     let which_api = Form.Elements.Dropdown.enumerable (module T) graph in
     let render_cell_kind =
       Form.Elements.Dropdown.enumerable
-        ~init:(`This (return Shared.Config.Render_cell_kind.Stateful_cells))
-        (module Shared.Config.Render_cell_kind)
+        ~init:(`This (return Config.Render_cell_kind.Stateful_cells))
+        (module Config.Render_cell_kind)
         graph
     in
     let new_api_cols =
       Form.Elements.Dropdown.enumerable
-        ~init:(`This (return Shared.Config.New_api_cols.Dynamic))
-        (module Shared.Config.New_api_cols)
+        ~init:(`This (return Config.New_api_cols.Dynamic))
+        (module Config.New_api_cols)
         graph
     in
     let constant_foldable_cols = Form.Elements.Checkbox.bool ~default:false () graph in
     let counters_in_cells = Form.Elements.Checkbox.bool ~default:false () graph in
     let which_dynamic_cols =
       Form.Elements.Dropdown.enumerable
-        ~init:(`This (return Shared.Config.Which_dynamic_cols.No_counters))
-        (module Shared.Config.Which_dynamic_cols)
+        ~init:(`This (return Config.Which_dynamic_cols.No_counters))
+        (module Config.Which_dynamic_cols)
         graph
     in
     let col_groups = Form.Elements.Checkbox.bool ~default:false () graph in
@@ -65,7 +66,7 @@ module Which_api = struct
       let duplicate_col = Form.value_or_default duplicate_col ~default:false in
       match Form.value_or_default which_api ~default:New_api with
       | New_api ->
-        Shared.Config.New_api
+        Config.New_api
           { counters_in_cells
           ; cols = new_api_cols
           ; col_groups
@@ -73,7 +74,7 @@ module Which_api = struct
           ; duplicate_col
           }
       | Old_dynamic_cells ->
-        Shared.Config.Dynamic_cells { counters_in_cells; col_groups; duplicate_col }
+        Config.Dynamic_cells { counters_in_cells; col_groups; duplicate_col }
       | Old_dynamic_cols -> Dynamic_cols { col_groups; which_dynamic_cols; duplicate_col }
       | Old_dynamic_experimental ->
         Dynamic_experimental { counters_in_cells; constant_foldable_cols }
@@ -189,23 +190,27 @@ let component (local_ graph) =
   let params, params_view = Params.form graph in
   let data =
     let%arr { num_rows; _ } = params in
-    Shared.Row.many_random num_rows
+    Symbol_table.Row.many_random num_rows
   in
-  let all_configs = Shared.Config.all in
+  let all_configs = Config.all in
   let match_ =
     let%arr which_api in
-    List.findi_exn all_configs ~f:(fun _ -> Shared.Config.equal which_api) |> fst
+    List.findi_exn all_configs ~f:(fun _ -> Config.equal which_api) |> fst
   in
   let local_ with_ i =
     let config = List.nth_exn all_configs i in
     let rank_range, set_rank_range =
-      Bonsai.state (Incr_map_collate.Collate.Which_range.To 100) graph
+      Bonsai.state (Incr_map_collate.Collate_params.Which_range.To 100) graph
     in
     let%sub { view; inject; range } =
-      Shared.Config.computation
+      Config.computation
         config
-        (let%arr data and rank_range in
-         Shared.Prt_input.create ~rank_range data)
+        (let%arr data and rank_range and params in
+         Sharable.Input.create
+           ~rank_range
+           ~row_height:params.row_height
+           ~resize_column_widths_to_fit:params.autosize
+           data)
         graph
     in
     Bonsai.Edge.on_change
@@ -215,23 +220,27 @@ let component (local_ graph) =
       ~callback:
         (let%map set_rank_range in
          fun (low, high) ->
-           set_rank_range (Incr_map_collate.Collate.Which_range.Between (low, high)))
+           set_rank_range
+             (Incr_map_collate.Collate_params.Which_range.Between (low, high)))
       graph;
     let%arr view and inject and which_api_view and params_view in
     let controls =
       Vdom.Attr.on_keydown (fun kbc ->
         let binding =
           match Js_of_ocaml.Dom_html.Keyboard_code.of_event kbc with
-          | ArrowDown | KeyJ -> Some (inject Shared.Action.Focus_down)
-          | ArrowUp | KeyK -> Some (inject Shared.Action.Focus_up)
-          | ArrowRight | KeyL -> Some (inject Shared.Action.Focus_right)
-          | ArrowLeft | KeyH -> Some (inject Shared.Action.Focus_left)
-          | PageDown -> Some (inject Shared.Action.Page_down)
-          | PageUp -> Some (inject Shared.Action.Page_up)
-          | Escape -> Some (inject Shared.Action.Unfocus)
-          | Home -> Some (inject (Shared.Action.Focus_index_first_column 0))
+          | ArrowDown | KeyJ -> Some (inject Sharable.Navigation_action.Focus_down)
+          | ArrowUp | KeyK -> Some (inject Sharable.Navigation_action.Focus_up)
+          | ArrowRight | KeyL -> Some (inject Sharable.Navigation_action.Focus_right)
+          | ArrowLeft | KeyH -> Some (inject Sharable.Navigation_action.Focus_left)
+          | PageDown -> Some (inject Sharable.Navigation_action.Page_down)
+          | PageUp -> Some (inject Sharable.Navigation_action.Page_up)
+          | Escape -> Some (inject Sharable.Navigation_action.Unfocus)
+          | Home -> Some (inject (Sharable.Navigation_action.Focus_index_first_column 0))
           | End ->
-            Some (inject (Shared.Action.Focus_index_first_column Int.max_value_30_bits))
+            Some
+              (inject
+                 (Sharable.Navigation_action.Focus_index_first_column
+                    Int.max_value_30_bits))
           | _ -> None
         in
         match binding with
@@ -240,9 +249,13 @@ let component (local_ graph) =
     in
     let layout =
       let open Snips.Infix in
-      Snips.top which_api_view |+| Snips.right params_view |+| Snips.body view
+      Snips.top which_api_view
+      |+| Snips.right params_view
+      |+| Snips.body ~attr:{%css|margin-bottom: 10px;|} view
     in
-    Snips.render ~container_attr:controls layout
+    Snips.render
+      ~container_attr:(Vdom.Attr.many [ controls; {%css|margin-left: 10px;|} ])
+      layout
   in
   (* DANGER! Do NOT write this in real app code, use [match%sub] instead.*)
   Bonsai.Let_syntax.Let_syntax.switch
@@ -256,4 +269,6 @@ let () =
   component
   |> View.Theme.set_for_app (Bonsai.return (Kado.theme ~version:Bleeding ()))
   |> Bonsai_web.Start.start
+       ~use_new_experimental_implementation:true
+       ~enable_bonsai_telemetry:Enabled
 ;;

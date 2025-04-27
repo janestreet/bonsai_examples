@@ -45,7 +45,7 @@ module Style =
         background: white;
         left: 400px;
       }
-      |}]
+    |}]
 
 let visible_attr = Bonsai.return Style.visible
 let hidden_attr = Bonsai.return Style.hidden
@@ -82,4 +82,4 @@ let component (local_ graph) =
   Vdom.Node.div [ boxes; debug ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

@@ -26,7 +26,7 @@ module Boxes = struct
         .blue {
           background-color: blue;
         }
-        |}
+      |}
       (* [ppx_css] appends a hash to the end of each classname to allow you to be able
            to re-use classnames in multiple calls to [%css stylesheet] avoiding sadness
            for css identifier collisions like in this example where container is used
@@ -68,7 +68,7 @@ module Themeable = struct
         .container p {
           font-family: sans-serif;
         }
-        |}
+      |}
       (* Sometimes it might be useful to be able to use the same class-name
            defined from another call to [%css stylesheet] which you can do using the
            "~dont_hash" optional flag.*)
@@ -103,16 +103,18 @@ module My_theme =
       .container p {
         font-family: monospace;
       }
-      |}]
+    |}]
 
 let () =
-  Bonsai_web.Start.start (fun (local_ _graph) ->
-    Bonsai.return
-      (Vdom.Node.div
-         [ Vdom.Node.h1 [ Vdom.Node.text "Boxes" ]
-         ; Boxes.component
-         ; Vdom.Node.h1 [ Vdom.Node.text "Themeable Component" ]
-         ; Themeable.component ()
-         ; Themeable.component ~style:(module My_theme) ()
-         ]))
+  Bonsai_web.Start.start
+    (fun (local_ _graph) ->
+      Bonsai.return
+        (Vdom.Node.div
+           [ Vdom.Node.h1 [ Vdom.Node.text "Boxes" ]
+           ; Boxes.component
+           ; Vdom.Node.h1 [ Vdom.Node.text "Themeable Component" ]
+           ; Themeable.component ()
+           ; Themeable.component ~style:(module My_theme) ()
+           ]))
+    ~enable_bonsai_telemetry:Enabled
 ;;

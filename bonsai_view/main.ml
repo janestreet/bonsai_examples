@@ -617,7 +617,7 @@ module Interactive_vbox = struct
           width: 150px;
           height: 150px;
         }
-        |}]
+      |}]
 
   module Axis = struct
     type t =
@@ -1014,5 +1014,5 @@ let component (local_ graph) =
 
 let () =
   Async_js.init ();
-  Bonsai_web.Start.start component
+  Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
 ;;

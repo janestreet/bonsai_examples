@@ -70,7 +70,7 @@ let () = Util.run two_counters_wrong_2 ~id:"two_counters_wrong_2"
 
 let counter_state_machine (local_ graph) : Vdom.Node.t Bonsai.t * int Bonsai.t =
   let count, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       ~default_model:0
       ~apply_action:(fun (_ : _ Bonsai.Apply_action_context.t) model action ->
         match action with
@@ -101,11 +101,11 @@ let () =
     ~id:"counter_state_machine"
 ;;
 
-(* $MDX part-begin=counter_state_machine1 *)
+(* $MDX part-begin=counter_state_machine_with_input *)
 
-let counter_state_machine1 ~(step : int Bonsai.t) (local_ graph) =
+let counter_state_machine_with_input ~(step : int Bonsai.t) (local_ graph) =
   let count, inject =
-    Bonsai.state_machine1
+    Bonsai.state_machine_with_input
       ~default_model:0
       ~apply_action:(fun (_ : _ Bonsai.Apply_action_context.t) input model action ->
         match input with
@@ -139,9 +139,9 @@ let counter_state_machine1 ~(step : int Bonsai.t) (local_ graph) =
 
 (* $MDX part-begin=counter_state_machine_chained *)
 let counter_state_machine_chained (local_ graph) =
-  let counter1, count1 = counter_state_machine1 ~step:(Bonsai.return 1) graph in
-  let counter2, count2 = counter_state_machine1 ~step:count1 graph in
-  let counter3, _ = counter_state_machine1 ~step:count2 graph in
+  let counter1, count1 = counter_state_machine_with_input ~step:(Bonsai.return 1) graph in
+  let counter2, count2 = counter_state_machine_with_input ~step:count1 graph in
+  let counter3, _ = counter_state_machine_with_input ~step:count2 graph in
   let%arr counter1 and counter2 and counter3 in
   Vdom.Node.div [ counter1; counter2; counter3 ]
 ;;
@@ -149,4 +149,4 @@ let counter_state_machine_chained (local_ graph) =
 (* $MDX part-end *)
 
 let () = Util.run counter_state_machine_chained ~id:"counter_state_machine_chained"
-let counter = counter_state_machine1
+let counter = counter_state_machine_with_input

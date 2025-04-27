@@ -20,4 +20,4 @@ let app (local_ graph) =
     ]
 ;;
 
-let () = Bonsai_web.Start.start app
+let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled

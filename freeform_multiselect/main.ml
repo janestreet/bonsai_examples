@@ -10,7 +10,7 @@ let components (local_ graph) =
   let%arr selected, control, (_ : String.Set.t -> unit Ui_effect.t) = control in
   let have_you_selected_something =
     match Set.to_list selected with
-    | [] -> Vdom.Node.none_deprecated [@alert "-deprecated"]
+    | [] -> Vdom.Node.none
     | selected ->
       Vdom.Node.p
         [ Vdom.Node.text ("You've selected: " ^ String.concat ~sep:", " selected) ]
@@ -22,4 +22,4 @@ let components (local_ graph) =
     ]
 ;;
 
-let () = Bonsai_web.Start.start components
+let () = Bonsai_web.Start.start components ~enable_bonsai_telemetry:Enabled

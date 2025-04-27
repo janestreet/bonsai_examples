@@ -46,7 +46,7 @@ let dynamic_cols (local_ graph) =
       ]
   in
   let column_structure, shuffle_column_structure =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       ~default_model:default_column_structure
       ~apply_action:(fun _ctx model () -> List.permute model)
       graph
@@ -85,11 +85,12 @@ let pure_rows (local_ graph) =
       ~content:(fun symbol (local_ _graph) ->
         let%arr symbol in
         {%html|
-            <div>
-              <h3>#{symbol} History</h3>
-              <p>The history is too sensitive to show in this demo.</p>
-            </div>
-          |})
+          <div>
+            <h3>#{symbol} History</h3>
+            <p>The history is too sensitive to show in this demo.</p>
+          </div>
+        |})
+      ~overflow_auto_wrapper:(Bonsai.return false)
       graph
   in
   Table.Render_cell.Pure
@@ -103,16 +104,16 @@ let pure_rows (local_ graph) =
            else Vdom.Attr.empty
          in
          {%html|
-             <div style="display: flex; align-items: center">
-               <button
-                 on_click=%{fun _ -> set_history_open_symbol (Some symbol)}
-                 %{popover_attr}
-                 style="margin: 2px; paddding: 2px 3px"
-               >
-                 See History
-               </button>
-             </div>
-           |}
+           <div style="display: flex; align-items: center">
+             <button
+               on_click=%{fun _ -> set_history_open_symbol (Some symbol)}
+               %{popover_attr}
+               style="margin: 2px; paddding: 2px 3px"
+             >
+               See History
+             </button>
+           </div>
+         |}
        | Row_fields col ->
          let { f = T field } = col in
          let string, float, int =
@@ -136,7 +137,7 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) (local_ graph) =
   let render_cell = pure_rows graph in
   let column_structure, shuffle_button = dynamic_cols graph in
   let columns =
-    Table.Basic.New_columns.build
+    Table.Basic.Columns.build
       (module Col_id)
       ~columns:
         (column_structure
@@ -149,17 +150,17 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) (local_ graph) =
                   | _ -> `Px 50)))
       ~render_cell
       ~render_header:(fun col (local_ _graph) ->
-        let with_icon = Table.Sortable.Header.with_icon in
         match%sub col with
-        | History -> return (with_icon {%html|History|})
+        | History -> return {%html|History|}
         | Row_fields col ->
           let%arr { f = T field } = col in
-          with_icon (Vdom.Node.text (Row.Typed_field.name field)))
+          Vdom.Node.text (Row.Typed_field.name field))
   in
   let table =
     Table.Basic.component
       (module String)
       ?filter
+      ~resize_column_widths_to_fit:(return true)
       ~styling:(This_one (return Bonsai_web_ui_partial_render_table_styling.default))
       ~focus:(By_row { on_change = Bonsai.return (Fn.const Effect.Ignore) })
       ~row_height:(Bonsai.return (`Px 30))
@@ -198,5 +199,5 @@ let () =
   let input = Bonsai.return (Row.many_random 100_000) in
   component input
   |> View.Theme.set_for_app (Bonsai.return (Kado.theme ~style:Light ~version:V1 ()))
-  |> Bonsai_web.Start.start
+  |> Bonsai_web.Start.start ~enable_bonsai_telemetry:Enabled
 ;;

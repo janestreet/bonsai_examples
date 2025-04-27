@@ -14,7 +14,7 @@ module Style =
       .container > div {
         padding: 20px;
       }
-      |}]
+    |}]
 
 let component (local_ graph) =
   let%map.Bonsai big_form = Big_form.component graph
@@ -28,4 +28,4 @@ let component (local_ graph) =
     [ big_form; list_form; form_with_submit; typed_record; file_form; custom_form ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

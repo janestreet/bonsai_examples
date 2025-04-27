@@ -4,8 +4,8 @@ open Bonsai_chat_open_source_common
 
 let message_stream global_state =
   let bus_read = Bus.read_only global_state.Global_state.message_bus in
-  let f _user_state () = Async_bus.pipe1_exn bus_read [%here] |> Deferred.Result.return in
-  Rpc.Pipe_rpc.implement Protocol.Message_stream.t f
+  let f _user_state () = Async_bus.pipe1_exn bus_read |> Deferred.Result.return in
+  Rpc.Pipe_rpc.implement Protocol.Message_stream.t f ~leave_open_on_exception:true
 ;;
 
 let message_request global_state =

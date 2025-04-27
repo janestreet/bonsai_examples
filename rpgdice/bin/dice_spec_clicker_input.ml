@@ -35,7 +35,7 @@ end
 
 let component (local_ graph) =
   let model, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Model.t]
       ~equal:[%equal: Model.t]

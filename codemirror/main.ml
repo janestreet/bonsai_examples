@@ -36,22 +36,34 @@ let y =
 |}
   ;;
 
-  let codemirror_editor ~theme =
+  type keybindings =
+    | Normal
+    | Vim
+    | Emacs
+
+  let codemirror_editor ?name ~(keybindings : keybindings) ~theme =
     let create_extensions state =
       let theme = Codemirror_themes.get state in
-      [ Basic_setup.basic_setup
-      ; Mllike.ocaml
-        |> Stream_parser.Stream_language.define
-        |> Stream_parser.Stream_language.to_language
-        |> Language.extension
-      ; theme
-      ]
+      let extensions =
+        [ Basic_setup.basic_setup
+        ; Codemirror_ocaml.ocaml_stream_parser
+          |> Stream_parser.Stream_language.define
+          |> Stream_parser.Stream_language.to_language
+          |> Language.extension
+        ; theme
+        ]
+      in
+      match keybindings with
+      | Normal -> extensions
+      | Vim -> Codemirror_vim.create () :: extensions
+      | Emacs -> Codemirror_emacs.create () :: extensions
     in
     let create_state extensions =
       State.Editor_state.create (State.Editor_state_config.create ~doc ~extensions ())
     in
     Codemirror.with_dynamic_extensions
-      (module Codemirror_themes)
+      ?name
+      ~sexp_of:[%sexp_of: Codemirror_themes.t]
       ~equal:[%equal: Codemirror_themes.t]
       ~initial_state:(create_state (create_extensions Codemirror_themes.Material_dark))
       ~compute_extensions:(Bonsai.return create_extensions)
@@ -59,9 +71,49 @@ let y =
   ;;
 end
 
+module Ocaml_syntax_highlighting_dynamic_prime = struct
+  let doc =
+    {|open! Core
+
+(* Syntax highlight for ocaml *)
+
+let x = List.map [ 1; 2; 3; 4; 5 ] ~f:(fun x -> x + 1)
+
+      oooo
+
+let y =
+  let z = 3 in
+  let a = 4 in
+  z + a
+;;
+|}
+  ;;
+
+  let codemirror_editor ~with_vim_keybindings ~theme =
+    let extensions =
+      let%arr theme in
+      let theme = Codemirror_themes.get theme in
+      let extensions =
+        [ Basic_setup.basic_setup
+        ; Codemirror_ocaml.ocaml_stream_parser
+          |> Stream_parser.Stream_language.define
+          |> Stream_parser.Stream_language.to_language
+          |> Language.extension
+        ; theme
+        ]
+      in
+      match with_vim_keybindings with
+      | false -> extensions
+      | true -> Codemirror_vim.create () :: extensions
+    in
+    Codemirror.with_dynamic_extensions' ~initial_text:doc ~extensions
+  ;;
+end
+
 module Fsharp_syntax_highlighting = struct
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~extensions:
@@ -76,8 +128,9 @@ module Fsharp_syntax_highlighting = struct
 end
 
 module Sml_syntax_highlighting = struct
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~extensions:
@@ -92,8 +145,9 @@ module Sml_syntax_highlighting = struct
 end
 
 module Markdown_syntax_highlighting = struct
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~extensions:
@@ -103,8 +157,9 @@ module Markdown_syntax_highlighting = struct
 end
 
 module Sql_syntax_highlighting = struct
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~extensions:[ Basic_setup.basic_setup; Lang_sql.sql () |> Language.extension ]
@@ -143,8 +198,9 @@ index 04646a9..9a39cc7 100644
     |}
   ;;
 
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~doc
@@ -172,8 +228,9 @@ module Html_syntax_highlighting = struct
   |}
   ;;
 
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~doc
@@ -196,8 +253,9 @@ html {
 |}
   ;;
 
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~doc
@@ -224,8 +282,9 @@ server.listen(port, hostname, () => {
 });|}
   ;;
 
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~doc
@@ -244,8 +303,9 @@ echo "Hello World!";
 ?>|}
   ;;
 
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~doc
@@ -270,8 +330,9 @@ fn main() {
 }|}
   ;;
 
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~doc
@@ -298,8 +359,9 @@ module Common_lisp_syntax_highlighting = struct
               (format nil "~a~a~a~a" '#:write- (if signed "" '#:u) '#:int bytes))))) |}
   ;;
 
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~doc
@@ -326,8 +388,9 @@ module Scheme_syntax_highlighting = struct
         (loop (- i 1) (cons (* i i) res)))))|}
   ;;
 
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~doc
@@ -348,8 +411,9 @@ module Xml_syntax_highlighting = struct
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"></xs:schema>|}
   ;;
 
-  let codemirror_editor =
+  let codemirror_editor ~name =
     Codemirror.of_initial_state
+      ~name
       (State.Editor_state.create
          (State.Editor_state_config.create
             ~doc
@@ -358,9 +422,12 @@ module Xml_syntax_highlighting = struct
   ;;
 end
 
-module Which_language = struct
+module Which_editor = struct
   type t =
     | Ocaml
+    | Ocaml_dynamic_prime
+    | Ocaml_with_vim_keybindings
+    | Ocaml_with_emacs_keybindings
     | Fsharp
     | Markdown
     | Sml
@@ -380,6 +447,9 @@ module Which_language = struct
     | Fsharp -> "F# syntax highlighting"
     | Markdown -> "Markdown syntax highlighting"
     | Ocaml -> "OCaml syntax highlighting"
+    | Ocaml_dynamic_prime -> "OCaml syntax highlighting with_dynamic_extensions'"
+    | Ocaml_with_vim_keybindings -> "OCaml syntax highlighting with vim keybindings"
+    | Ocaml_with_emacs_keybindings -> "OCaml syntax highlighting with emacs keybindings"
     | Sml -> "SML syntax highlighting"
     | Sql -> "SQL syntax highlighting"
     | Common_lisp -> "Common Lisp syntax highlighting"
@@ -402,8 +472,8 @@ let no_theme_picker x =
 let component (local_ graph) =
   let language_picker =
     Form.Elements.Dropdown.enumerable
-      ~to_string:Which_language.to_string
-      (module Which_language)
+      ~to_string:Which_editor.to_string
+      (module Which_editor)
       graph
   in
   let chosen_language =
@@ -415,13 +485,7 @@ let component (local_ graph) =
        and choosing a codemirror editor instance. For the purposes of this demo, the code
        is optimized for showing off the ease with which people can create different
        codemirror editors, so we do the less-preferred option. *)
-    match%sub chosen_language with
-    | Fsharp ->
-      no_theme_picker (Fsharp_syntax_highlighting.codemirror_editor ~name:"fsharp" graph)
-    | Markdown ->
-      no_theme_picker
-        (Markdown_syntax_highlighting.codemirror_editor ~name:"markdown" graph)
-    | Ocaml ->
+    let ocaml_editor ~keybindings (local_ graph) =
       let theme_picker =
         Form.Elements.Dropdown.enumerable
           ~to_string:Codemirror_themes.to_string
@@ -437,6 +501,38 @@ let component (local_ graph) =
         Ocaml_syntax_highlighting.codemirror_editor
           ~name:"ocaml"
           ~theme:chosen_theme
+          ~keybindings
+          graph
+      in
+      let%arr c and theme_picker in
+      Some theme_picker, c
+    in
+    match%sub chosen_language with
+    | Fsharp ->
+      no_theme_picker (Fsharp_syntax_highlighting.codemirror_editor ~name:"fsharp" graph)
+    | Markdown ->
+      no_theme_picker
+        (Markdown_syntax_highlighting.codemirror_editor ~name:"markdown" graph)
+    | Ocaml -> ocaml_editor ~keybindings:Normal graph
+    | Ocaml_with_vim_keybindings -> ocaml_editor ~keybindings:Vim graph
+    | Ocaml_with_emacs_keybindings -> ocaml_editor ~keybindings:Emacs graph
+    | Ocaml_dynamic_prime ->
+      let theme_picker =
+        Form.Elements.Dropdown.enumerable
+          ~to_string:Codemirror_themes.to_string
+          (module Codemirror_themes)
+          graph
+        |> Bonsai.map ~f:(Form.label "theme")
+      in
+      let chosen_theme =
+        let%arr theme_picker in
+        Form.value theme_picker |> Or_error.ok_exn
+      in
+      let c =
+        Ocaml_syntax_highlighting_dynamic_prime.codemirror_editor
+          ~name:"ocaml_dynamic_prime"
+          ~theme:chosen_theme
+          ~with_vim_keybindings:false
           graph
       in
       let%arr c and theme_picker in
@@ -476,13 +572,10 @@ let component (local_ graph) =
     ; Vdom.Node.div
         ~attrs:[ Vdom.Attr.style (Css_gen.flex_container ~direction:`Row ()) ]
         [ Form.view_as_vdom language_picker
-        ; Option.value_map
-            ~default:(Vdom.Node.none_deprecated [@alert "-deprecated"])
-            ~f:Form.view_as_vdom
-            theme_picker
+        ; Option.value_map ~default:Vdom.Node.none ~f:Form.view_as_vdom theme_picker
         ]
     ; codemirror_view
     ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

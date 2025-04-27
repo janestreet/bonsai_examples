@@ -11,14 +11,14 @@ module Theme = struct
   let styles = function
     | Light ->
       {%css|
-          background-color: black;
-          color: white;
-        |}
+        background-color: black;
+        color: white;
+      |}
     | Dark ->
       {%css|
-          background-color: white;
-          color: black;
-        |}
+        background-color: white;
+        color: black;
+      |}
   ;;
 end
 

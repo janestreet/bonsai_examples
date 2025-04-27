@@ -178,7 +178,7 @@ include
       .button_container {
         display: inline-flex;
       }
-      |}]
+    |}]
 
 let color_class color =
   match color with

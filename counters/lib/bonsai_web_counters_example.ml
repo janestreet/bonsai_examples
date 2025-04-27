@@ -9,7 +9,7 @@ end
 
 let add_counter_component (local_ graph) =
   let state, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Model.t]
       ~equal:[%equal: Model.t]
@@ -41,7 +41,7 @@ end
 
 let single_counter (local_ graph) =
   let state, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Int.t]
       ~equal:[%equal: Int.t]
@@ -88,5 +88,6 @@ let _application_sugar_free (local_ graph) =
       Bonsai.assoc (module Int) map ~f:(fun _key _data -> single_counter) graph
     in
     Bonsai.map2 add_button counters ~f:(fun add_button counters ->
-      Vdom.Node.div [ add_button; Vdom.Node.div (Map.data counters) ])) [@nontail]
+      Vdom.Node.div [ add_button; Vdom.Node.div (Map.data counters) ]))
+  [@nontail]
 ;;

@@ -60,7 +60,7 @@ module Style =
       .disable_child_pointer_events * {
         pointer-events: none;
       }
-      |}]
+    |}]
 
 module Column = struct
   type t =
@@ -178,7 +178,7 @@ let kanban_column ~extra_dnd ~dnd ~items ~column ~title (local_ graph) =
 
 let board ?extra_dnd name (local_ graph) =
   let items, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Kanban_board.t]
       ~equal:[%equal: Kanban_board.t]

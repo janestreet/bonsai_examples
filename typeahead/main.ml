@@ -65,10 +65,10 @@ let components (local_ graph) =
                  not (Pokemon.equal favourite_pokemon pokemon)))
            |> inject_all_options)
       ~to_string:(Bonsai.return Pokemon.to_string)
-      ~placeholder:"Select a pokemon"
+      ~placeholder:(return "Select a pokemon")
       ?handle_unknown_option
       ~all_options:(Bonsai.return Pokemon.all)
-      (module Pokemon)
+      ~sexp_of:Pokemon.sexp_of_t
       ~equal:[%equal: Pokemon.t]
       ~attr_merge_behavior:
         Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
@@ -90,7 +90,7 @@ let components (local_ graph) =
                Set.remove all favourite_pokemon)
            in
            Set.diff all_pokemon not_good_pokemon |> Set.to_list |> inject_all_options)
-      ~placeholder:"Select many pokemon"
+      ~placeholder:(return "Select many pokemon")
       ~all_options
       graph
       ~attr_merge_behavior:
@@ -107,7 +107,7 @@ let components (local_ graph) =
   let typeahead_multi_with_custom_input ~all_options =
     Typeahead.create_multi
       ~to_string:(Bonsai.return Pokemon.to_string)
-      ~placeholder:"Select many pokemon"
+      ~placeholder:(return "Select many pokemon")
       ~handle_unknown_option:
         (Bonsai.return (fun input ->
            (* custom [handle_unknown_option] that does a check on unknown inputs *)
@@ -180,4 +180,4 @@ let components (local_ graph) =
     ]
 ;;
 
-let () = Bonsai_web.Start.start components
+let () = Bonsai_web.Start.start components ~enable_bonsai_telemetry:Enabled

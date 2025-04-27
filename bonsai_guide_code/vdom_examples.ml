@@ -28,15 +28,15 @@ let () = Util.run_vdom bulleted_list ~id:"bulleted_list"
 (* $MDX part-begin=bulleted_list_with_ppx_html *)
 let bulleted_list =
   {%html|
-      <div>
-        <h3>Norwegian Pancakes</h3>
-        <ul>
-          <li>3 eggs</li>
-          <li>2 cups of milk</li>
-          <li>1 cup of flour</li>
-        </ul>
-      </div>
-    |}
+    <div>
+      <h3>Norwegian Pancakes</h3>
+      <ul>
+        <li>3 eggs</li>
+        <li>2 cups of milk</li>
+        <li>1 cup of flour</li>
+      </ul>
+    </div>
+  |}
 ;;
 
 (* $MDX part-end *)
@@ -53,7 +53,7 @@ let () = Util.run_vdom input_placeholder ~id:"input_placeholder"
 
 (* $MDX part-begin=css *)
 let css : Vdom.Node.t =
-  Vdom.Node.span ~attrs:[ [%css {|color: red;|}] ] [ Vdom.Node.text "this text is red" ]
+  Vdom.Node.span ~attrs:[ {%css|color: red;|} ] [ Vdom.Node.text "this text is red" ]
 ;;
 
 (* $MDX part-end *)

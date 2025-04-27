@@ -78,7 +78,7 @@ module Shared_code = struct
           opacity: 50%;
           transform: translate(-120%, 0);
         }
-        |}]
+      |}]
 
   type t =
     { red : string -> Vdom.Node.t
@@ -543,7 +543,7 @@ let component (local_ graph) =
   let%sub theme, theme_picker =
     Gallery.Theme_picker.component ~default:Kado_light ~standalone:false () graph
   in
-  let%sub () =
+  let () =
     Bonsai_extra.exactly_once
       (Bonsai.return
          (Effect.of_sync_fun
@@ -590,10 +590,7 @@ let component (local_ graph) =
           ()
       in
       let body =
-        Gallery.wrap_application
-          ~theme_picker:(Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"]))
-          nodes
-          graph
+        Gallery.wrap_application ~theme_picker:(Bonsai.return Vdom.Node.none) nodes graph
       in
       let%arr theme_picker and attr and body in
       let header =
@@ -607,5 +604,5 @@ let component (local_ graph) =
 
 let () =
   Async_js.init ();
-  Bonsai_web.Start.start component
+  Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
 ;;

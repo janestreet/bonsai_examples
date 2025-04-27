@@ -22,11 +22,11 @@ module Css =
       .notification {
         color: black;
       }
-      |}]
+    |}]
 
 let component (local_ graph) =
   let notifications =
-    Bonsai_web_ui_notifications.component (module Unit) ~equal:[%equal: Unit.t] graph
+    Bonsai_web_ui_notifications.component ~equal:[%equal: Unit.t] graph
   in
   let rendered_notifications =
     Bonsai_web_ui_notifications.render
@@ -149,4 +149,4 @@ let component (local_ graph) =
     ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

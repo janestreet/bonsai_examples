@@ -104,7 +104,7 @@ module Food = struct
   let form_for_variant
     : type a cmp.
       a Typed_variant.t
-      -> (a, cmp) Bonsai.comparator
+      -> (a, cmp) Comparator.Module.t
       -> local_ Bonsai.graph
       -> (a, cmp) Set.t Form.t Bonsai.t
     =

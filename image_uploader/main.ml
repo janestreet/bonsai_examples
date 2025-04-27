@@ -24,7 +24,7 @@ end
 let component (local_ graph) =
   let seqnum = Seqnum.component graph in
   let image_state, inject_image_state =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       ~default_model:Model.default
       ~apply_action:Model.apply_action
       graph
@@ -78,21 +78,21 @@ let component (local_ graph) =
     | `Not_over -> "unset"
   in
   {%html|
-      <div>
-        <div
-          %{upload_attr}
-          style="
-            width: 100px;
-            height: 100px;
-            border: 1px solid black;
-            background: %{background};
-          "
-        >
-          Drop images here
-        </div>
-        %{Vdom.Node.Map_children.div (images)}
+    <div>
+      <div
+        %{upload_attr}
+        style="
+          width: 100px;
+          height: 100px;
+          border: 1px solid black;
+          background: %{background};
+        "
+      >
+        Drop images here
       </div>
-    |}
+      %{Vdom.Node.Map_children.div (images)}
+    </div>
+  |}
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

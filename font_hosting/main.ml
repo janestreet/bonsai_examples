@@ -13,7 +13,7 @@ module Css =
       .firacode {
         font-family: "FiraCode";
       }
-      |}]
+    |}]
 
 let component (local_ _graph) =
   Bonsai.return
@@ -22,4 +22,4 @@ let component (local_ _graph) =
        [ Vdom.Node.text "text with some ligatures -> ==> >>=" ])
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

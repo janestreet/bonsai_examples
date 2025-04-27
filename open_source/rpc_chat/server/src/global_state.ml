@@ -10,7 +10,6 @@ type t =
 let create () =
   let message_bus =
     Bus.create_exn
-      [%here]
       Arity1
       ~on_subscription_after_first_write:Allow
       ~on_callback_raise:(fun error -> print_s [%sexp (error : Error.t)])

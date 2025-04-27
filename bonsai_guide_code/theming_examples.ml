@@ -12,9 +12,9 @@ let flex_container =
   Vdom.Node.div
     ~attrs:
       [ {%css|
-            flex-direction: row;
-            flex-wrap: wrap;
-          |}
+          flex-direction: row;
+          flex-wrap: wrap;
+        |}
       ]
     [ text_a; text_b; text_c ]
 ;;

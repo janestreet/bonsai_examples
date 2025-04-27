@@ -15,7 +15,7 @@ module Style =
       .card-content {
         flex-grow: 1;
       }
-      |}]
+    |}]
 
 module Shared = struct
   type t =

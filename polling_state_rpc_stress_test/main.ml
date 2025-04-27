@@ -28,7 +28,7 @@ let rpc =
 
 let component (local_ graph) =
   let count_and_items, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: int * unit Int.Map.t]
       ~equal:[%equal: int * unit Int.Map.t]
@@ -58,7 +58,7 @@ let component (local_ graph) =
             ~equal_response:[%equal: T.t]
             rpc
             ~where_to_connect:(Custom Connection)
-            ~every:(Time_ns.Span.of_sec 1.0)
+            ~every:(Bonsai.return (Time_ns.Span.of_sec 1.0))
             key
             graph
         in
@@ -117,6 +117,7 @@ let run () =
         | Connection -> connector
         | _ -> Rpc_effect.Connector.test_fallback)
       component
+      ~enable_bonsai_telemetry:Enabled
   in
   Deferred.never ()
 ;;

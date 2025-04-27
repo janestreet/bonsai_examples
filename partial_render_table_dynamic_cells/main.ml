@@ -21,7 +21,7 @@ module Style =
         right: 0px;
         z-index: 9000;
       }
-      |}]
+    |}]
 
 module type S = sig
   type t [@@deriving compare]
@@ -36,10 +36,10 @@ module Column = Table.Columns.Dynamic_cells
 
 let cell_attrs =
   {%css|
-      display: flex;
-      align-items: center;
-      white-space: pre;
-    |}
+    display: flex;
+    align-items: center;
+    white-space: pre;
+  |}
 ;;
 
 let column_helper
@@ -59,9 +59,7 @@ let column_helper
         (Bonsai.return (fun (_, a) (_, b) ->
            M.compare (Field.get field a) (Field.get field b)))
   in
-  let render_header text =
-    Bonsai.return (Column.Sortable.Header.with_icon (Vdom.Node.text text))
-  in
+  let render_header text = Bonsai.return (Vdom.Node.text text) in
   Column.column
     ?visible
     ?resizable
@@ -105,9 +103,7 @@ let special_compare_option how compare_inner a b =
 ;;
 
 let columns ~should_show_position =
-  let render_header text =
-    Bonsai.return (Column.Sortable.Header.with_icon (Vdom.Node.text text))
-  in
+  let render_header text = Bonsai.return (Vdom.Node.text text) in
   Column.lift
     [ column_helper (module String) Row.Fields.symbol
     ; column_helper (module String) Row.Fields.symbol ~should_be_stacked:true
@@ -186,7 +182,9 @@ let generic_table_and_focus_attr
       ?filter
       ~styling
       ~resize_column_widths_to_fit
-      ~multisort_columns_when
+      ~wrap_header:
+        (let%arr multisort_columns_when in
+         Table.Columns.Sortable.Wrap_header.clickable_with_icon ~multisort_columns_when ())
       ~focus
       ~row_height
       ~columns:(columns ~should_show_position)
@@ -309,6 +307,7 @@ module Layout_form = struct
       [ `Shift_click
       | `Ctrl_click
       | `Shift_or_ctrl_click
+      | `Disabled
       ]
     [@@deriving sexp, equal, enumerate, compare]
   end
@@ -317,6 +316,7 @@ module Layout_form = struct
     type t =
       | From_theme
       | Explicit_tomato_header
+      | No_styling
       | Legacy_unsafe_raw_classnames
     [@@deriving sexp, equal, enumerate, compare]
   end
@@ -448,14 +448,31 @@ let component ~theme_picker (local_ graph) =
           ; column_widths
           }
     =
-    let custom_styling =
+    let tomato_styling =
       let theme = View.Theme.current graph in
       let%arr theme in
       View.For_components.Prt.styling theme
-      |> Bonsai_web_ui_partial_render_table_styling.Expert.map ~f:(fun s ->
-        { s with
-          header_cell = Vdom.Attr.combine s.header_cell {%css|background-color: tomato;|}
-        })
+      |> Bonsai_web_ui_partial_render_table_styling.Expert.add_attrs
+           ~header_cell:[ {%css|background-color: tomato;|} ]
+    in
+    let no_styling =
+      return
+        (Bonsai_web_ui_partial_render_table_styling.Expert.lift
+           { table_vars = Vdom.Attr.empty
+           ; table = Vdom.Attr.empty
+           ; header = Vdom.Attr.empty
+           ; header_row = Vdom.Attr.empty
+           ; header_cell = Vdom.Attr.empty
+           ; header_cell_focused = Vdom.Attr.empty
+           ; body = Vdom.Attr.empty
+           ; row = Vdom.Attr.empty
+           ; row_focused = Vdom.Attr.empty
+           ; row_of_focused_cell = Vdom.Attr.empty
+           ; cell = Vdom.Attr.empty
+           ; cell_focused = Vdom.Attr.empty
+           ; autosize_table_cell_wrapper = Vdom.Attr.empty
+           ; autosize_table_cell_wrapper_focused = Vdom.Attr.empty
+           })
     in
     let render ~cell_based_highlighting styling =
       let focus_kind = if cell_based_highlighting then `Cell else `Row in
@@ -464,7 +481,8 @@ let component ~theme_picker (local_ graph) =
         | Layout_form.Styling.Legacy_unsafe_raw_classnames ->
           Prt.Which_styling.Legacy_unsafe_raw_classnames
         | From_theme -> From_theme
-        | Explicit_tomato_header -> This_one custom_styling
+        | Explicit_tomato_header -> This_one tomato_styling
+        | No_styling -> This_one no_styling
       in
       table
         ~multisort_columns_when
@@ -482,11 +500,13 @@ let component ~theme_picker (local_ graph) =
     | false, From_theme -> render ~cell_based_highlighting:false From_theme
     | false, Explicit_tomato_header ->
       render ~cell_based_highlighting:false Explicit_tomato_header
+    | false, No_styling -> render ~cell_based_highlighting:false No_styling
     | true, Legacy_unsafe_raw_classnames ->
       render ~cell_based_highlighting:true Legacy_unsafe_raw_classnames
     | true, From_theme -> render ~cell_based_highlighting:true From_theme
     | true, Explicit_tomato_header ->
       render ~cell_based_highlighting:true Explicit_tomato_header
+    | true, No_styling -> render ~cell_based_highlighting:true No_styling
   in
   let toggle_focus_lock_button =
     let on_click =
@@ -527,4 +547,4 @@ let component_with_theme (local_ graph) =
   View.Theme.set_for_app theme (component ~theme_picker) graph
 ;;
 
-let () = Bonsai_web.Start.start component_with_theme
+let () = Bonsai_web.Start.start component_with_theme ~enable_bonsai_telemetry:Enabled

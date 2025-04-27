@@ -5,7 +5,7 @@ open Bonsai.Let_syntax
 module Time_source_inside_of_apply_action = struct
   let component (local_ graph) =
     let model, inject =
-      Bonsai.state_machine0
+      Bonsai.state_machine
         ~default_model:`Resting
         ~apply_action:(fun ctx model action ->
           let inject = Bonsai.Apply_action_context.inject ctx in
@@ -48,7 +48,7 @@ include
          let () =
            Bonsai.Clock.every
              ~when_to_start_next_effect:`Every_multiple_of_period_blocking
-             (Time_ns.Span.of_sec 1.0)
+             (Bonsai.return (Time_ns.Span.of_sec 1.0))
              (Bonsai.return (Bonsai.Effect.print_s [%message "tick"]))
              graph
          in

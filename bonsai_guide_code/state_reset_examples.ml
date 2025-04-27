@@ -9,11 +9,10 @@ let two_counters (local_ graph) =
   and counter2 = State_examples.counter_ui graph in
   Vdom.Node.div
     ~attrs:
-      [ [%css
-          {|
-            border: 1px solid black;
-            padding: 4px;
-          |}]
+      [ {%css|
+          border: 1px solid black;
+          padding: 4px;
+        |}
       ]
     [ counter1; counter2 ]
 ;;
@@ -44,11 +43,10 @@ let resettable_counters_from_inside (local_ graph) =
       and reset in
       Vdom.Node.div
         ~attrs:
-          [ [%css
-              {|
-                border: 1px solid black;
-                padding: 4px;
-              |}]
+          [ {%css|
+              border: 1px solid black;
+              padding: 4px;
+            |}
           ]
         [ counter1
         ; Vdom.Node.button
@@ -270,7 +268,7 @@ end
 
 let order_manager (exchange : Exchange.t) (local_ graph) =
   let model, inject_action =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       ~default_model:Model.empty
       ~apply_action:
         (fun
@@ -336,7 +334,7 @@ let () = Util.run (reset_ui ~f:(trading_ui exchange)) ~id:"trading_ui_reset"
 let order_manager (exchange : Exchange.t) (local_ graph) =
   (* $MDX part-begin=order_manager_with_reset *)
   let model, inject_action =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       ~default_model:Model.empty
       ~apply_action:
         (fun

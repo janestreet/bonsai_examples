@@ -53,6 +53,7 @@ module Record = struct
     ; username_on_path : string
     ; comment_id_on_path : int
     ; remaining_words_on_path : string list
+    ; from_fragment : string option
     }
   [@@deriving typed_fields, sexp, equal, compare]
 
@@ -68,6 +69,7 @@ module Record = struct
     | Username_on_path -> with_prefix [ "username" ] (from_path string)
     | Comment_id_on_path -> with_prefix [ "id" ] (from_path int)
     | Remaining_words_on_path -> with_prefix [] (from_remaining_path string)
+    | From_fragment -> from_fragment string
   ;;
 
   let form_of_t : local_ Bonsai.graph -> t Form.t Bonsai.t =
@@ -96,6 +98,10 @@ module Record = struct
           | Comment_id_on_path -> int ~allow_updates_when_focused:`Never () graph
           | Remaining_words_on_path ->
             Multiple.list (string ~allow_updates_when_focused:`Never ()) graph
+          | From_fragment ->
+            let form = string ~allow_updates_when_focused:`Never () graph in
+            let%arr form in
+            Form.optional form ~is_some:(fun x -> not (String.equal x "")) ~none:""
         ;;
 
         let label_for_field = `Inferred
@@ -250,7 +256,7 @@ let%expect_test _ =
     │ /unable                                                                                  │
     │ /username/<string>/id/<int>/<multiple<string>>?record.an_int=<int>&record.many_floats=<m │
     │ ultiple<float>>&record.many_locations=<multiple<sexpable>>&record.nested.x=<int>&record. │
-    │ nested.y=<optional<int>>&record.optional_string=<optional<string>>                       │
+    │ nested.y=<optional<int>>&record.optional_string=<optional<string>>#<string>              │
     │ /variant/comments                                                                        │
     │ /variant/post                                                                            │
     └──────────────────────────────────────────────────────────────────────────────────────────┘
@@ -273,7 +279,7 @@ let component ~url_var (local_ graph) =
     let%arr url_value in
     Some url_value
   in
-  let%sub () =
+  let () =
     Form.Dynamic.sync_with
       ~sexp_of_model:[%sexp_of: T.t]
       ~equal:[%equal: T.t]

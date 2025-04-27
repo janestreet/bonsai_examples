@@ -13,6 +13,8 @@ let%expect_test "drag between containers" =
   Handle.show handle;
   [%expect
     {|
+    adding window event listener
+    adding window event listener
     <div data-dnd-name="board" class="kanban_container_hash_replaced_in_test" dnd-test-hook=<fun>>
       <div data-drag-targetbonsai_path_replaced_in_test="Todo"
            class="kanban_column_hash_replaced_in_test kanban_column_todo_hash_replaced_in_test"
@@ -60,8 +62,6 @@ let%expect_test "drag between containers" =
         </div>
       </div>
     </div>
-    adding window event listener
-    adding window event listener
     |}];
   run handle (Start_drag "0");
   run handle (Set_target (Some "finished"));

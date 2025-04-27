@@ -4,91 +4,6 @@ open Bonsai.Let_syntax
 module Form = Bonsai_web_ui_form.With_automatic_view
 
 module Config = struct
-  module Virtual = struct
-    type t =
-      { x : int
-      ; y : int
-      ; width : int
-      ; height : int
-      }
-    [@@deriving typed_fields]
-
-    let form_for_field
-      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
-      =
-      fun typed_field (local_ graph) ->
-      match typed_field with
-      | X ->
-        Form.Elements.Number.int
-          ~default:50
-          ~step:25
-          ~min:0
-          ~allow_updates_when_focused:`Always
-          ()
-          graph
-      | Y ->
-        Form.Elements.Number.int
-          ~default:100
-          ~step:25
-          ~min:0
-          ~allow_updates_when_focused:`Always
-          ()
-          graph
-      | Width ->
-        Form.Elements.Number.int
-          ~default:10
-          ~step:10
-          ~min:0
-          ~allow_updates_when_focused:`Always
-          ()
-          graph
-      | Height ->
-        Form.Elements.Number.int
-          ~default:10
-          ~step:10
-          ~min:0
-          ~allow_updates_when_focused:`Always
-          ()
-          graph
-    ;;
-
-    let label_for_field = `Inferred
-  end
-
-  let virtual_form = Form.Typed.Record.make (module Virtual)
-
-  module Anchor = struct
-    type t =
-      | Dom of int
-      | Virtual of Virtual.t
-    [@@deriving typed_variants]
-
-    let form_for_variant
-      : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
-      =
-      fun typed_field (local_ graph) ->
-      match typed_field with
-      | Dom ->
-        Form.Elements.Number.int
-          ~default:0
-          ~step:1
-          ~allow_updates_when_focused:`Always
-          ()
-          graph
-      | Virtual -> virtual_form graph
-    ;;
-
-    let variant_to_string : type a. a Typed_variant.t -> string = function
-      | Dom -> "DOM (px per shift)"
-      | Virtual -> "Virtual"
-    ;;
-
-    let label_for_variant = `Computed variant_to_string
-    let initial_choice = `First_constructor
-  end
-
-  let anchor_form = Form.Typed.Variant.make (module Anchor)
-
   module Offset = struct
     type t =
       { main_axis : float
@@ -170,7 +85,7 @@ module Config = struct
 
   module Full = struct
     type t =
-      { anchor_type : Anchor.t
+      { px_per_shift : int
       ; popovers : One_popover.t list
       }
     [@@deriving typed_fields]
@@ -181,7 +96,13 @@ module Config = struct
       fun typed_field (local_ graph) ->
       match typed_field with
       | Popovers -> popovers_form graph
-      | Anchor_type -> anchor_form graph
+      | Px_per_shift ->
+        Form.Elements.Number.int
+          ~default:0
+          ~step:1
+          ~allow_updates_when_focused:`Always
+          ()
+          graph
     ;;
 
     let label_for_field = `Inferred
@@ -200,7 +121,7 @@ let get_viewport_dimensions () =
 
 let with_dom_anchor shift popovers (local_ graph) =
   let anchor_pos, move =
-    Bonsai.state_machine1
+    Bonsai.state_machine_with_input
       ~default_model:(0, 0)
       ~apply_action:(fun _ input (x, y) () ->
         let shift =
@@ -216,7 +137,7 @@ let with_dom_anchor shift popovers (local_ graph) =
   let () =
     Bonsai.Clock.every
       ~when_to_start_next_effect:`Every_multiple_of_period_non_blocking
-      (Time_ns.Span.of_int_ms interval_ms)
+      (Bonsai.return (Time_ns.Span.of_int_ms interval_ms))
       (let%map move in
        move ())
       graph
@@ -233,6 +154,7 @@ let with_dom_anchor shift popovers (local_ graph) =
           ~alignment
           ~offset
           ?match_anchor_side_length:match_anchor_side
+          ~overflow_auto_wrapper:false
           (Vdom.Node.div [ Vdom.Node.text [%string "Popover %{i#Int}!"] ]))
   in
   Vdom.Node.div
@@ -255,45 +177,6 @@ let with_dom_anchor shift popovers (local_ graph) =
     ]
 ;;
 
-let with_virtual_anchor coords popovers =
-  let%map { Config.Virtual.x; y; width; height } = coords
-  and popovers in
-  let popover_nodes =
-    List.mapi
-      popovers
-      ~f:(fun i { Config.One_popover.position; alignment; offset; match_anchor_side } ->
-        Vdom_toplayer.For_use_in_portals.popover_custom
-          ~popover_attrs:[ [%css {|border: 1px solid red;|}] ]
-          ~position
-          ~alignment
-          ~offset
-          ?match_anchor_side_length:match_anchor_side
-          ~popover_content:
-            (Vdom.Node.div [ Vdom.Node.text [%string "Virtual Popover %{i#Int}!"] ])
-          (Floating_positioning_new.Anchor.of_bounding_box
-             ~top:(Float.of_int y)
-             ~left:(Float.of_int x)
-             ~bottom:(Float.of_int (y + height))
-             ~right:(Float.of_int (x + width))))
-  in
-  Vdom.Node.div
-    ([ Vdom.Node.div
-         ~attrs:
-           [ [%css
-               {|
-                 position: fixed;
-                 left: %{(`Px x)#Css_gen.Length};
-                 top: %{(`Px y)#Css_gen.Length};
-                 width: %{(`Px width)#Css_gen.Length};
-                 height: %{(`Px height)#Css_gen.Length};
-               |}]
-           ; [%css {|border: 2px dotted green;|}]
-           ]
-         []
-     ]
-     @ popover_nodes)
-;;
-
 let component (local_ graph) =
   let form = Config.form graph in
   let body =
@@ -301,8 +184,7 @@ let component (local_ graph) =
     | Error e ->
       let%map e in
       View.text (Error.to_string_hum e)
-    | Ok { anchor_type = Dom shift; popovers } -> with_dom_anchor shift popovers graph
-    | Ok { anchor_type = Virtual coords; popovers } -> with_virtual_anchor coords popovers
+    | Ok { px_per_shift = shift; popovers } -> with_dom_anchor shift popovers graph
   in
   let%map form and body in
   let form_div =
@@ -321,7 +203,7 @@ let component (local_ graph) =
     ~attrs:
       [ [%css
           {|
-            &* {
+            & * {
               box-sizing: border-box;
             }
           |}]
@@ -329,4 +211,4 @@ let component (local_ graph) =
     [ form_div; body ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

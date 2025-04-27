@@ -74,5 +74,5 @@ include
         height: 200px;
         border: 2px solid red;
       }
-      |}
+    |}
     ~dont_hash:[ "--js-form-unfocused-color" ]]

@@ -27,7 +27,7 @@ module S =
       .transition_transform {
         transition: transform 0.3s, opacity 0.1s, background-color 0.3s;
       }
-      |}]
+    |}]
 
 let item ~index:_ ~source _which _data (local_ graph) =
   let text, set_text = Bonsai.state_opt ~equal:[%equal: string] graph in
@@ -48,7 +48,7 @@ let item ~index:_ ~source _which _data (local_ graph) =
 
 let component (local_ graph) =
   let input, extend_input =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Int.Set.t]
       ~equal:[%equal: Int.Set.t]
@@ -61,7 +61,7 @@ let component (local_ graph) =
     Bonsai.Clock.every
       ~when_to_start_next_effect:`Every_multiple_of_period_blocking
       ~trigger_on_activate:true
-      (Time_ns.Span.of_sec 1.0)
+      (Bonsai.return (Time_ns.Span.of_sec 1.0))
       (let%map extend_input in
        extend_input ())
       graph
@@ -108,4 +108,4 @@ let component (local_ graph) =
     [ Form.view_as_vdom num_lists; View.hbox (Map.data lists); dragged_element ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

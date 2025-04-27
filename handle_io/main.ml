@@ -12,4 +12,4 @@ let component (local_ _graph) =
        [ Vdom.Node.text "click me to print a thing to the console" ])
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

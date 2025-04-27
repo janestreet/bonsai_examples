@@ -9,7 +9,7 @@ type t =
 
 let component (local_ graph) =
   let attr, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: opaque]
       ~equal:phys_equal

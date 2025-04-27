@@ -1,22 +1,23 @@
 input.invalid {
-    border: 1px solid red;
+  border: 1px solid red;
 }
 
 pre.invalid {
-    color: red;
+  color: red;
 }
 
-#input, #roller {
-    border: 1px solid black;
-    padding: 10px;
-    margin: 10px;
-    width: fit-content;
+#input,
+#roller {
+  border: 1px solid black;
+  padding: 10px;
+  margin: 10px;
+  width: fit-content;
 }
 
 #input select {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 #input button {
-    margin: 2px;
+  margin: 2px;
 }

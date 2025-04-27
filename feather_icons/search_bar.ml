@@ -8,7 +8,7 @@ module Search_container =
       .class_ {
         position: relative;
       }
-      |}]
+    |}]
 
 module Search_icon =
   [%css
@@ -19,7 +19,7 @@ module Search_icon =
         left: 16px;
         top: 8px;
       }
-      |}]
+    |}]
 
 module Search_bar =
   [%css
@@ -31,7 +31,7 @@ module Search_bar =
         font-size: 16px;
         text-indent: 40px;
       }
-      |}]
+    |}]
 
 let component (local_ graph) =
   let search_bar =

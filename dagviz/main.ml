@@ -110,7 +110,7 @@ module Styles =
       .cursor {
         cursor: pointer;
       }
-      |}]
+    |}]
 
 module Status = struct
   type t =
@@ -465,4 +465,4 @@ let component (local_ graph) =
     ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

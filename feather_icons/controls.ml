@@ -22,7 +22,7 @@ module Range =
         background-color: #d1d5da;
         width: 100%;
       }
-      |}]
+    |}]
 
 let size_slider =
   Form.Elements.Range.int
@@ -55,7 +55,7 @@ module Color_input =
         height: 3em;
         width: 100%;
       }
-      |}]
+    |}]
 
 let display_none = Vdom.Attr.style (Css_gen.display `None)
 
@@ -99,7 +99,7 @@ module Style =
         flex: 0 0 200px;
         gap: 16px;
       }
-      |}]
+    |}]
 
 module Fill = struct
   type t =
@@ -116,7 +116,7 @@ module Fill = struct
           display: flex;
           justify-content: space-between;
         }
-        |}]
+      |}]
 
   let component : local_ Bonsai.graph -> t Bonsai.t =
     (* Equal to --js-primary-color *)

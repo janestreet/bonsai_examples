@@ -60,5 +60,5 @@ let () =
   Async_js.init ();
   main
   |> View.Theme.set_for_app (Bonsai.return (Kado.theme ~version:Bleeding ()))
-  |> Bonsai_web.Start.start
+  |> Bonsai_web.Start.start ~enable_bonsai_telemetry:Enabled
 ;;

@@ -33,6 +33,7 @@ module Css =
 
       .row {
         display: flex;
+        flex-wrap: wrap;
         flex-direction: row;
         align-items: center;
         align-content: center;
@@ -48,7 +49,7 @@ module Css =
       :root {
         box-sizing: border-box;
       }
-      |}]
+    |}]
 
 let paper = Css.paper
 let column = Css.column
@@ -75,7 +76,8 @@ let colors =
 
 module Random_time_span = struct
   type t =
-    { base_duration : Time_ns.Span.t
+    { interval : Time_ns.Span.t
+    ; base_duration : Time_ns.Span.t
     ; extra_duration : Time_ns.Span.t
     ; chance_of_getting_extra_duration : float
     }
@@ -83,6 +85,7 @@ module Random_time_span = struct
 
   let default_base_duration = 0.5
   let default_extra_duration = 1.0
+  let default_interval_duration = 1.0
   let default_chance_of_getting_extra_duration = 0.5
 
   let form (local_ graph) =
@@ -111,6 +114,7 @@ module Random_time_span = struct
           fun typed_field (local_ graph) ->
           match typed_field with
           | Base_duration -> time_span_form ~max:1.0 ~default:default_base_duration graph
+          | Interval -> time_span_form ~max:1.0 ~default:default_base_duration graph
           | Extra_duration ->
             time_span_form ~max:2.0 ~default:default_extra_duration graph
           | Chance_of_getting_extra_duration ->
@@ -132,6 +136,7 @@ module Random_time_span = struct
   let default =
     { base_duration = Time_ns.Span.of_sec default_base_duration
     ; extra_duration = Time_ns.Span.of_sec default_extra_duration
+    ; interval = Time_ns.Span.of_sec default_interval_duration
     ; chance_of_getting_extra_duration = default_chance_of_getting_extra_duration
     }
   ;;
@@ -363,7 +368,7 @@ let clock
   =
   let next_bar_id = Bar_id.component graph in
   let state, update_tracks =
-    Bonsai.state_machine1
+    Bonsai.state_machine_with_input
       ~sexp_of_model:[%sexp_of: Tracks.t]
       ~equal:[%equal: Tracks.t]
       ~sexp_of_action:[%sexp_of: Tracks_action.t]
@@ -397,11 +402,12 @@ let clock
     let%bind () = Effect.of_deferred_fun Async_kernel.Clock_ns.after wait_time in
     update_tracks (Finish_bar bar_id)
   in
+  let interval = wait_time >>| fun { Random_time_span.interval; _ } -> interval in
   let () =
     Bonsai.Clock.every
       ~trigger_on_activate
       ~when_to_start_next_effect
-      (Time_ns.Span.of_sec 1.0)
+      interval
       clock_action
       graph
   in
@@ -487,4 +493,4 @@ let component (local_ graph) =
     ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

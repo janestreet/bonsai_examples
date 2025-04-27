@@ -78,7 +78,7 @@ module Style = struct
           border: 1px solid #5555fe;
           outline: none;
         }
-        |}]
+      |}]
 end
 
 module Temporary_toggle = struct
@@ -202,4 +202,4 @@ let app (local_ graph) =
   Vdom.Node.div ~attrs:[ Style.main ] [ search; grid ]
 ;;
 
-let () = Bonsai_web.Start.start app
+let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled
