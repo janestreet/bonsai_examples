@@ -32,7 +32,7 @@ module Ids = struct
 
   let component graph =
     let state, inject =
-      Bonsai.state_machine0
+      Bonsai.state_machine
         graph
         ~sexp_of_model:[%sexp_of: State.t]
         ~equal:[%equal: State.t]
@@ -65,4 +65,4 @@ let component graph =
     graph
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

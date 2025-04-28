@@ -84,9 +84,8 @@ let component graph =
       (Autogen.form (module Parameters) graph ~allow_updates_when_focused:`Never)
       graph
   in
-  let%sub () =
+  let () =
     Bonsai_extra.mirror
-      ()
       ~sexp_of_model:[%sexp_of: Parameters.t]
       ~equal:[%equal: Parameters.t]
       ~store_set:(Bonsai.return (Persistent_var.effect form_store))

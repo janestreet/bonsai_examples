@@ -12,7 +12,7 @@ module Css =
         flex-direction: row;
         flex-wrap: wrap;
       }
-      |}]
+    |}]
 
 let c s = s
 let examples_column = c Css.examples_column
@@ -23,4 +23,4 @@ let component graph =
   Vdom.Node.div [ Vdom.Node.div ~attrs:[ examples_column ] examples ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

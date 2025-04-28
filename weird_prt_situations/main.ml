@@ -7,7 +7,7 @@ module Table = Bonsai_web_ui_partial_render_table.Basic
 module Column = Table.Columns.Dynamic_cells
 module Form = Bonsai_web_ui_form.With_automatic_view
 
-let header text = Column.Sortable.Header.with_icon (Vdom.Node.text text) |> Bonsai.return
+let header text = Vdom.Node.text text |> Bonsai.return
 
 let columns =
   Column.lift
@@ -34,7 +34,7 @@ module Css =
         height: 75vh;
         overflow: auto;
       }
-      |}]
+    |}]
 
 module Which = struct
   type t =
@@ -139,4 +139,4 @@ let component graph =
   Vdom.Node.div ~attrs:[ attr ] [ Form.view_as_vdom which_form; tables ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

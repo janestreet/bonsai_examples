@@ -38,11 +38,7 @@ open Bonsai_web_test_async
 let%expect_test "Allowing the async effect of the previous test to run." =
   let handle = Handle.create (Result_spec.vdom Fn.id) double_number_app in
   let%bind () = Handle.flush_async_and_bonsai handle in
-  [%expect
-    {|
-    (Failure "BUG: no bonsai-rpc handler installed")
-    ------ between bonsai frame ------
-    |}];
+  [%expect {| (Failure "BUG: no bonsai-rpc handler installed") |}];
   return ()
 ;;
 
@@ -94,7 +90,6 @@ let%expect_test "Clicking the button should double the number" =
   Handle.show handle;
   [%expect
     {|
-    ------ between bonsai frame ------
     <div>
       <div> The number is: 2 </div>
       <button @on_click> Double the number </button>

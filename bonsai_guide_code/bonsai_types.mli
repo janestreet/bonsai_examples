@@ -10,15 +10,15 @@ module Url_var := Bonsai_web_ui_url_var
 (* $MDX part-begin=assoc *)
 val assoc
   :  ?here:Stdlib.Lexing.position
-  -> ('k, 'cmp) Bonsai.comparator
+  -> ('k, 'cmp) Comparator.Module.t
   -> ('k, 'v, 'cmp) Map.t Bonsai.t
   -> f:('k Bonsai.t -> 'v Bonsai.t -> Bonsai.graph -> 'result Bonsai.t)
   -> Bonsai.graph
   -> ('k, 'result, 'cmp) Map.t Bonsai.t
 (* $MDX part-end *)
 
-(* $MDX part-begin=state_machine0 *)
-val state_machine0
+(* $MDX part-begin=state_machine *)
+val state_machine
   :  default_model:'model
   -> apply_action:
        (('action, unit) Bonsai.Apply_action_context.t -> 'model -> 'action -> 'model)
@@ -80,24 +80,6 @@ module Url_var : sig
 end
 
 (* $MDX part-begin=mirror *)
-
-(** [mirror] is used to reflect state back and forth between locations.
-    Frequently this will be used to back up a components model in a more
-    persistent form of storage, such as the URL, or local-storage.
-
-    The gist of this combinator is that if you have two states that you'd
-    like to be synchronized, you can feed the "current value" and "set
-    value" functions for both states into [mirror] and they'll
-    automatically be kept up to date. Either of these can be backed by any
-    kind of structure, but there are some important differences in their
-    symmetry.
-
-    When the component is first loaded, [store] has priority, so if the
-    values are different, [store] wins, and [interactive] has its value
-    "set". From that point on, if either incoming value changes, the
-    opposite setter is called. In the case that both [store] and
-    [interactive] change at the same time, the tie is broken in favor of
-    [interactive], and [store_set] is called. *)
 val mirror
   :  ?sexp_of_model:('m -> Sexp.t)
   -> equal:('m -> 'm -> bool)
@@ -105,7 +87,25 @@ val mirror
   -> store_value:'m Bonsai.t
   -> interactive_set:('m -> unit Effect.t) Bonsai.t
   -> interactive_value:'m Bonsai.t
-  -> unit
   -> Bonsai.graph
-  -> unit Bonsai.t
+  -> unit
+(* $MDX part-end *)
+
+(* $MDX part-begin=apply_action_context *)
+module Apply_action_context : sig
+  (** A value with the type [('action, 'response) Apply_action_context.t] is provided to
+      all state-machine's [apply_action] functions. It can be used to do a variety of
+      things that are only legal inside of [apply_action]:
+      1. Access the application time source directly. This is most likely useful to read
+         the current time or sleep for some time span
+      2. "inject" a value corresponding to the state-machine's action type into an effect
+         that can be scheduled.
+      3. Directly schedule effects. *)
+
+  type ('action, 'response) t
+
+  val inject : ('action, 'response) t -> 'action -> 'response Effect.t
+  val schedule_event : _ t -> unit Effect.t -> unit
+  val time_source : _ t -> Bonsai.Time_source.t
+end
 (* $MDX part-end *)

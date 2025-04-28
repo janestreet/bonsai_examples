@@ -106,8 +106,8 @@ module _ = struct
   (* $MDX part-begin=variant_columns *)
   module Table = Bonsai_web_ui_partial_render_table.Basic
 
-  let columns : (Symbol.t, Row.t, Col_id.t) Table.New_columns.t =
-    Table.New_columns.build
+  let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
+    Table.Columns.build
       (module Col_id)
       ~columns:structure
       ~render_cell:
@@ -121,15 +121,11 @@ module _ = struct
                | Num_owned -> Vdom.Node.text (string_of_int num_owned)
                | Last_updated -> Vdom.Node.text (Time_ns.to_string last_updated)))
       ~render_header:(fun col _graph ->
-        let%arr col in
-        let name =
-          match col with
-          | Symbol -> Vdom.Node.text "Symbol"
-          | Price -> Vdom.Node.text "Price"
-          | Num_owned -> Vdom.Node.text "Num_owned"
-          | Last_updated -> Vdom.Node.text "Last Updated"
-        in
-        Table.New_columns.Sortable.Header.with_icon name)
+        match%arr col with
+        | Symbol -> Vdom.Node.text "Symbol"
+        | Price -> Vdom.Node.text "Price"
+        | Num_owned -> Vdom.Node.text "Num_owned"
+        | Last_updated -> Vdom.Node.text "Last Updated")
   ;;
 
   (* $MDX part-end *)
@@ -179,7 +175,7 @@ module _ = struct
   (* $MDX part-end *)
 
   let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
-    Table.New_columns.build
+    Table.Columns.build
       (module Col_id)
       ~sorts
       ~columns:structure
@@ -192,15 +188,11 @@ module _ = struct
               | Num_owned -> Vdom.Node.text (string_of_int num_owned)
               | Last_updated -> Vdom.Node.text (Time_ns.to_string last_updated))))
       ~render_header:(fun col _graph ->
-        let%arr col in
-        let name =
-          match col with
-          | Symbol -> Vdom.Node.text "Symbol"
-          | Price -> Vdom.Node.text "Price"
-          | Num_owned -> Vdom.Node.text "Num_owned"
-          | Last_updated -> Vdom.Node.text "Last Updated"
-        in
-        Table.Columns.Dynamic_columns.Sortable.Header.with_icon name)
+        match%arr col with
+        | Symbol -> Vdom.Node.text "Symbol"
+        | Price -> Vdom.Node.text "Price"
+        | Num_owned -> Vdom.Node.text "Num_owned"
+        | Last_updated -> Vdom.Node.text "Last Updated")
   ;;
 
   let component graph ~data =
@@ -267,8 +259,9 @@ module _ = struct
             match binding with
             | Some b -> Effect.Many [ Effect.Prevent_default; b ]
             | None -> Effect.Ignore)
-          (* Allows browser focus to be set on the table. *)
-        ; Vdom.Attr.tabindex 0 (* Unsets default browser styling for focused elements. *)
+          (* [tabindex=0] allows browser focus to be set on the table.
+             We then remove the default focus ring with [outline: none] css. *)
+        ; Vdom.Attr.tabindex 0
         ; {%css|outline: none;|}
         ]
       [ view ]
@@ -289,26 +282,34 @@ module _ = struct
         ~styling:
           (This_one
              (Bonsai.return
-                (Bonsai_web_ui_partial_render_table_styling.create
-                   { colors =
-                       { page_bg = `Hex "#f0f4f8"
-                       ; page_fg = `Hex "#333333"
-                       ; header_bg = `Hex "#2c3e50"
-                       ; header_fg = `Hex "#ecf0f1"
-                       ; row_even_bg = `Hex "#ffffff"
-                       ; row_even_fg = `Hex "#333333"
-                       ; row_odd_bg = `Hex "#e8eef2"
-                       ; row_odd_fg = `Hex "#333333"
-                       ; cell_focused_bg = `Hex "#3498db"
-                       ; cell_focused_fg = `Hex "#ffffff"
-                       ; row_focused_bg = `Hex "#d6eaf8"
-                       ; row_focused_fg = `Hex "#2980b9"
-                       ; row_focused_border = `Hex "#2980b9"
-                       ; header_header_border = `Hex "#34495e"
-                       ; body_body_border = `Hex "#bdc3c7"
-                       ; header_body_border = `Hex "#7f8c8d"
-                       }
-                   })))
+                Bonsai_web_ui_partial_render_table_styling.(
+                  create
+                    { colors =
+                        { page_bg = `Hex "#f0f4f8"
+                        ; page_fg = `Hex "#333333"
+                        ; header_bg = `Hex "#2c3e50"
+                        ; header_fg = `Hex "#ecf0f1"
+                        ; header_cell_focused_bg = `Hex "#2c3e50"
+                        ; header_cell_focused_fg = `Hex "#2980b9"
+                        ; row_even_bg = `Hex "#ffffff"
+                        ; row_even_fg = `Hex "#333333"
+                        ; row_odd_bg = `Hex "#e8eef2"
+                        ; row_odd_fg = `Hex "#333333"
+                        ; cell_focused_bg = `Hex "#3498db"
+                        ; cell_focused_fg = `Hex "#ffffff"
+                        ; cell_focused_outline = Some (`Hex "#2980b9")
+                        ; row_focused_bg = `Hex "#d6eaf8"
+                        ; row_focused_fg = `Hex "#2980b9"
+                        ; row_focused_border = `Hex "#2980b9"
+                        ; row_of_focused_cell_fg = None
+                        ; row_of_focused_cell_bg = None
+                        ; header_header_border = `Hex "#34495e"
+                        ; body_body_border = `Hex "#bdc3c7"
+                        ; header_body_border = `Hex "#7f8c8d"
+                        }
+                    ; lengths = Params.Lengths.default
+                    ; fonts = Params.Fonts.default
+                    })))
         ~focus:
           (Table.Focus.By_cell
              { on_change =
@@ -412,8 +413,8 @@ module _ = struct
   (* $MDX part-begin=typed_fields_columns *)
   module Table = Bonsai_web_ui_partial_render_table.Basic
 
-  let columns : (Symbol.t, Row.t, Col_id.t) Table.New_columns.t =
-    Table.New_columns.build
+  let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
+    Table.Columns.build
       (module Col_id)
       ~sorts
       ~columns:structure
@@ -428,8 +429,7 @@ module _ = struct
               | Last_updated -> Vdom.Node.text (Time_ns.to_string value))))
       ~render_header:(fun col _graph ->
         let%arr { f = T field } = col in
-        Table.Columns.Dynamic_columns.Sortable.Header.with_icon
-          (Vdom.Node.text (Row.Typed_field.name field)))
+        Vdom.Node.text (Row.Typed_field.name field))
   ;;
 
   (* $MDX part-end *)
@@ -438,6 +438,16 @@ module _ = struct
 end
 
 module _ = struct
+  module Query = struct
+    type t =
+      { filter_params : unit
+      ; sort_order : Row.Typed_field.Packed.t Bonsai_web_ui_partial_render_table.Order.t
+      ; visible_range : int * int
+      }
+  end
+
+  let fetch_data_polling_rpc _query = return Incr_map_collate.Collated.empty
+
   (* $MDX part-begin=server_side_columns *)
   module Table = Bonsai_web_ui_partial_render_table.Expert
 
@@ -448,13 +458,13 @@ module _ = struct
 
   module Structure = Bonsai_web_ui_partial_render_table.Column_structure
 
-  let component graph ~data =
+  let component graph =
     (* We need to create the sortable state outside of the table. *)
     let sortable_state =
-      Table.New_columns.Sortable.state ~equal:[%equal: Col_id.t] () graph
+      Table.Columns.Sortable.state ~equal:[%equal: Col_id.t] () graph
     in
-    let columns : (Symbol.t, Row.t, Col_id.t) Table.New_columns.t =
-      Table.New_columns.build
+    let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
+      Table.Columns.build
         (module Col_id)
         ~columns:(Structure.flat Col_id.all)
         ~render_cell:
@@ -469,16 +479,46 @@ module _ = struct
         ~render_header:(fun col _graph ->
           let%arr ({ f = T field } as col) = col
           and sortable_state in
-          Table.New_columns.Sortable.Header.Expert.default_click_handler
+          Table.Columns.Sortable.Header.Expert.default_click_handler
             ~sortable:true
             ~column_id:col
             sortable_state
-            (Table.New_columns.Sortable.Header.with_icon
+            (Table.Columns.Sortable.Header.with_icon
                (Vdom.Node.text (Row.Typed_field.name field))))
     in
     (* $MDX part-end *)
-    ignore data;
-    ignore columns
+    ignore columns;
+    let focus = Table.Focus.None in
+    let filter_params = return () in
+    (* $MDX part-begin=server_side_query *)
+    let copied_range, set_copied_range = Bonsai.state (0, 0) graph in
+    let query =
+      let%arr copied_range and sortable_state and filter_params in
+      { Query.filter_params
+      ; sort_order = Table.Columns.Sortable.order sortable_state
+      ; visible_range = copied_range
+      }
+    in
+    (* In practice, this would probably need some kind of error handling.*)
+    let data = fetch_data_polling_rpc query in
+    let table =
+      Table.component
+        (module Symbol)
+        ~focus
+        ~row_height:(Bonsai.return (`Px 30))
+        ~columns
+        data
+        graph
+    in
+    let%sub { range = table_range; _ } = table in
+    Bonsai.Edge.on_change
+      ~equal:[%equal: int * int]
+      table_range
+      ~callback:
+        (let%arr set_copied_range in
+         fun table_range -> set_copied_range table_range)
+      graph (* $MDX part-end *);
+    ignore query
   ;;
 
   let () = ignore component

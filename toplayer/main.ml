@@ -4,8 +4,6 @@ open! Bonsai.Let_syntax
 module Gallery = Bonsai_web_ui_gallery
 module Toplayer = Bonsai_web_ui_toplayer
 
-let () = Vdom_toplayer.For_debugging_frame_delay.mark_events := true
-
 module Vdom_popover = struct
   let name = "Popover"
 
@@ -27,6 +25,7 @@ module Vdom_popover = struct
             ~position
             ~alignment
             ~offset:{ main_axis = 6.; cross_axis = 0. }
+            ~overflow_auto_wrapper:false
             (Vdom.Node.div [ View.text "Hi, I am a popover" ])
         in
         Vdom.Node.div
@@ -34,59 +33,6 @@ module Vdom_popover = struct
           [ View.text "oooo, popovers!" ]]
     in
     return (vdom, demo)
-  ;;
-
-  let selector = None
-  let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
-end
-
-module Vdom_popover_virtual = struct
-  let name = "Virtually-positioned Popovers"
-
-  let description =
-    {|You can also position popovers relative to a "virtual" anchor, which is typically
-    a bounding box or coordinate. |}
-  ;;
-
-  let view graph =
-    let vdom, demo =
-      [%demo
-        let coords, set_coords = Bonsai.state_opt graph in
-        let contents =
-          match%sub coords with
-          | None -> return [ Vdom.Node.text "Click to place!" ]
-          | Some (x, y) ->
-            let%arr x and y and set_coords in
-            let anchor = Floating_positioning_new.Anchor.of_coordinate ~x ~y in
-            [ Vdom_toplayer.For_use_in_portals.popover_custom
-                ~position:Right
-                ~alignment:Start
-                ~popover_content:(View.text "Click around to move me!")
-                anchor
-            ; Vdom.Node.button
-                ~attrs:
-                  [ Vdom.Attr.on_click (fun _ ->
-                      Effect.Many [ set_coords None; Effect.Stop_propagation ])
-                  ]
-                [ View.text "remove popover" ]
-            ]
-        in
-        let%arr contents and set_coords in
-        Vdom.Node.div
-          ~attrs:
-            [ [%css
-                {|
-                  width: 100%;
-                  height: 300px;
-                |}]
-            ; Vdom.Attr.on_click (fun evt ->
-                set_coords
-                  (Some (evt##.clientX |> Int.to_float, evt##.clientY |> Int.to_float)))
-            ]
-          contents]
-    in
-    let%arr vdom in
-    vdom, demo
   ;;
 
   let selector = None
@@ -122,6 +68,7 @@ module Vdom_popover_match_anchor_side_length = struct
             ~popover_attrs:[ [%css {|overflow: hidden;|}] ]
             ~position
             ~match_anchor_side_length
+            ~overflow_auto_wrapper:false
             (View.text "Dropdown")
         in
         View.vbox
@@ -211,6 +158,7 @@ module Vdom_popover_arrows = struct
             ~alignment
             ~offset:{ main_axis = 10.; cross_axis = 0. }
             ~arrow
+            ~overflow_auto_wrapper:false
             (Vdom.Node.div [ View.text "Hi, I am a popover" ])
         in
         Vdom.Node.div
@@ -224,7 +172,32 @@ module Vdom_popover_arrows = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-module Vdom_tooltip = struct
+module Vdom_toplayer_tooltip_no_light_dismiss = struct
+  let name = "Tooltips w/o light dismiss"
+
+  let description =
+    {|By default, tooltip have "light dismiss" behavior; i.e. they close on click outside
+      or pressing escape, or when other tooltips open. This can be disabled. |}
+  ;;
+
+  let view _graph =
+    [%demo
+      View.hbox
+        ~gap:(`Px 10)
+        [ View.vbox
+            ~attrs:
+              [ Vdom_toplayer.tooltip ~light_dismiss:false {%html|Clicking wont close me|}
+              ]
+            [ View.text "Show on hover" ]
+        ]]
+    |> return
+  ;;
+
+  let selector = None
+  let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
+end
+
+module Tooltip = struct
   let name = "Tooltip"
 
   let description =
@@ -237,12 +210,11 @@ module Vdom_tooltip = struct
   let view _graph =
     [%demo
       let tooltip position alignment =
-        Vdom_toplayer.tooltip
+        Toplayer.Tooltip.text
           ~position
           ~alignment
-          ~hide_grace_period:(Time_ns.Span.of_int_ms 300)
           ~hoverable_inside:true
-          (View.text "Hi, I am a tooltip")
+          "Hi, I am a tooltip"
       in
       View.vbox
         ~gap:(`Px 10)
@@ -284,7 +256,7 @@ module Vdom_tooltip = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-module Vdom_tooltip_hoverable = struct
+module Tooltip_hoverable = struct
   let name = "Hoverable Tooltips"
 
   let description =
@@ -296,11 +268,7 @@ module Vdom_tooltip_hoverable = struct
   let view _graph =
     [%demo
       let tooltip ~hoverable_inside =
-        Vdom_toplayer.tooltip
-          ~show_delay:(Time_ns.Span.of_int_ms 100)
-          ~hide_grace_period:(Time_ns.Span.of_int_ms 100)
-          ~hoverable_inside
-          (View.text "Hi, I am a tooltip")
+        Toplayer.Tooltip.text ~hoverable_inside "Hi, I am a tooltip"
       in
       View.hbox
         ~gap:(`Px 10)
@@ -318,7 +286,75 @@ module Vdom_tooltip_hoverable = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-module Vdom_tooltip_nested = struct
+module Tooltip_custom_config = struct
+  let name = "Tooltips w/ custom config"
+
+  let description =
+    {|The `config` argument can be overrided to customize some aspects of tooltip appearance
+    that you probably want to set globally. |}
+  ;;
+
+  let view _graph =
+    [%demo
+      let tooltip ~hoverable_inside =
+        Toplayer.Tooltip.text
+          ~config:
+            { tooltip_attrs =
+                [ {%css|
+                    background-color: green;
+                    color: red;
+                    padding: 10px;
+                    border: 2px dotted yellow;
+                  |}
+                ]
+            ; anchor_attrs =
+                [ {%css|
+                    background-image: linear-gradient(
+                      to left,
+                      violet,
+                      indigo,
+                      blue,
+                      green,
+                      yellow,
+                      orange,
+                      red
+                    );
+                    -webkit-background-clip: text;
+                    color: transparent;
+                  |}
+                ]
+            ; main_axis_offset = -3.
+            ; cross_axis_offset = 4.
+            ; show_delay = Some (Time_ns.Span.of_ms 100.)
+            ; hide_grace_period = Some (Time_ns.Span.of_ms 100.)
+            ; hoverable_hide_grace_period = Time_ns.Span.of_ms 500.
+            ; arrow =
+                Bonsai_web_ui_toplayer_styling.arrow_helper
+                  ~attrs:[ {%css|background-color: black;|} ]
+                  ~arrow_len:(`Px_float 8.)
+                  ()
+                |> Some
+            }
+          ~hoverable_inside
+          "Hi, I am a tooltip"
+      in
+      View.hbox
+        ~gap:(`Px 10)
+        [ View.vbox
+            ~attrs:[ tooltip ~hoverable_inside:false ]
+            [ View.text "Custom Config Tooltip" ]
+        ; View.vbox
+            ~attrs:[ tooltip ~hoverable_inside:true ]
+            [ View.text "Custom Config Tooltip (interactive)" ]
+        ]]
+    |> return
+  ;;
+
+  let selector = None
+  let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
+end
+
+module Tooltip_nested = struct
   let name = "Nested tooltips"
   let description = {| Demonstration of nested tooltips, controlled via hover.|}
 
@@ -396,6 +432,180 @@ module Vdom_tooltip_nested = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
+module Menu_like_popovers = struct
+  let name = "Menu-like Popovers"
+  let description = {|Toplayer contains several  |}
+
+  type coords =
+    { client_x : float
+    ; client_y : float
+    ; page_x : float
+    ; page_y : float
+    }
+
+  let view graph =
+    let vdom, demo =
+      [%demo
+        let position_form =
+          Skyline.Select_input.component
+            ~to_string:(fun position ->
+              Toplayer.Position.sexp_of_t position |> Sexp.to_string)
+            (return Nonempty_list.[ Toplayer.Position.Auto; Top; Right; Bottom; Left ])
+            graph
+        in
+        let position =
+          let%arr position_form in
+          Skyline.Input.value position_form
+        in
+        let positioning_kind_form =
+          Skyline.Select_input.component
+            ~to_string:(function
+              | `Virtual -> "Virtual Anchor"
+              | `Css -> "CSS Anchor")
+            (return Nonempty_list.[ `Virtual; `Css ])
+            graph
+        in
+        let positioning_kind =
+          let%arr positioning_kind_form in
+          Skyline.Input.value positioning_kind_form
+        in
+        let relative_to_form =
+          Skyline.Select_input.component
+            ~to_string:(function
+              | `Viewport -> "Viewport"
+              | `Document -> "Document")
+            (return Nonempty_list.[ `Viewport; `Document ])
+            graph
+        in
+        let relative_to =
+          let%arr relative_to_form in
+          Skyline.Input.value relative_to_form
+        in
+        let content ~close =
+          let%arr close in
+          {%html|
+            <div>
+              I will move wherever you click
+              <button on_click=%{(fun _ -> close)}>x</button>
+            </div>
+          |}
+        in
+        let coords, set_coords = Bonsai.state_opt graph in
+        let close =
+          let%arr set_coords in
+          set_coords None
+        in
+        let is_open =
+          let%arr coords in
+          Option.is_some coords
+        in
+        let%sub () =
+          match%sub positioning_kind with
+          | `Virtual ->
+            let controls =
+              Toplayer.Controls.For_external_state.create
+                ~close_on_click_outside:(return Toplayer.Close_on_click_outside.No)
+                ~close
+                graph
+            in
+            let anchor =
+              let%arr coords and relative_to in
+              match coords, relative_to with
+              | None, _ ->
+                Toplayer.Anchor.of_coordinate ~relative_to:`Viewport ~x:0. ~y:0.
+              | Some { client_x; client_y; _ }, `Viewport ->
+                Toplayer.Anchor.of_coordinate
+                  ~relative_to:`Viewport
+                  ~x:client_x
+                  ~y:client_y
+              | Some { page_x; page_y; _ }, `Document ->
+                Toplayer.Anchor.of_coordinate ~relative_to:`Document ~x:page_x ~y:page_y
+            in
+            Toplayer.Popover.For_external_state.bool_virtual
+              ~position
+              ~overflow_auto_wrapper:(return false)
+              ~controls
+              ~is_open
+              ~content:(fun _ -> content ~close)
+              anchor
+              graph;
+            return ()
+          | `Css ->
+            let controls =
+              Toplayer.Controls.For_external_state.create
+                ~close_on_click_outside:(return Toplayer.Close_on_click_outside.No)
+                ~close
+                graph
+            in
+            let extra_attrs =
+              let%arr coords and relative_to in
+              match coords, relative_to with
+              | None, _ -> []
+              | Some { client_x; client_y; _ }, `Viewport ->
+                [ {%css|
+                    position: fixed;
+                    top: %{(`Px_float client_y)#Css_gen.Length};
+                    left: %{(`Px_float client_x)#Css_gen.Length};
+                  |}
+                ]
+              | Some { page_x; page_y; _ }, `Document ->
+                [ {%css|
+                    position: absolute;
+                    top: %{(`Px_float page_y)#Css_gen.Length};
+                    left: %{(`Px_float page_x)#Css_gen.Length};
+                  |}
+                ]
+            in
+            Toplayer.Popover.For_external_state.bool_css
+              ~extra_attrs
+              ~controls
+              ~content:(fun _ -> content ~close)
+              ~is_open
+              graph;
+            return ()
+        in
+        let%arr set_coords
+        and is_open
+        and positioning_kind
+        and positioning_kind_form
+        and relative_to_form
+        and position_form in
+        Vdom.Node.div
+          ~attrs:
+            [ [%css
+                {|
+                  width: 100%;
+                  height: 300px;
+                |}]
+            ; Vdom.Attr.on_click (fun evt ->
+                let opt_float x =
+                  Js_of_ocaml.Js.Optdef.to_option x
+                  |> Option.value_map ~f:Js_of_ocaml.Js.float_of_number ~default:0.
+                in
+                set_coords
+                  (Some
+                     { client_x = evt##.clientX |> Js_of_ocaml.Js.float_of_number
+                     ; client_y = evt##.clientY |> Js_of_ocaml.Js.float_of_number
+                     ; page_x = evt##.pageX |> opt_float
+                     ; page_y = evt##.pageY |> opt_float
+                     }))
+            ]
+          [ Skyline.Input.view positioning_kind_form
+          ; Skyline.Input.view relative_to_form
+          ; (match positioning_kind with
+             | `Virtual -> Skyline.Input.view position_form
+             | `Css -> Vdom.Node.none)
+          ; (if is_open then Vdom.Node.none else Vdom.Node.text "Click to place!")
+          ]]
+    in
+    let%arr vdom in
+    vdom, demo
+  ;;
+
+  let selector = None
+  let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
+end
+
 module Nested_popovers_remain_open = struct
   let name = "Nested popovers"
   let description = {| Child popovers remain open when their parents close and re-open. |}
@@ -406,6 +616,7 @@ module Nested_popovers_remain_open = struct
         let popover, { Toplayer.Controls.open_; _ } =
           Toplayer.Popover.create
             ~close_on_click_outside:(Bonsai.return Toplayer.Close_on_click_outside.No)
+            ~overflow_auto_wrapper:(return false)
             ~content:(fun ~close graph ->
               let button_with_popover graph =
                 let popover, { Toplayer.Controls.open_; _ } =
@@ -414,6 +625,7 @@ module Nested_popovers_remain_open = struct
                       (Bonsai.return Toplayer.Close_on_click_outside.No)
                     ~position:(return Toplayer.Position.Right)
                     ~alignment:(return Toplayer.Alignment.Start)
+                    ~overflow_auto_wrapper:(return false)
                     ~content:(fun ~close graph ->
                       let%arr theme = View.Theme.current graph
                       and close in
@@ -545,7 +757,7 @@ module Vdom_tooltip_animations = struct
             .animated_tooltip[popover]:popover-open {
               animation: fade-in 0.7s ease-out;
             }
-            |}]
+          |}]
       in
       let tooltip =
         Vdom_toplayer.tooltip
@@ -571,62 +783,105 @@ module Giant_toplayer_elements = struct
   let view graph =
     let computation, demo =
       [%demo
-        let content =
-          View.vbox
-            (Vdom.Node.h1 [ View.text "Popover Heading" ]
-             :: List.init 100 ~f:(fun _ -> View.text (String.make 1000 'z')))
-        in
-        let popover, { Toplayer.Controls.open_ = open_popover; _ } =
-          Toplayer.Popover.create ~content:(fun ~close:_ _ -> return content) graph
-        in
-        let { Toplayer.Controls.open_ = open_virtual_popover; _ } =
-          Toplayer.Popover.create_virtual
-            ~content:(fun ~close:_ _ -> return content)
-            (return (Toplayer.Anchor.of_coordinate ~x:10. ~y:10.))
-            graph
-        in
-        let { Toplayer.Controls.open_ = open_virtual_aligned_popover; _ } =
-          Toplayer.Popover.create_virtual
-            ~content:(fun ~close:_ _ -> return content)
-            ~alignment:(return Toplayer.Alignment.Start)
-            (return (Toplayer.Anchor.of_coordinate ~x:10. ~y:40.))
-            graph
-        in
-        let { Toplayer.Controls.open_ = open_modal; _ } =
-          Toplayer.Modal.create ~content:(fun ~close:_ _ -> return content) graph
-        in
-        let%arr theme = View.Theme.current graph
-        and popover
-        and open_popover
-        and open_virtual_popover
-        and open_virtual_aligned_popover
-        and open_modal in
-        View.hbox
-          [ View.text ~attrs:[ View.tooltip_attr' theme [ content ] ] "Tooltip"
-          ; View.button ~attrs:[ popover ] theme ~on_click:open_popover "Open Popover"
-          ; View.button theme ~on_click:open_virtual_popover "Open Virtual Popover"
-          ; View.button
-              theme
-              ~on_click:open_virtual_aligned_popover
-              "Open Virtual Aligned Popover"
-          ; View.button theme ~on_click:open_modal "Open Modal"
-          ]]
+        fun ~overflow_auto_wrapper ->
+          let content =
+            View.vbox
+              (Vdom.Node.h1 [ View.text "Popover Heading" ]
+               :: List.init 100 ~f:(fun _ -> View.text (String.make 1000 'z')))
+          in
+          let popover, { Toplayer.Controls.open_ = open_popover; _ } =
+            Toplayer.Popover.create
+              ~overflow_auto_wrapper:(return overflow_auto_wrapper)
+              ~content:(fun ~close:_ _ -> return content)
+              graph
+          in
+          let { Toplayer.Controls.open_ = open_custom_popover_css_positioned; _ } =
+            Toplayer.Popover.create_css
+              ~extra_attrs:
+                (return
+                   [ {%css|
+                       top: 10px;
+                       left: 10px;
+                     |}
+                   ])
+              ~content:(fun ~close:_ _ -> return content)
+              graph
+          in
+          let { Toplayer.Controls.open_ = open_custom_popover_virtually_positioned; _ } =
+            Toplayer.Popover.create_virtual
+              ~overflow_auto_wrapper:(return overflow_auto_wrapper)
+              ~content:(fun ~close:_ _ -> return content)
+              (return
+                 (Toplayer.Anchor.of_coordinate ~relative_to:`Viewport ~x:10. ~y:10.))
+              graph
+          in
+          let { Toplayer.Controls.open_ =
+                  open_custom_popover_virtually_positioned_and_aligned
+              ; _
+              }
+            =
+            Toplayer.Popover.create_virtual
+              ~overflow_auto_wrapper:(return overflow_auto_wrapper)
+              ~alignment:(return Toplayer.Alignment.Start)
+              ~content:(fun ~close:_ _ -> return content)
+              (return
+                 (Toplayer.Anchor.of_coordinate ~relative_to:`Viewport ~x:10. ~y:10.))
+              graph
+          in
+          let { Toplayer.Controls.open_ = open_modal; _ } =
+            Toplayer.Modal.create
+              ~overflow_auto_wrapper:(return overflow_auto_wrapper)
+              ~content:(fun ~close:_ _ -> return content)
+              graph
+          in
+          let%arr theme = View.Theme.current graph
+          and popover
+          and open_popover
+          and open_custom_popover_css_positioned
+          and open_custom_popover_virtually_positioned
+          and open_custom_popover_virtually_positioned_and_aligned
+          and open_modal in
+          View.hbox
+            [ View.text ~attrs:[ View.tooltip_attr' theme [ content ] ] "Tooltip"
+            ; View.button ~attrs:[ popover ] theme ~on_click:open_popover "Open Popover"
+            ; View.button
+                theme
+                ~on_click:open_custom_popover_css_positioned
+                "Open Custom Popover (CSS)"
+            ; View.button
+                theme
+                ~on_click:open_custom_popover_virtually_positioned
+                "Open Custom Popover (Floating UI)"
+            ; View.button
+                theme
+                ~on_click:open_custom_popover_virtually_positioned_and_aligned
+                "Open Custom Popover (Floating UI Aligned)"
+            ; View.button theme ~on_click:open_modal "Open Modal"
+            ]]
     in
-    let%arr computation in
-    computation, demo
+    let%arr unhandled = computation ~overflow_auto_wrapper:false
+    and handled = computation ~overflow_auto_wrapper:true in
+    let view =
+      View.vbox
+        ~gap:(`Px 10)
+        [ Vdom.Node.div [ Vdom.Node.h3 [ View.text "Unhandled Overflow" ]; unhandled ]
+        ; Vdom.Node.div [ Vdom.Node.h3 [ View.text "Handled Overflow" ]; handled ]
+        ]
+    in
+    view, demo
   ;;
 
   let selector = None
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-module Autofocus_on_open = struct
-  let name = "Autofocus on open"
+module Focus_on_open = struct
+  let name = "Focus on open"
 
   let description =
-    {| This example tests that popover autofocus won't steal focus from something already
-    focused inside the popover. `Effect.Focus.on_activate` doesn't currently work, because
-    the popover becomes visible a frame or two after the computation is activated. |}
+    {| This example tests that popover focus_on_open won't steal focus from something already
+    focused inside the popover, and that `Effect.Focus.on_activate` and `Vdom.Attr.autofocus`
+    work properly. |}
   ;;
 
   let view graph =
@@ -642,6 +897,7 @@ module Autofocus_on_open = struct
         in
         let popover_autofocus, { Toplayer.Controls.open_ = open_popover_autofocus; _ } =
           Toplayer.Popover.create
+            ~overflow_auto_wrapper:(return false)
             ~focus_on_open:(return true)
             ~extra_attrs:(return [ focus_style ])
             ~content:(fun ~close:_ _graph ->
@@ -652,6 +908,7 @@ module Autofocus_on_open = struct
             , { Toplayer.Controls.open_ = open_popover_focus_on_activate; _ } )
           =
           Toplayer.Popover.create
+            ~overflow_auto_wrapper:(return false)
             ~focus_on_open:(return true)
             ~extra_attrs:(return [ focus_style ])
             ~content:(fun ~close:_ graph ->
@@ -664,13 +921,77 @@ module Autofocus_on_open = struct
             , { Toplayer.Controls.open_ = open_popover_no_autofocus; _ } )
           =
           Toplayer.Popover.create
+            ~overflow_auto_wrapper:(return false)
             ~focus_on_open:(return true)
             ~extra_attrs:(return [ focus_style ])
             ~content:(fun ~close:_ _graph -> return (Vdom.Node.input ()))
             graph
         in
+        let virtual_anchor =
+          return (Toplayer.Anchor.of_coordinate ~relative_to:`Viewport ~x:20. ~y:20.)
+        in
+        let { Toplayer.Controls.open_ = open_virtual_autofocus; _ } =
+          Toplayer.Popover.create_virtual
+            ~overflow_auto_wrapper:(return false)
+            ~extra_attrs:(return [ focus_style ])
+            ~content:(fun ~close:_ _graph ->
+              return (Vdom.Node.input ~attrs:[ Vdom.Attr.autofocus true ] ()))
+            virtual_anchor
+            graph
+        in
+        let { Toplayer.Controls.open_ = open_virtual_focus_on_activate; _ } =
+          Toplayer.Popover.create_virtual
+            ~overflow_auto_wrapper:(return false)
+            ~extra_attrs:(return [ focus_style ])
+            ~content:(fun ~close:_ graph ->
+              let focus_attr = Effect.Focus.on_activate () graph in
+              let%arr focus_attr in
+              Vdom.Node.input ~attrs:[ focus_attr ] ())
+            virtual_anchor
+            graph
+        in
+        let { Toplayer.Controls.open_ = open_virtual_no_autofocus; _ } =
+          Toplayer.Popover.create_virtual
+            ~overflow_auto_wrapper:(return false)
+            ~extra_attrs:(return [ focus_style ])
+            ~content:(fun ~close:_ _graph -> return (Vdom.Node.input ()))
+            virtual_anchor
+            graph
+        in
+        let css_extra_attrs =
+          return
+            [ focus_style
+            ; {%css|
+                top: 30px;
+                left: 5px;
+              |}
+            ]
+        in
+        let { Toplayer.Controls.open_ = open_css_autofocus; _ } =
+          Toplayer.Popover.create_css
+            ~extra_attrs:css_extra_attrs
+            ~content:(fun ~close:_ _graph ->
+              return (Vdom.Node.input ~attrs:[ Vdom.Attr.autofocus true ] ()))
+            graph
+        in
+        let { Toplayer.Controls.open_ = open_css_focus_on_activate; _ } =
+          Toplayer.Popover.create_css
+            ~extra_attrs:css_extra_attrs
+            ~content:(fun ~close:_ graph ->
+              let focus_attr = Effect.Focus.on_activate () graph in
+              let%arr focus_attr in
+              Vdom.Node.input ~attrs:[ focus_attr ] ())
+            graph
+        in
+        let { Toplayer.Controls.open_ = open_css_no_autofocus; _ } =
+          Toplayer.Popover.create_css
+            ~extra_attrs:css_extra_attrs
+            ~content:(fun ~close:_ _graph -> return (Vdom.Node.input ()))
+            graph
+        in
         let { Toplayer.Controls.open_ = open_modal_autofocus; _ } =
           Toplayer.Modal.create
+            ~overflow_auto_wrapper:(return false)
             ~extra_attrs:(return [ focus_style ])
             ~content:(fun ~close:_ _graph ->
               return (Vdom.Node.input ~attrs:[ Vdom.Attr.autofocus true ] ()))
@@ -678,6 +999,7 @@ module Autofocus_on_open = struct
         in
         let { Toplayer.Controls.open_ = open_modal_focus_on_activate; _ } =
           Toplayer.Modal.create
+            ~overflow_auto_wrapper:(return false)
             ~extra_attrs:(return [ focus_style ])
             ~content:(fun ~close:_ graph ->
               let focus_attr = Effect.Focus.on_activate () graph in
@@ -687,6 +1009,7 @@ module Autofocus_on_open = struct
         in
         let { Toplayer.Controls.open_ = open_modal_no_autofocus; _ } =
           Toplayer.Modal.create
+            ~overflow_auto_wrapper:(return false)
             ~extra_attrs:(return [ focus_style ])
             ~content:(fun ~close:_ _graph -> return (Vdom.Node.input ()))
             graph
@@ -695,12 +1018,18 @@ module Autofocus_on_open = struct
         and popover_autofocus
         and popover_focus_on_activate
         and popover_no_autofocus
-        and open_modal_autofocus
-        and open_modal_focus_on_activate
-        and open_modal_no_autofocus
         and open_popover_autofocus
         and open_popover_focus_on_activate
-        and open_popover_no_autofocus in
+        and open_popover_no_autofocus
+        and open_virtual_autofocus
+        and open_virtual_focus_on_activate
+        and open_virtual_no_autofocus
+        and open_css_autofocus
+        and open_css_focus_on_activate
+        and open_css_no_autofocus
+        and open_modal_autofocus
+        and open_modal_focus_on_activate
+        and open_modal_no_autofocus in
         View.vbox
           ~gap:(`Px 4)
           [ View.button
@@ -721,6 +1050,36 @@ module Autofocus_on_open = struct
               ~attrs:[ popover_no_autofocus ]
               ~on_click:open_popover_no_autofocus
               "Popover without autofocus child"
+          ; View.button
+              theme
+              ~intent:Info
+              ~on_click:open_virtual_autofocus
+              "Virtual Popover with autofocus child"
+          ; View.button
+              theme
+              ~intent:Info
+              ~on_click:open_virtual_focus_on_activate
+              "Virtual Popover with Effect.Focus.on_activate child"
+          ; View.button
+              theme
+              ~intent:Info
+              ~on_click:open_virtual_no_autofocus
+              "Virtual Popover without autofocus child"
+          ; View.button
+              theme
+              ~intent:Info
+              ~on_click:open_css_autofocus
+              "CSS-positioned Popover with autofocus child"
+          ; View.button
+              theme
+              ~intent:Info
+              ~on_click:open_css_focus_on_activate
+              "CSS-positioned Popover with Effect.Focus.on_activate child"
+          ; View.button
+              theme
+              ~intent:Info
+              ~on_click:open_css_no_autofocus
+              "CSS-positioned Popover without autofocus child"
           ; View.button
               theme
               ~intent:Info
@@ -746,6 +1105,103 @@ module Autofocus_on_open = struct
   let filter_attrs = None
 end
 
+module Explicit_styling = struct
+  let name = "Explicit styling"
+  let description = {|Tests for explicitly passing styling to modals / popovers. |}
+
+  let view graph =
+    let computation, demo =
+      [%demo
+        let style =
+          {%css|
+            color: green;
+            background-color: red;
+            border: 2px dashed purple;
+            padding: 1em 2em;
+            border-radius: 8px;
+          |}
+        in
+        let popover_styling =
+          Toplayer.Popover.Config.create
+            ~popover_attrs:[ style ]
+            ~default_main_axis_offset:5.
+            ~default_main_axis_offset_with_arrow:15.
+            ~arrow:(Vdom.Node.text "<|>")
+            ()
+        in
+        let modal_styling = { Toplayer.Modal.Config.modal_attrs = [ style ] } in
+        let content = Vdom.Node.div [ Vdom.Node.text "content" ] in
+        let popover, { Toplayer.Controls.open_ = open_popover; _ } =
+          Toplayer.Popover.create
+            ~overflow_auto_wrapper:(return false)
+            ~config:(`This_one (return popover_styling))
+            ~content:(fun ~close:_ _ -> return content)
+            graph
+        in
+        let arrow_popover, { Toplayer.Controls.open_ = open_arrow_popover; _ } =
+          Toplayer.Popover.create
+            ~overflow_auto_wrapper:(return false)
+            ~config:(`This_one (return popover_styling))
+            ~has_arrow:(return true)
+            ~content:(fun ~close:_ _ -> return content)
+            graph
+        in
+        let { Toplayer.Controls.open_ = open_css_popover; _ } =
+          Toplayer.Popover.create_css
+            ~extra_attrs:
+              (return
+                 [ {%css|
+                     top: 0px;
+                     left: 0px;
+                   |}
+                 ; style
+                 ])
+            ~content:(fun ~close:_ _ -> return content)
+            graph
+        in
+        let { Toplayer.Controls.open_ = open_virtual_popover; _ } =
+          Toplayer.Popover.create_virtual
+            ~config:(`This_one (return popover_styling))
+            ~overflow_auto_wrapper:(return false)
+            ~content:(fun ~close:_ _ -> return content)
+            (return (Toplayer.Anchor.of_coordinate ~relative_to:`Viewport ~x:10. ~y:10.))
+            graph
+        in
+        let { Toplayer.Controls.open_ = open_modal; _ } =
+          Toplayer.Modal.create
+            ~overflow_auto_wrapper:(return false)
+            ~config:(`This_one (return modal_styling))
+            ~content:(fun ~close:_ _ -> return content)
+            graph
+        in
+        let%arr theme = View.Theme.current graph
+        and popover
+        and arrow_popover
+        and open_popover
+        and open_arrow_popover
+        and open_css_popover
+        and open_virtual_popover
+        and open_modal in
+        View.hbox
+          [ View.button ~attrs:[ popover ] theme ~on_click:open_popover "Open Popover"
+          ; View.button
+              ~attrs:[ arrow_popover ]
+              theme
+              ~on_click:open_arrow_popover
+              "Open Arrow Popover"
+          ; View.button theme ~on_click:open_css_popover "Open CSS Popover"
+          ; View.button theme ~on_click:open_virtual_popover "Open Virtual Popover"
+          ; View.button theme ~on_click:open_modal "Open Modal"
+          ]]
+    in
+    let%arr computation in
+    computation, demo
+  ;;
+
+  let selector = None
+  let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
+end
+
 let component graph =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
   let view =
@@ -756,20 +1212,26 @@ let component graph =
              `bonsai_web_ui_toplayer`. This library is intended for component library
              and theme authors. |}
         , [ Gallery.make_demo (module Vdom_popover)
-          ; Gallery.make_demo (module Vdom_popover_virtual)
           ; Gallery.make_demo (module Vdom_popover_match_anchor_side_length)
           ; Gallery.make_demo (module Vdom_popover_arrows)
-          ; Gallery.make_demo (module Vdom_tooltip)
-          ; Gallery.make_demo (module Vdom_tooltip_hoverable)
-          ; Gallery.make_demo (module Vdom_tooltip_nested)
+          ; Gallery.make_demo (module Vdom_toplayer_tooltip_no_light_dismiss)
+          ] )
+      ; ( "Bonsai web ui toplayer tooltip"
+        , {|These demos are intended to test the toplayer tooltips|}
+        , [ Gallery.make_demo (module Tooltip)
+          ; Gallery.make_demo (module Tooltip_hoverable)
+          ; Gallery.make_demo (module Tooltip_custom_config)
+          ; Gallery.make_demo (module Tooltip_nested)
           ] )
       ; ( "Interesting Behavior Demos"
         , {| These demos are intended for Bonsai developers. |}
         , [ Gallery.make_demo (module Nested_popovers_remain_open)
+          ; Gallery.make_demo (module Menu_like_popovers)
           ; Gallery.make_demo (module Theme_arrows)
           ; Gallery.make_demo (module Vdom_tooltip_animations)
           ; Gallery.make_demo (module Giant_toplayer_elements)
-          ; Gallery.make_demo (module Autofocus_on_open)
+          ; Gallery.make_demo (module Focus_on_open)
+          ; Gallery.make_demo (module Explicit_styling)
           ] )
       ]
   in
@@ -778,5 +1240,5 @@ let component graph =
 
 let () =
   Async_js.init ();
-  Bonsai_web.Start.start component
+  Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
 ;;

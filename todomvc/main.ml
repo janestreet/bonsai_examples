@@ -303,7 +303,7 @@ let footer_component
   in
   let maybe_clear_completed_button =
     match completed_count with
-    | 0 -> Node.none_deprecated [@alert "-deprecated"]
+    | 0 -> Node.none
     | _ ->
       let on_click _ = inject Clear_completed in
       let attr = Attr.many [ Style.clear_completed; Attr.on_click on_click ] in
@@ -336,7 +336,7 @@ let info =
 let root_component graph =
   let default_model = Bonsai_web.Persistent_var.get persisted_model in
   let state, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Model.t]
       ~sexp_of_action:[%sexp_of: Action.t]
@@ -356,4 +356,4 @@ let root_component graph =
   Vdom.Node.div [ app; info ]
 ;;
 
-let () = Bonsai_web.Start.start root_component
+let () = Bonsai_web.Start.start root_component ~enable_bonsai_telemetry:Enabled

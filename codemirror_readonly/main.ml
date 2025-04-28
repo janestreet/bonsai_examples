@@ -13,7 +13,7 @@ module _ =
       body {
         background: black;
       }
-      |}]
+    |}]
 
 let back_and_forth graph =
   let%sub { value; animate } =
@@ -80,11 +80,11 @@ let component graph =
   View.vbox
     ~attrs:
       [ {%css|
-            background: white;
-            width: fit-content;
-          |}
+          background: white;
+          width: fit-content;
+        |}
       ]
     [ pause_controlls; Cm_ro.make ~language:OCaml ~theme:Basic_light source_code ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

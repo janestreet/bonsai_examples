@@ -9,3 +9,4 @@ val run
 
 val run_vdom_val : Vdom.Node.t Bonsai.t -> id:string -> unit
 val run_vdom : Vdom.Node.t -> id:string -> unit
+val no_hash_fallback_must_run_last : unit -> unit

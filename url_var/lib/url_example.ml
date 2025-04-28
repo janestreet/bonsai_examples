@@ -108,7 +108,7 @@ module Css =
         align-content: center;
         justify-content: center;
       }
-      |}]
+    |}]
 
 (* This form is the one that reads/write the URI. *)
 let uri_form ~default graph =
@@ -242,9 +242,8 @@ let component (type a) (t : a t) graph =
     type t = Url_var.Components.t Or_error.t [@@deriving sexp, equal]
   end
   in
-  let%sub () =
+  let () =
     Bonsai_extra.mirror
-      ()
       ~sexp_of_model:[%sexp_of: T.t]
       ~equal:[%equal: T.t]
       ~store_set:typed_url_form_set
@@ -940,6 +939,41 @@ let catchall_example =
   }
 ;;
 
+module Fragment_url =
+  [%demo
+  open Uri_parsing
+
+  module Anchor = struct
+    type t = string option [@@deriving sexp, equal]
+
+    let parser = Parser.from_fragment Value_parser.string
+  end
+
+  let%expect_test _ =
+    Parser.check_ok_and_print_urls_or_errors Anchor.parser;
+    [%expect
+      {|
+      URL parser looks good!
+      ┌────────────┐
+      │ All urls   │
+      ├────────────┤
+      │ /#<string> │
+      └────────────┘
+      |}]
+  ;;]
+
+let fragment_example =
+  { starting_components = Url_var.Components.create ~fragment:(Some "section-1") ()
+  ; parser = Fragment_url.Anchor.parser |> Projection.make ~encoding_behavior:Correct
+  ; type_ = (module Fragment_url.Anchor)
+  ; fallback = None
+  ; title = "Fragment Example"
+  ; description = "Supports reading the fragment of URIs (e.g: [/#fragment])"
+  ; demo_code = Fragment_url.ppx_demo_string
+  ; example_urls = []
+  }
+;;
+
 let examples graph =
   List.map [ T reading_from_query; T reading_from_path ] ~f:(fun (T example) ->
     component example graph)
@@ -953,6 +987,7 @@ let examples graph =
       ; T tuple_example
       ; T folder_example
       ; T catchall_example
+      ; T fragment_example
       ]
       ~f:(fun (T example) -> component example graph)
   |> Bonsai.all

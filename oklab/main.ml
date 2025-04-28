@@ -37,9 +37,9 @@ module Style =
         background: repeating-conic-gradient(black 0% 25%, white 0% 50%) 50% / 20px
           20px;
       }
-      |}]
+    |}]
 
-let box_with_color ?(content = (Vdom.Node.none_deprecated [@alert "-deprecated"])) color =
+let box_with_color ?(content = Vdom.Node.none) color =
   let css_color =
     color
     |> Oklab.to_string_css
@@ -93,4 +93,5 @@ let component graph =
 let () =
   Bonsai_web.Start.start
     (View.Theme.set_for_app (Bonsai.return (Kado.theme ~version:Bleeding ())) component)
+    ~enable_bonsai_telemetry:Enabled
 ;;

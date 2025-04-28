@@ -53,7 +53,7 @@ module Styles =
       .second_panel {
         background-color: #6ecc8a;
       }
-      |}]
+    |}]
 
 module Parameters_or_error = struct
   type t = Parameters.t Or_error.t [@@deriving sexp, equal]
@@ -107,7 +107,7 @@ let create_parameters_form graph =
   let form_vdom = Bonsai_web_ui_auto_generated.view_as_vdom form in
   let error =
     match Bonsai_web_ui_form.With_automatic_view.value form with
-    | Ok _ -> Node.none_deprecated [@alert "-deprecated"]
+    | Ok _ -> Node.none
     | Error e -> Node.sexp_for_debugging [%sexp (e : Error.t)]
   in
   let view = Vdom.Node.div [ form_vdom; error ] in

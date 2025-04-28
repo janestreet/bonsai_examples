@@ -68,4 +68,6 @@ let component graph =
     graph
 ;;
 
-let () = Start.start ~bind_to_element_with_id:"app" component
+let () =
+  Start.start ~bind_to_element_with_id:"app" component ~enable_bonsai_telemetry:Enabled
+;;

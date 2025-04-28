@@ -31,10 +31,10 @@ module Css =
         left: 0;
         right: 0;
       }
-      |}]
+    |}]
 
 let offset_state_machine graph =
-  Bonsai.state_machine0
+  Bonsai.state_machine
     graph
     ~sexp_of_model:[%sexp_of: Int.t]
     ~equal:[%equal: Int.t]
@@ -129,7 +129,7 @@ let component graph =
             (Keyboard_event_handler.get_help_text handler)
             Help_text.View_spec.plain
         ]
-    | false -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
+    | false -> Bonsai.return Vdom.Node.none
   in
   let%arr x and y and handler and help_view in
   let view =
@@ -152,4 +152,4 @@ let component graph =
   with_keyboard_handler view handler
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

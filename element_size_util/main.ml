@@ -58,7 +58,7 @@ let position graph =
   let () =
     Bonsai.Clock.every
       ~when_to_start_next_effect:`Every_multiple_of_period_blocking
-      (Time_ns.Span.of_sec 2.0)
+      (Bonsai.return (Time_ns.Span.of_sec 2.0))
       update
       graph
   in
@@ -237,7 +237,7 @@ let resizer_component _graph =
            ~attrs:[ Style.resizable_using_resizer ]
            [ Vdom.Node.text (String.concat (List.init 20 ~f:(Fn.const "Hello world. ")))
            ; Vdom.Node.div
-               ~attrs:[ Style.resizer; Size_hooks.Expert.Resizer.attr ~side:Right ]
+               ~attrs:[ Style.resizer; Size_hooks.Expert.Resizer.attr ~side:Second () ]
                []
            ]
        ])
@@ -293,4 +293,4 @@ let component graph =
   Vdom.Node.div [ buttons; page_component ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

@@ -8,13 +8,13 @@ let compute_magic_number a b = a * b
 let a_typical_function (input : int Bonsai.t) graph =
   (* Declare your state *)
   let num_input_changes, incr_num_input_changes =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       ~default_model:0
       ~apply_action:(fun _ model () -> model + 1)
       graph
   in
   let (logs : string Bonsai.t), (write_log_line : (string -> unit Effect.t) Bonsai.t) =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       ~default_model:""
       ~apply_action:(fun _ logs new_log_line ->
         match logs with

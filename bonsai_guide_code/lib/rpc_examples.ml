@@ -114,7 +114,7 @@ module Css =
       .error_text {
         color: red;
       }
-      |}]
+    |}]
 
 let zone_form graph =
   let module Form = Bonsai_web_ui_form.With_automatic_view in
@@ -146,7 +146,7 @@ let current_time_app graph =
       ~equal_query:[%equal: string]
       ~equal_response:[%equal: Current_time.t]
       ~where_to_connect
-      ~every:(Time_ns.Span.of_sec 0.1)
+      ~every:(Bonsai.return (Time_ns.Span.of_sec 0.1))
       zone
       graph
   in
@@ -166,7 +166,7 @@ let current_time_app graph =
         [ Vdom.Node.text [%string "Got error when requesting time in zone '%{zone}'"]
         ; Vdom.Node.pre [ Vdom.Node.text (Error.to_string_hum error) ]
         ]
-    | None -> Vdom.Node.none_deprecated [@alert "-deprecated"]
+    | None -> Vdom.Node.none
   in
   Vdom.Node.div [ zone_view; Vdom.Node.div [ Vdom.Node.text text ]; error_view ]
 ;;

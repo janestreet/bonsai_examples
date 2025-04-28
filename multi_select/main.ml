@@ -59,4 +59,4 @@ let bonsai graph =
     ]
 ;;
 
-let () = Bonsai_web.Start.start bonsai
+let () = Bonsai_web.Start.start bonsai ~enable_bonsai_telemetry:Enabled

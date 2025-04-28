@@ -35,4 +35,4 @@ let app graph =
   View.Theme.set_for_app theme app graph
 ;;
 
-let () = Bonsai_web.Start.start app
+let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled

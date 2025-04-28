@@ -18,7 +18,7 @@ module Css =
       .selected_item {
         background: yellow;
       }
-      |}]
+    |}]
 
 module Input_source = struct
   type t =
@@ -73,7 +73,7 @@ let items =
 
 let component graph =
   let selected_items, add_item =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: string list]
       ~equal:[%equal: string list]
@@ -146,7 +146,7 @@ let component graph =
       end
       in
       let map, inject =
-        Bonsai.state_machine0
+        Bonsai.state_machine
           ~default_model:String.Map.empty
           ~apply_action:(fun _context model action ->
             match action with
@@ -170,7 +170,7 @@ let component graph =
       let () =
         Bonsai.Clock.every
           ~when_to_start_next_effect:`Wait_period_after_previous_effect_starts_blocking
-          (Time_ns.Span.of_sec 0.2)
+          (Bonsai.return (Time_ns.Span.of_sec 0.2))
           add_random_item
           graph
       in
@@ -224,4 +224,4 @@ let component graph =
     ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

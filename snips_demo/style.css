@@ -2,22 +2,22 @@
   :root:has(> body > .top),
   body:has(> .top),
   .top {
-    margin:0;
-    padding:0;
-    width:100%;
-    height:100%;
-    overflow:clip;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: clip;
   }
 }
 
 .header {
   background: var(--header-bg);
   font-size: 1.2em;
-  padding:0.1em 0.5em;
+  padding: 0.1em 0.5em;
 }
 .sidebar {
   background: var(--header-bg);
-  padding:0.1em 0.5em;
+  padding: 0.1em 0.5em;
 }
 
 .footer {
@@ -38,11 +38,11 @@
   padding: 1em;
   justify-content: center;
   align-items: center;
-  height:100%;
+  height: 100%;
 
   background: var(--header-bg);
   border: 1px solid var(--border);
-  border-radius:3px;
+  border-radius: 3px;
 }
 
 .table-header {
@@ -53,12 +53,12 @@
   align-items: center;
 }
 
-*:has( > .table-header):nth-child(1),
-.details{
+*:has(> .table-header):nth-child(1),
+.details {
   border-top: 1px solid var(--border);
 }
 
-.table ,
+.table,
 .table-header {
   border-left: 1px solid var(--border);
 }
@@ -69,7 +69,5 @@
 
 .details {
   padding: 1em;
-  border-radius:3px;
+  border-radius: 3px;
 }
-
-

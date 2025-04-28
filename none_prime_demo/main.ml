@@ -18,7 +18,7 @@ module Style =
 
         font-family: monospace;
       }
-      |}]
+    |}]
 
 module Flashing_box_attr = Vdom.Attr.Hooks.Make (struct
     open Js_of_ocaml
@@ -78,16 +78,23 @@ let component graph =
         ~gap:(`Em 1)
         [ View.vbox
             ~gap:(`Em 1)
-            [ View.themed_text theme ~size:Large "none"
+            [ View.themed_text theme ~size:Large "none_deprecated"
             ; box "a"
             ; box "b"
-            ; (if state then Vdom.Node.none_deprecated [@alert "-deprecated"] else box "c")
+            ; (if state
+               then
+                 (* NOTE: The purpose of this demo is to compare the previous none
+                    function with the new one so we are intentionally using the deprecated
+                    function. *)
+                 Vdom.Node.none_deprecated
+                 [@alert "-deprecated"]
+               else box "c")
             ; box "d"
             ; box "e"
             ]
         ; View.vbox
             ~gap:(`Em 1)
-            [ View.themed_text theme ~size:Large "none-prime"
+            [ View.themed_text theme ~size:Large "none"
             ; box "a"
             ; box "b"
             ; (if state then Vdom.Node.none else box "c")
@@ -98,4 +105,4 @@ let component graph =
     ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

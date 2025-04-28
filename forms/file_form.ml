@@ -13,7 +13,7 @@ let form graph =
   let result = Bonsai_web_ui_file.Read_on_change.create_single_opt file_from_form graph in
   let result =
     match%sub result with
-    | None -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
+    | None -> Bonsai.return Vdom.Node.none
     | Some (_, (Bonsai_web_ui_file.Read_on_change.Status.Starting | In_progress _)) ->
       Bonsai.return (View.text "file still loading")
     | Some (filename, Complete (Error error)) ->

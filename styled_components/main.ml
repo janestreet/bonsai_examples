@@ -17,10 +17,10 @@ module Basic = struct
         Vdom.Node.div
           ~attrs:
             [ {%css|
-                  background-color: tomato;
-                  width: 2rem;
-                  height: 2rem;
-                |}
+                background-color: tomato;
+                width: 2rem;
+                height: 2rem;
+              |}
             ]
           []]
     in
@@ -72,10 +72,10 @@ module Interpolation = struct
         Vdom.Node.div
           ~attrs:
             [ {%css|
-                  background-color: %{color};
-                  width: %{width};
-                  height: %{height};
-                |}
+                background-color: %{color};
+                width: %{width};
+                height: %{height};
+              |}
             ]
           []]
     in
@@ -117,10 +117,10 @@ module Typed_interpolation = struct
         Vdom.Node.div
           ~attrs:
             [ {%css|
-                  background-color: %{color#Css_gen.Color};
-                  width: %{width#Css_gen.Length};
-                  height: %{height#Css_gen.Length};
-                |}
+                background-color: %{color#Css_gen.Color};
+                width: %{width#Css_gen.Length};
+                height: %{height#Css_gen.Length};
+              |}
             ]
           []]
     in
@@ -161,14 +161,14 @@ module Nested_css = struct
         Vdom.Node.div
           ~attrs:
             [ {%css|
-                  background-color: tomato;
-                  height: 2rem;
-                  width: 2rem;
+                background-color: tomato;
+                height: 2rem;
+                width: 2rem;
 
-                  &:hover {
-                    background-color: white;
-                  }
-                |}
+                &:hover {
+                  background-color: white;
+                }
+              |}
             ]
           []]
   ;;
@@ -201,7 +201,7 @@ module Stylesheet_interpolation = struct
               .square:hover {
                 transform: rotate(180deg);
               }
-              |}]
+            |}]
         in
         Vdom.Node.div ~attrs:[ Style.square ] []]
     in
@@ -253,5 +253,5 @@ let component graph =
 
 let () =
   Async_js.init ();
-  Bonsai_web.Start.start component
+  Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
 ;;

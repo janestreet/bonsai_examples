@@ -12,11 +12,13 @@ module T = struct
 end
 
 let component graph =
-  let tab_state = Tabs.tab_state (module T) ~initial:T.A ~equal:[%equal: T.t] graph in
+  let tab_state =
+    Tabs.tab_state ~sexp_of:[%sexp_of: T.t] ~initial:T.A ~equal:[%equal: T.t] graph
+  in
   let contents =
     Tabs.tab_ui
-      (module T)
       ~equal:[%equal: T.t]
+      ~sexp_of:[%sexp_of: T.t]
       tab_state
       ~all_tabs:(Bonsai.return T.all)
       ~f:(fun ~change_tab tab graph ->
@@ -39,4 +41,4 @@ let component graph =
   Tabs.Result.combine_trivially contents
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

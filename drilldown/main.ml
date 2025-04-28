@@ -10,7 +10,7 @@ module Style =
       .app {
         width: 600px;
       }
-      |}]
+    |}]
 
 let example : Tree.String.t =
   let open Tree.String in
@@ -97,4 +97,4 @@ let app : Bonsai.graph -> Vdom.Node.t Bonsai.t =
        ])
 ;;
 
-let () = Bonsai_web.Start.start app
+let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled

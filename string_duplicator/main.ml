@@ -4,7 +4,7 @@ open Bonsai.Let_syntax
 
 let string_duplicator input_string graph =
   let num_duplicated, inject_duplicate =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Int.t]
       ~equal:[%equal: Int.t]
@@ -54,4 +54,4 @@ let app
   Vdom.Node.div [ textbox_view; duplicated ]
 ;;
 
-let () = Bonsai_web.Start.start app
+let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled

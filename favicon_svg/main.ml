@@ -21,7 +21,7 @@ module Style =
         color: #999999;
         font-style: italic;
       }
-      |}]
+    |}]
 
 let widget uri : Vdom.Node.t =
   (* [init] is called whenever [uri] changes, updating the favicon. The DOM element
@@ -51,7 +51,7 @@ let widget uri : Vdom.Node.t =
          in
          let link = (link :> Dom.node Js.t) in
          Js.Opt.iter head (fun head -> ignore (head##appendChild link : Dom.node Js.t)));
-      (), Vdom.Node.to_dom (Vdom.Node.none_deprecated [@alert "-deprecated"]))
+      (), Vdom.Node.to_dom Vdom.Node.none)
     ()
 ;;
 
@@ -227,7 +227,7 @@ let component graph =
 
 let run () =
   Async_js.init ();
-  Bonsai_web.Start.start component
+  Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
 ;;
 
 let () = run ()

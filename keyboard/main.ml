@@ -105,11 +105,11 @@ module Style =
       .red {
         color: red;
       }
-      |}]
+    |}]
 
 let component graph =
   let model, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Model.t]
       ~equal:[%equal: Model.t]
@@ -131,4 +131,4 @@ let component graph =
     ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

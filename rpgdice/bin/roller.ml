@@ -8,7 +8,7 @@ module Model = struct
 end
 
 let roller_state input graph =
-  Bonsai.state_machine1
+  Bonsai.state_machine_with_input
     ~sexp_of_model:[%sexp_of: Model.t]
     ~equal:[%equal: Model.t]
     ~sexp_of_action:[%sexp_of: Unit.t]

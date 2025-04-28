@@ -35,7 +35,7 @@ module Style =
         align-items: center;
         justify-content: center;
       }
-      |}]
+    |}]
 
 let icon_div icon ~controls =
   let { Controls.size; stroke_width; stroke; fill } = controls in

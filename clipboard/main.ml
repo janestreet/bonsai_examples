@@ -83,4 +83,4 @@ let component graph =
     ]
 ;;
 
-let () = Start.start component
+let () = Start.start component ~enable_bonsai_telemetry:Enabled

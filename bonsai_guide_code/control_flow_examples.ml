@@ -10,7 +10,7 @@ let maybe_show_naive show graph =
   let counter = counter ~step:(return 1) graph in
   let%arr counter and show in
   match show with
-  | false -> Vdom.Node.none_deprecated [@alert "-deprecated"]
+  | false -> Vdom.Node.none
   | true -> counter
 ;;
 
@@ -34,7 +34,7 @@ let () = Util.run (show_control maybe_show_naive) ~id:"maybe_show_naive"
 let maybe_show show graph =
   let counter = counter ~step:(return 1) graph in
   match%sub show with
-  | false -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
+  | false -> Bonsai.return Vdom.Node.none
   | true -> counter
 ;;
 
@@ -56,7 +56,7 @@ let maybe_show_2 show graph =
   match%sub show with
   | `Count_by_1 -> counter ~step:(return 1) graph
   | `Count_by_2 -> counter ~step:(return 2) graph
-  | `No -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
+  | `No -> Bonsai.return Vdom.Node.none
 ;;
 
 (* $MDX part-end *)
@@ -84,7 +84,7 @@ let () = Util.run (show_control_2 maybe_show_2) ~id:"maybe_show_2"
 let maybe_show_var show graph =
   match%sub show with
   | `Count_by step -> counter ~step graph
-  | `No -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
+  | `No -> Bonsai.return Vdom.Node.none
 ;;
 
 (* $MDX part-end *)
@@ -94,7 +94,7 @@ let maybe_show_var_guard show graph =
   | `Count_by step when Int.equal step 1 -> counter ~step graph
   | `Count_by step when Int.equal step 4 -> counter ~step graph
   | `Count_by step -> counter ~step graph
-  | `No -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
+  | `No -> Bonsai.return Vdom.Node.none
 ;;
 
 (* $MDX part-end *)
@@ -108,7 +108,7 @@ let maybe_show_var_scope_model show graph =
       ~on:step
       ~for_:(fun graph -> counter ~step graph)
       graph
-  | `No -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
+  | `No -> Bonsai.return Vdom.Node.none
 ;;
 
 (* $MDX part-end *)
@@ -150,7 +150,7 @@ let maybe_show_dynamic_count show graph =
   match%sub show with
   | `Count_by_1 -> counter ~step:(return 1) graph
   | `Count_by_2 -> counter ~step:(return 2) graph
-  | `No -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
+  | `No -> Bonsai.return Vdom.Node.none
 ;;
 
 (* $MDX part-end *)
@@ -183,6 +183,7 @@ let multiple_counters (input : unit Int.Map.t Bonsai.t) graph =
       input
       ~f:(fun key (_ : unit Bonsai.t) graph ->
         let%arr key
+        (* [counter_ui] is like [counter] but only returns the view. *)
         and counter = State_examples.counter_ui graph in
         Vdom.Node.tr
           [ Vdom.Node.td [ Vdom.Node.textf "counter #%d:" key ]

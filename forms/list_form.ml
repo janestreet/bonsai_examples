@@ -27,7 +27,7 @@ module S =
         display: flex;
         flex-direction: column;
       }
-      |}]
+    |}]
 
 module Simple_list = struct
   module T = struct

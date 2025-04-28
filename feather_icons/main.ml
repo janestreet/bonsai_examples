@@ -32,7 +32,7 @@ module Left_section =
         flex-direction: column;
         gap: 48px;
       }
-      |}]
+    |}]
 
 let left_section ~controls graph =
   let%sub icons, search_bar = Search_bar.component graph in
@@ -49,7 +49,7 @@ module Main =
         display: flex;
         gap: 48px;
       }
-      |}]
+    |}]
 
 let main graph =
   let%sub controls, controls_view = Controls.component graph in
@@ -71,7 +71,7 @@ module App =
       .class_ {
         padding: 48px;
       }
-      |}]
+    |}]
 
 let app graph =
   let main = main graph in
@@ -79,4 +79,4 @@ let app graph =
   Vdom.Node.div ~attrs:[ App.class_ ] [ header; main ]
 ;;
 
-let () = Bonsai_web.Start.start app
+let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled

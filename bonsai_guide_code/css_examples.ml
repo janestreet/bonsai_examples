@@ -6,12 +6,11 @@ open! Bonsai.Let_syntax
 let view =
   Vdom.Node.div
     ~attrs:
-      [ [%css
-          {|
-            background-color: tomato;
-            min-width: 2rem;
-            min-height: 2rem;
-          |}]
+      [ {%css|
+          background-color: tomato;
+          min-width: 2rem;
+          min-height: 2rem;
+        |}
       ]
     [ Vdom.Node.text "Very Red Background" ]
 ;;
@@ -23,7 +22,7 @@ let () = Util.run_vdom view ~id:"ppx_css_inline"
 (* $MDX part-begin=ppx_css_inline_interpol *)
 let box_with_border (color : Css_gen.Color.t) (width : Css_gen.Length.t) =
   Vdom.Node.div
-    ~attrs:[ [%css {|border: %{width#Css_gen.Length} solid %{color#Css_gen.Color};|}] ]
+    ~attrs:[ {%css|border: %{width#Css_gen.Length} solid %{color#Css_gen.Color};|} ]
     [ Vdom.Node.text "Nice Borders!" ]
 ;;
 
@@ -38,21 +37,20 @@ let hoverable_blocks =
   let block =
     Vdom.Node.div
       ~attrs:
-        [ [%css
-            {|
-              background-color: green;
-              min-width: 2rem;
-              min-height: 2rem;
-              border: 1px solid black;
+        [ {%css|
+            background-color: green;
+            min-width: 2rem;
+            min-height: 2rem;
+            border: 1px solid black;
 
-              &:hover {
-                background-color: tomato;
-              }
+            &:hover {
+              background-color: tomato;
+            }
 
-              &:not(:nth-child(odd)):hover {
-                background-color: purple;
-              }
-            |}]
+            &:not(:nth-child(odd)):hover {
+              background-color: purple;
+            }
+          |}
         ]
       [ Vdom.Node.text "Hoverable" ]
   in
@@ -66,9 +64,9 @@ let () = Util.run_vdom hoverable_blocks ~id:"ppx_css_inline_nesting"
 (* $MDX part-begin=ppx_css_inline_multiple *)
 let multiple_ppx_css =
   Vdom.Node.div
-    ~attrs:[ [%css {|color: red;|}] ]
+    ~attrs:[ {%css|color: red;|} ]
     [ Vdom.Node.text "Foo"
-    ; Vdom.Node.div ~attrs:[ [%css {|color: blue;|}] ] [ Vdom.Node.text "Bar" ]
+    ; Vdom.Node.div ~attrs:[ {%css|color: blue;|} ] [ Vdom.Node.text "Bar" ]
     ]
 ;;
 
@@ -98,7 +96,7 @@ module Style =
           font-size: 20px;
         }
       }
-      |}]
+    |}]
 
 let stylesheet_demo = Vdom.Node.div ~attrs:[ Style.container ] [ Vdom.Node.text "Hello" ]
 
@@ -124,7 +122,7 @@ let stylesheet_interpol small_bg large_bg =
             background-color: %{large_bg#Css_gen.Color};
           }
         }
-        |}]
+      |}]
   in
   Vdom.Node.div ~attrs:[ Style.container ] [ Vdom.Node.text "Hello" ]
 ;;
@@ -154,7 +152,7 @@ module _ = struct
             background-color: var(--large-bg);
           }
         }
-        |}]
+      |}]
 
   let stylesheet_vars =
     Vdom.Node.div

@@ -19,6 +19,7 @@ module Popover = struct
           Toplayer.Popover.create
             ~position:(return Toplayer.Position.Top)
             ~alignment:(return Toplayer.Alignment.Start)
+            ~overflow_auto_wrapper:(Bonsai.return false)
             ~content:(fun ~close graph ->
               let%arr theme = View.Theme.current graph
               and close in
@@ -55,12 +56,14 @@ module Nested_popover = struct
       [%demo
         let popover, { Toplayer.Controls.open_; _ } =
           Toplayer.Popover.create
+            ~overflow_auto_wrapper:(Bonsai.return false)
             ~content:(fun ~close:_ graph ->
               let button_with_popover graph =
                 let popover, { Toplayer.Controls.open_; _ } =
                   Toplayer.Popover.create
                     ~position:(return Toplayer.Position.Right)
                     ~alignment:(return Toplayer.Alignment.Start)
+                    ~overflow_auto_wrapper:(Bonsai.return false)
                     ~content:(fun ~close:_ _graph ->
                       View.text "I am a nested popover" |> Bonsai.return)
                     graph
@@ -107,6 +110,7 @@ module Popover_with_arrow = struct
       [%demo
         let popover_anchor, { Toplayer.Controls.open_; _ } =
           Toplayer.Popover.create
+            ~overflow_auto_wrapper:(Bonsai.return false)
             ~has_arrow:(return true)
             ~content:(fun ~close:_ _graph ->
               View.text "Hi, I am a popover" |> Bonsai.return)
@@ -147,6 +151,7 @@ module Popover_close_on_click = struct
             ~position:(return Toplayer.Position.Top)
             ~offset:(return offset)
             ~close_on_click_outside:(return Toplayer.Close_on_click_outside.No)
+            ~overflow_auto_wrapper:(Bonsai.return false)
             ~content:(fun ~close:_ _graph ->
               View.text "Will not close when clicked outside (use esc)" |> Bonsai.return)
             graph
@@ -157,6 +162,7 @@ module Popover_close_on_click = struct
               (return Toplayer.Close_on_click_outside.Yes_unless_target_is_popover)
             ~position:(return Toplayer.Position.Right)
             ~offset:(return offset)
+            ~overflow_auto_wrapper:(Bonsai.return false)
             ~content:(fun ~close:_ _graph ->
               View.text
                 "Will close when clicked outside, unless clicking on another popover"
@@ -167,6 +173,7 @@ module Popover_close_on_click = struct
           Toplayer.Popover.create
             ~position:(return Toplayer.Position.Bottom)
             ~offset:(return offset)
+            ~overflow_auto_wrapper:(Bonsai.return false)
             ~content:(fun ~close:_ _graph ->
               View.text "Will always close when clicked outside" |> Bonsai.return)
             graph
@@ -218,5 +225,5 @@ let component graph =
 
 let () =
   Async_js.init ();
-  Bonsai_web.Start.start component
+  Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
 ;;

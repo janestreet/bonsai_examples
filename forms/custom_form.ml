@@ -5,7 +5,7 @@ module Form = Bonsai_web_ui_form.With_manual_view
 
 let form graph =
   let state, set_state =
-    Bonsai.state_machine0 ~default_model:"" graph ~apply_action:(fun _ _ new_state ->
+    Bonsai.state_machine ~default_model:"" graph ~apply_action:(fun _ _ new_state ->
       String.capitalize new_state)
   in
   let%arr state and set_state in

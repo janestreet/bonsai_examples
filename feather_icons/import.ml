@@ -10,9 +10,9 @@ module Card_like =
       .class_ {
         border-radius: 8px;
         background-color: white;
-        box-shadow: rgb(0 0 0 / 10%) 0px 4px 6px -1px,
-          rgb(0 0 0 / 6%) 0px 2px 4px -1px;
+        box-shadow: rgb(0 0 0 / 10%) 0px 4px 6px -1px, rgb(0 0 0 / 6%) 0px 2px 4px
+          -1px;
         border: none;
         padding: 8px;
       }
-      |}]
+    |}]

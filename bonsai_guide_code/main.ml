@@ -22,6 +22,7 @@ module _ = Control_flow_examples
 (* How-tos *)
 
 module _ = Css_examples
+module _ = Cutoff_examples
 module _ = Best_practices_examples
 module _ = Edge_triggered_examples
 module _ = Dynamic_scope_examples
@@ -30,6 +31,7 @@ module _ = Focus_examples
 module _ = Form_examples
 module _ = Higher_order_examples
 module _ = Lifecycle_examples
+module _ = Organizing_state_examples
 module _ = Prt_examples
 module _ = Rpc_examples
 module _ = Scope_model_examples
@@ -37,3 +39,5 @@ module _ = State_reset_examples
 module _ = Time_examples
 module _ = Theming_examples
 module _ = Url_var_examples
+
+let () = Util.no_hash_fallback_must_run_last ()

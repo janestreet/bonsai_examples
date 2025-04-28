@@ -24,6 +24,7 @@ module Modal = struct
                 [ View.text "Hi, I am a modal"
                 ; View.button theme ~on_click:close "Close Modal"
                 ])
+            ~overflow_auto_wrapper:(Bonsai.return false)
             graph
         in
         let%arr theme = View.Theme.current graph
@@ -55,6 +56,7 @@ module Modal_lock_body_scroll = struct
           Toplayer.Modal.create
             ~lock_body_scroll:(return true)
             ~content:(fun ~close:_ _graph -> View.text "Hi, I am a modal" |> return)
+            ~overflow_auto_wrapper:(Bonsai.return false)
             graph
         in
         let%arr theme = View.Theme.current graph
@@ -88,6 +90,7 @@ module Nested_modals = struct
                       [ View.text "Hi, I am a modal"
                       ; View.button theme ~on_click:close "Close Modal"
                       ])
+                  ~overflow_auto_wrapper:(Bonsai.return false)
                   graph
               in
               let%arr theme = View.Theme.current graph
@@ -98,6 +101,7 @@ module Nested_modals = struct
                 ; View.button theme ~on_click:open_inner "Open Inner Modal"
                 ; View.button theme ~on_click:close "Close Modal"
                 ])
+            ~overflow_auto_wrapper:(Bonsai.return false)
             graph
         in
         let%arr theme = View.Theme.current graph
@@ -137,6 +141,7 @@ module Modal_and_popover_interactions = struct
                 [ View.text "Hi, I am a popover"
                 ; View.button theme ~on_click:close "Close Popover"
                 ])
+            ~overflow_auto_wrapper:(Bonsai.return false)
             graph
         in
         let { Toplayer.Controls.open_ = open_modal; _ } =
@@ -152,6 +157,7 @@ module Modal_and_popover_interactions = struct
                       [ View.text "Inner Popover"
                       ; View.button theme ~on_click:close "Close Popover"
                       ])
+                  ~overflow_auto_wrapper:(Bonsai.return false)
                   graph
               in
               let%arr theme = View.Theme.current graph
@@ -168,10 +174,11 @@ module Modal_and_popover_interactions = struct
                     ~on_click:open_popover
                     "Open Inner Popover"
                 ; (match outer_is_open with
-                   | true -> Vdom.Node.none_deprecated [@alert "-deprecated"]
+                   | true -> Vdom.Node.none
                    | false -> View.button theme ~on_click:open_outer "Open Outer Popover")
                 ; View.button theme ~on_click:close "Close Modal"
                 ])
+            ~overflow_auto_wrapper:(Bonsai.return true)
             graph
         in
         let%arr theme = View.Theme.current graph
@@ -213,4 +220,4 @@ let component graph =
     graph
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

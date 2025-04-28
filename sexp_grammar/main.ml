@@ -20,7 +20,7 @@ let component graph =
   in
   let form = Type.form graph in
   let index, incr =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Int.t]
       ~equal:[%equal: Int.t]
@@ -49,4 +49,4 @@ let component graph =
     ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

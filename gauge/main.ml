@@ -44,7 +44,7 @@ module Styles =
         max-height: 50vh;
         overflow-y: auto;
       }
-      |}]
+    |}]
 
 let colors =
   [| "#ff355e"
@@ -68,7 +68,7 @@ let radius = 30.
 
 let ticker graph =
   let percentage, increase =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Int.t]
       ~equal:[%equal: Int.t]
@@ -78,7 +78,7 @@ let ticker graph =
         (model + 1) % 101)
   in
   let color_index, increment =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: Int.t]
       ~equal:[%equal: Int.t]
@@ -95,7 +95,7 @@ let ticker graph =
     Bonsai.Clock.every
       ~when_to_start_next_effect:`Every_multiple_of_period_blocking
       ~trigger_on_activate:false
-      (Time_ns.Span.of_sec 0.1)
+      (Bonsai.return (Time_ns.Span.of_sec 0.1))
       effect
       graph;
     Bonsai.return ()
@@ -147,4 +147,4 @@ let component graph =
     ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

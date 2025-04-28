@@ -25,7 +25,7 @@ let time_now graph =
   Bonsai.Clock.every
     ~when_to_start_next_effect:`Every_multiple_of_period_blocking
     ~trigger_on_activate:false
-    (Time_ns.Span.of_sec 1.)
+    (Bonsai.return (Time_ns.Span.of_sec 1.))
     (let%arr set_state in
      let%bind.Effect time =
        Effect.of_thunk (fun () -> Time_now.nanosecond_counter_for_timing ())
@@ -35,22 +35,22 @@ let time_now graph =
   let%arr state in
   let span = Time_ns.Span.of_int63_ns state in
   {%html|
-      <div>
-        This counter should show the # of seconds since the page opened:
-        %{span#Time_ns.Span}
-      </div>
-    |}
+    <div>
+      This counter should show the # of seconds since the page opened:
+      %{span#Time_ns.Span}
+    </div>
+  |}
 ;;
 
 let component graph =
   let%arr bonsai_time_source = testable_bonsai_clock graph
   and time_now = time_now graph in
   {%html|
-      <div>
-        <h2>Bonsai Time Source</h2>
-        <div>%{bonsai_time_source}</div>
-        <h2>Clock.every + Time_now</h2>
-        <div>%{time_now}</div>
-      </div>
-    |}
+    <div>
+      <h2>Bonsai Time Source</h2>
+      <div>%{bonsai_time_source}</div>
+      <h2>Clock.every + Time_now</h2>
+      <div>%{time_now}</div>
+    </div>
+  |}
 ;;

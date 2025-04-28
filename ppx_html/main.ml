@@ -25,12 +25,12 @@ module Basic = struct
     let vdom, demo =
       [%demo
         {%html|
-            <div %{centered}>
-              <p>Capybaras are the worlds largest living rodent.</p>
-              <br />
-              <img style="width: 50%" src=%{image_url} />
-            </div>
-          |}]
+          <div %{centered}>
+            <p>Capybaras are the worlds largest living rodent.</p>
+            <br />
+            <img style="width: 50%" src=%{image_url} />
+          </div>
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -67,10 +67,10 @@ module With_ppx_css = struct
       [%demo
         let color = `Name "tomato" in
         {%html|
-            <div
-              style="width: 2rem; height: 2rem; background-color: %{color#Css_gen.Color}"
-            ></div>
-          |}]
+          <div
+            style="width: 2rem; height: 2rem; background-color: %{color#Css_gen.Color}"
+          ></div>
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -141,11 +141,11 @@ module Html_with_vdom_interpolation = struct
             [ Vdom.Node.text "Capybara's are the world's largest living rodent" ]
         in
         {%html|
-            <div>
-              <h1>Hello Capybara!</h1>
-              %{body}
-            </div>
-          |}]
+          <div>
+            <h1>Hello Capybara!</h1>
+            %{body}
+          </div>
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -167,10 +167,10 @@ module Html_no_string_interpolation = struct
         let name = "Capybara" in
         let age = 2 in
         {%html|
-            <div>
-              <h1>Hello #{name}! Your age is %{age#Int}.</h1>
-            </div>
-          |}]
+          <div>
+            <h1>Hello #{name}! Your age is %{age#Int}.</h1>
+          </div>
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -191,12 +191,12 @@ module Html_with_attributes = struct
       [%demo
         let image = "Capybara_mother_with_pups.jpg" in
         {%html|
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/1/1b/%{image}"
-              style="width: 50%"
-              tabindex=%{1}
-            />
-          |}]
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/1/1b/%{image}"
+            style="width: 50%"
+            tabindex=%{1}
+          />
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -216,13 +216,13 @@ module Attribute_value_interpolation = struct
     let vdom, demo =
       [%demo
         {%html|
-            <div
-              on_click=%{fun _ -> Effect.alert "You clicked me!"}
-              style="background-color: tomato; padding: 1rem; cursor: pointer"
-            >
-              Click me!
-            </div>
-          |}]
+          <div
+            on_click=%{fun _ -> Effect.alert "You clicked me!"}
+            style="background-color: tomato; padding: 1rem; cursor: pointer"
+          >
+            Click me!
+          </div>
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -241,21 +241,21 @@ module Attribute_interpolation = struct
         let tomato_attr ~size =
           Vdom.Attr.many
             [ {%css|
-                  background-color: tomato;
-                  width: %{`Rem size#Css_gen.Length};
-                  height: %{`Rem size#Css_gen.Length};
-                  cursor: pointer;
-                |}
+                background-color: tomato;
+                width: %{`Rem size#Css_gen.Length};
+                height: %{`Rem size#Css_gen.Length};
+                cursor: pointer;
+              |}
             ; Vdom.Attr.on_click (fun _ -> Effect.alert "You clicked me!")
             ]
         in
         {%html|
-            <div>
-              <div %{tomato_attr ~size:1.0}></div>
-              <div %{tomato_attr ~size:2.0}></div>
-              <div %{tomato_attr ~size:3.0}></div>
-            </div>
-          |}]
+          <div>
+            <div %{tomato_attr ~size:1.0}></div>
+            <div %{tomato_attr ~size:2.0}></div>
+            <div %{tomato_attr ~size:3.0}></div>
+          </div>
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -276,19 +276,19 @@ module Interpolating_the_view_function = struct
       [%demo
         let box =
           {%css|
-              background-color: tomato;
-              width: 2rem;
-              height: 2rem;
-            |}
+            background-color: tomato;
+            width: 2rem;
+            height: 2rem;
+          |}
         in
         {%html|
-            <%{View.hbox ~gap:(`Rem 1.0)}>
-              <div %{box}></div>
-              <div %{box}></div>
-              <div %{box}></div>
-              <div %{box}></div>
-            </>
-          |}]
+          <%{View.hbox ~gap:(`Rem 1.0)}>
+            <div %{box}></div>
+            <div %{box}></div>
+            <div %{box}></div>
+            <div %{box}></div>
+          </>
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -310,17 +310,17 @@ module Interpolating_an_option = struct
         let maybe_tomato =
           Some
             {%css|
-                background-color: tomato;
-                height: 2rem;
-                width: 2rem;
-              |}
+              background-color: tomato;
+              height: 2rem;
+              width: 2rem;
+            |}
         in
         let maybe_greeting = Some {%html|hi|} in
         {%html|
-            <div ?{maybe_tomato : Vdom.Attr.t option} %{centered}>
-              ?{maybe_greeting : Vdom.Node.t option}
-            </div>
-          |}]
+          <div ?{maybe_tomato : Vdom.Attr.t option} %{centered}>
+            ?{maybe_greeting : Vdom.Node.t option}
+          </div>
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -344,13 +344,13 @@ module Interpolating_a_list = struct
           |> List.map ~f:(fun capy -> {%html|<li>%{capy#String}</li>|})
         in
         {%html|
-            <div>
-              <h1>Capybara List:</h1>
-              <ul>
-                *{capybaras : Vdom.Node.t list}
-              </ul>
-            </div>
-          |}]
+          <div>
+            <h1>Capybara List:</h1>
+            <ul>
+              *{capybaras : Vdom.Node.t list}
+            </ul>
+          </div>
+        |}]
     in
     fun _graph -> Bonsai.return (vdom, demo)
   ;;
@@ -385,4 +385,4 @@ let component graph =
     graph
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

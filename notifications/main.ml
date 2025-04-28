@@ -34,7 +34,7 @@ module User_defined_notification = struct
     let component graph =
       let notifications =
         Notifications.component
-          (module Notification)
+          ~sexp_of:[%sexp_of: Notification.t]
           ~equal:[%equal: Notification.t]
           graph
       in
@@ -109,4 +109,4 @@ let component graph =
     graph
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

@@ -1,8 +1,8 @@
 open! Core
 open! Bonsai_web
 
-(** Given a color-list map, this component will display the given rows
-    using four approaches:
+(** Given a color-list map, this component will display the given rows using four
+    approaches:
 
     1. Traditional [Vdom.Node.div (Map.data values)]
     2. Using Node_with_map_children

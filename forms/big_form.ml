@@ -19,7 +19,7 @@ module Query_box_css =
       .selected_item {
         background: yellow;
       }
-      |}]
+    |}]
 
 let barebones_button_like ~checked =
   if checked
@@ -189,9 +189,19 @@ module Int_blang = struct
   include T
 
   let form =
-    Codemirror_form.Sexp_grammar_autocomplete.sexpable
+    Codemirror_form.Dynamic_extensions.sexpable
       (module T)
       (Bonsai.return T.t_sexp_grammar)
+      ~equal:Codemirror_sexp.grammar_equal
+      ~compute_extensions:
+        (Bonsai.return (fun grammar ->
+           [ Codemirror_sexp.extension
+               ~enable_rainbow_parens:true
+               ~enable_validation:true
+               ~enable_autocomplete:New_autocomplete_beta
+               ~enable_syntax_highlighting_beta:true
+               grammar
+           ]))
   ;;
 end
 
@@ -293,9 +303,9 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
   | Time_ns_of_day -> E.Date_time.time ~allow_updates_when_focused:`Always () graph
   | Time_ns_of_day_range ->
     E.Date_time.Range.time ~allow_updates_when_focused:`Always () graph
-  | Date_time -> E.Date_time.datetime_local ~allow_updates_when_focused:`Always () graph
+  | Date_time -> E.Date_time.datetime_local ~allow_updates_when_focused:`Never () graph
   | Date_time_range ->
-    E.Date_time.Range.datetime_local ~allow_updates_when_focused:`Always () graph
+    E.Date_time.Range.datetime_local ~allow_updates_when_focused:`Never () graph
   | Date_from_string ->
     E.Textbox.string ~allow_updates_when_focused:`Always () graph
     >>|| Form.project ~parse_exn:Date.of_string ~unparse:Date.to_string
@@ -314,9 +324,9 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
     E.Dropdown.enumerable (module Bool) ~to_string:Bool.to_string graph
   | Typeahead ->
     E.Typeahead.single
-      (module Rodents)
+      ~sexp_of:[%sexp_of: Rodents.t]
       ~equal:[%equal: Rodents.t]
-      ~placeholder:"Typeahead here!"
+      ~placeholder:(Bonsai.return "Typeahead here!")
       ~to_option_description:(Bonsai.return Rodents.to_description)
       ~handle_unknown_option:(Bonsai.return (fun s -> Some (Rodents.Other s)))
       ~all_options:(Bonsai.return Rodents.all)
@@ -401,7 +411,7 @@ let form_for_field : type a. a Typed_field.t -> Bonsai.graph -> a Form.t Bonsai.
       graph
   | Nested_record -> Nested_record.form graph
   | Record_list_as_table -> Record_for_list.form graph
-  | Color_picker -> E.Color_picker.hex () graph
+  | Color_picker -> E.Color_picker.hex ~default:(`Hex "#663399") () graph
   | Int_blang -> Int_blang.form graph
   | Password -> E.Password.string ~allow_updates_when_focused:`Always () graph
   | Codemirror_string -> Codemirror_form.Basic.string () graph

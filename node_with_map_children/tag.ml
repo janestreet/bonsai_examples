@@ -9,7 +9,7 @@ type t =
 
 let component graph =
   let tag, inject =
-    Bonsai.state_machine0
+    Bonsai.state_machine
       graph
       ~sexp_of_model:[%sexp_of: String.t]
       ~equal:[%equal: String.t]

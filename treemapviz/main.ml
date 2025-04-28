@@ -208,7 +208,7 @@ module Style =
         border-color: #facc15;
         color: #facc15;
       }
-      |}]
+    |}]
 
 let create_color percent =
   let base =
@@ -247,7 +247,7 @@ let create_treemap ~elements graph =
   in
   let treemap =
     match%sub dimensions with
-    | None -> Bonsai.return (Vdom.Node.none_deprecated [@alert "-deprecated"])
+    | None -> Bonsai.return Vdom.Node.none
     | Some dimensions ->
       let dimensions =
         let%arr dimensions in
@@ -320,4 +320,4 @@ let component graph =
   Vdom.Node.div ~attrs:[ Style.top ] [ button; content ]
 ;;
 
-let () = Bonsai_web.Start.start component
+let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
