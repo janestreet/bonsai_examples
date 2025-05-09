@@ -204,26 +204,3 @@ module Popover_close_on_click = struct
   let selector = None
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
-
-let component (local_ graph) =
-  let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
-  View.Theme.set_for_app
-    theme
-    (Gallery.make_sections
-       ~theme_picker
-       [ ( "Bonsai_web_ui_toplayer"
-         , {| Popovers are toplayer elements that do not block interaction with the rest of
-          the page. |}
-         , [ Gallery.make_demo (module Popover)
-           ; Gallery.make_demo (module Nested_popover)
-           ; Gallery.make_demo (module Popover_with_arrow)
-           ; Gallery.make_demo (module Popover_close_on_click)
-           ] )
-       ])
-    graph
-;;
-
-let () =
-  Async_js.init ();
-  Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
-;;

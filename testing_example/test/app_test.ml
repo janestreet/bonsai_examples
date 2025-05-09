@@ -58,7 +58,7 @@ let%expect_test "shows hello to a specified user" =
   [%expect
     {|
     <div>
-      <input @on_input> </input>
+      <input @on_input/>
       <span> hello  </span>
     </div>
     |}];
@@ -67,7 +67,7 @@ let%expect_test "shows hello to a specified user" =
   [%expect
     {|
       <div>
-        <input @on_input> </input>
+        <input @on_input/>
     -|  <span> hello  </span>
     +|  <span> hello Bob </span>
       </div>
@@ -77,7 +77,7 @@ let%expect_test "shows hello to a specified user" =
   [%expect
     {|
       <div>
-        <input @on_input> </input>
+        <input @on_input/>
     -|  <span> hello Bob </span>
     +|  <span> hello Alice </span>
       </div>

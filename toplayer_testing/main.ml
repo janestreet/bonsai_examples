@@ -4,11 +4,15 @@ open! Bonsai.Let_syntax
 module Gallery = Bonsai_web_ui_gallery
 module Toplayer = Bonsai_web_ui_toplayer
 
+(* Do not copy the code in these examples! These are lower-level, and intended for
+   toplayer devs to test changes. See [examples/toplayer_components] for demos intended
+   for app writers. *)
+
 module Vdom_popover = struct
   let name = "Popover"
 
   let description =
-    {|A popover is positioned relative to a target element. `Vdom_toplayer`'s popovers
+    {|A popover is positioned relative to a target element. `Byo_toplayer`'s popovers
     are always displayed; for "sometimes open" popovers, use Bonsai-state-backed
     `Bonsai_web_ui_toplayer` popovers.
 
@@ -21,7 +25,7 @@ module Vdom_popover = struct
     let vdom, demo =
       [%demo
         let popover position alignment =
-          Vdom_toplayer.popover
+          Byo_toplayer.vdom_popover
             ~position
             ~alignment
             ~offset:{ main_axis = 6.; cross_axis = 0. }
@@ -64,7 +68,7 @@ module Vdom_popover_match_anchor_side_length = struct
             |}]
         in
         let popover ~match_anchor_side_length position =
-          Vdom_toplayer.popover
+          Byo_toplayer.vdom_popover
             ~popover_attrs:[ [%css {|overflow: hidden;|}] ]
             ~position
             ~match_anchor_side_length
@@ -153,7 +157,7 @@ module Vdom_popover_arrows = struct
             []
         in
         let popover position alignment =
-          Vdom_toplayer.popover
+          Byo_toplayer.vdom_popover
             ~position
             ~alignment
             ~offset:{ main_axis = 10.; cross_axis = 0. }
@@ -172,7 +176,7 @@ module Vdom_popover_arrows = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-module Vdom_toplayer_tooltip_no_light_dismiss = struct
+module Byo_toplayer_tooltip_no_light_dismiss = struct
   let name = "Tooltips w/o light dismiss"
 
   let description =
@@ -186,7 +190,7 @@ module Vdom_toplayer_tooltip_no_light_dismiss = struct
         ~gap:(`Px 10)
         [ View.vbox
             ~attrs:
-              [ Vdom_toplayer.tooltip ~light_dismiss:false {%html|Clicking wont close me|}
+              [ Byo_toplayer.tooltip ~light_dismiss:false {%html|Clicking wont close me|}
               ]
             [ View.text "Show on hover" ]
         ]]
@@ -361,7 +365,7 @@ module Tooltip_nested = struct
   let view _ =
     [%demo
       let make_tooltip content =
-        Vdom_toplayer.tooltip
+        Byo_toplayer.tooltip
           ~tooltip_attrs:
             [ [%css
                 {|
@@ -486,7 +490,7 @@ module Menu_like_popovers = struct
           {%html|
             <div>
               I will move wherever you click
-              <button on_click=%{(fun _ -> close)}>x</button>
+              <button on_click=%{fun _ -> close}>x</button>
             </div>
           |}
         in
@@ -495,15 +499,11 @@ module Menu_like_popovers = struct
           let%arr set_coords in
           set_coords None
         in
-        let is_open =
-          let%arr coords in
-          Option.is_some coords
-        in
         let%sub () =
-          match%sub positioning_kind with
-          | `Virtual ->
-            let controls =
-              Toplayer.Controls.For_external_state.create
+          match%sub coords, positioning_kind with
+          | Some coords, `Virtual ->
+            let autoclose =
+              Toplayer.Autoclose.create
                 ~close_on_click_outside:(return Toplayer.Close_on_click_outside.No)
                 ~close
                 graph
@@ -511,28 +511,25 @@ module Menu_like_popovers = struct
             let anchor =
               let%arr coords and relative_to in
               match coords, relative_to with
-              | None, _ ->
-                Toplayer.Anchor.of_coordinate ~relative_to:`Viewport ~x:0. ~y:0.
-              | Some { client_x; client_y; _ }, `Viewport ->
+              | { client_x; client_y; _ }, `Viewport ->
                 Toplayer.Anchor.of_coordinate
                   ~relative_to:`Viewport
                   ~x:client_x
                   ~y:client_y
-              | Some { page_x; page_y; _ }, `Document ->
+              | { page_x; page_y; _ }, `Document ->
                 Toplayer.Anchor.of_coordinate ~relative_to:`Document ~x:page_x ~y:page_y
             in
-            Toplayer.Popover.For_external_state.bool_virtual
+            Toplayer.Popover.always_open_virtual
               ~position
               ~overflow_auto_wrapper:(return false)
-              ~controls
-              ~is_open
+              ~autoclose
               ~content:(fun _ -> content ~close)
               anchor
               graph;
             return ()
-          | `Css ->
-            let controls =
-              Toplayer.Controls.For_external_state.create
+          | Some coords, `Css ->
+            let autoclose =
+              Toplayer.Autoclose.create
                 ~close_on_click_outside:(return Toplayer.Close_on_click_outside.No)
                 ~close
                 graph
@@ -540,15 +537,14 @@ module Menu_like_popovers = struct
             let extra_attrs =
               let%arr coords and relative_to in
               match coords, relative_to with
-              | None, _ -> []
-              | Some { client_x; client_y; _ }, `Viewport ->
+              | { client_x; client_y; _ }, `Viewport ->
                 [ {%css|
                     position: fixed;
                     top: %{(`Px_float client_y)#Css_gen.Length};
                     left: %{(`Px_float client_x)#Css_gen.Length};
                   |}
                 ]
-              | Some { page_x; page_y; _ }, `Document ->
+              | { page_x; page_y; _ }, `Document ->
                 [ {%css|
                     position: absolute;
                     top: %{(`Px_float page_y)#Css_gen.Length};
@@ -556,16 +552,16 @@ module Menu_like_popovers = struct
                   |}
                 ]
             in
-            Toplayer.Popover.For_external_state.bool_css
+            Toplayer.Popover.always_open_css
               ~extra_attrs
-              ~controls
+              ~autoclose
               ~content:(fun _ -> content ~close)
-              ~is_open
               graph;
             return ()
+          | None, _ -> return ()
         in
         let%arr set_coords
-        and is_open
+        and coords
         and positioning_kind
         and positioning_kind_form
         and relative_to_form
@@ -595,7 +591,9 @@ module Menu_like_popovers = struct
           ; (match positioning_kind with
              | `Virtual -> Skyline.Input.view position_form
              | `Css -> Vdom.Node.none)
-          ; (if is_open then Vdom.Node.none else Vdom.Node.text "Click to place!")
+          ; (if Option.is_some coords
+             then Vdom.Node.none
+             else Vdom.Node.text "Click to place!")
           ]]
     in
     let%arr vdom in
@@ -760,7 +758,7 @@ module Vdom_tooltip_animations = struct
           |}]
       in
       let tooltip =
-        Vdom_toplayer.tooltip
+        Byo_toplayer.tooltip
           ~tooltip_attrs:[ Style.animated_tooltip ]
           ~show_delay:(Time_ns.Span.of_int_ms 100)
           ~hide_grace_period:(Time_ns.Span.of_int_ms 100)
@@ -1202,19 +1200,19 @@ module Explicit_styling = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
-let component (local_ graph) =
+let demos (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
   let view =
     Gallery.make_sections
       ~theme_picker
       [ ( "Vdom Toplayer"
-        , {| vdom_toplayer provides basic, vdom-only primitives used to implement
+        , {| Byo_toplayer contains basic, vdom-only primitives used to implement
              `bonsai_web_ui_toplayer`. This library is intended for component library
              and theme authors. |}
         , [ Gallery.make_demo (module Vdom_popover)
           ; Gallery.make_demo (module Vdom_popover_match_anchor_side_length)
           ; Gallery.make_demo (module Vdom_popover_arrows)
-          ; Gallery.make_demo (module Vdom_toplayer_tooltip_no_light_dismiss)
+          ; Gallery.make_demo (module Byo_toplayer_tooltip_no_light_dismiss)
           ] )
       ; ( "Bonsai web ui toplayer tooltip"
         , {|These demos are intended to test the toplayer tooltips|}
@@ -1236,6 +1234,17 @@ let component (local_ graph) =
       ]
   in
   View.Theme.set_for_app theme view graph
+;;
+
+let component (local_ graph) =
+  let%arr demos = demos graph
+  and stress_test = Floating_ui_stress_test.component graph in
+  View.vbox
+    [ demos
+    ; Vdom.Node.h2 [ Vdom.Node.text "Floating UI Stress Test" ]
+    ; Vdom.Node.hr ()
+    ; stress_test
+    ]
 ;;
 
 let () =

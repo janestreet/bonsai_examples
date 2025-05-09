@@ -152,7 +152,7 @@ module Params = struct
     ;;
 
     type form_of_field_fn =
-      { f : 'a. 'a Typed_field.t -> ('a, field_view) Form.t Bonsai.t }
+      { f : 'a. 'a Typed_field.t @ local -> ('a, field_view) Form.t Bonsai.t }
 
     let finalize_view { f } (local_ _graph) =
       let%arr form_fields =
