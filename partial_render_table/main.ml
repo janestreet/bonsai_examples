@@ -74,24 +74,26 @@ let pure_rows graph =
      separate ones per row via [Stateful_rows]. *)
   let history_open_symbol, set_history_open_symbol = Bonsai.state_opt graph in
   let anchor_history_popover =
-    Bonsai_web_ui_toplayer.Popover.For_external_state.opt
-      ~controls:
-        (Bonsai_web_ui_toplayer.Controls.For_external_state.create
-           ~close:
-             (let%arr set_history_open_symbol in
-              set_history_open_symbol None)
-           graph)
-      ~is_open:history_open_symbol
-      ~content:(fun symbol _graph ->
-        let%arr symbol in
-        {%html|
-          <div>
-            <h3>#{symbol} History</h3>
-            <p>The history is too sensitive to show in this demo.</p>
-          </div>
-        |})
-      ~overflow_auto_wrapper:(Bonsai.return false)
-      graph
+    match%sub history_open_symbol with
+    | Some symbol ->
+      Bonsai_web_ui_toplayer.Popover.always_open
+        ~autoclose:
+          (Bonsai_web_ui_toplayer.Autoclose.create
+             ~close:
+               (let%arr set_history_open_symbol in
+                set_history_open_symbol None)
+             graph)
+        ~content:(fun _graph ->
+          let%arr symbol in
+          {%html|
+            <div>
+              <h3>#{symbol} History</h3>
+              <p>The history is too sensitive to show in this demo.</p>
+            </div>
+          |})
+        ~overflow_auto_wrapper:(Bonsai.return false)
+        graph
+    | None -> return Vdom.Attr.empty
   in
   Table.Render_cell.Pure
     (let%arr history_open_symbol and set_history_open_symbol and anchor_history_popover in

@@ -39,16 +39,16 @@ module Config = struct
     Form.project
       base
       ~parse_exn:(fun { main_axis; cross_axis } ->
-        { Floating_positioning_new.Offset.main_axis; cross_axis })
+        { Byo_toplayer.Offset.main_axis; cross_axis })
       ~unparse:(fun { main_axis; cross_axis } -> { main_axis; cross_axis })
   ;;
 
   module One_popover = struct
     type t =
-      { position : Floating_positioning_new.Position.t
-      ; alignment : Floating_positioning_new.Alignment.t
-      ; offset : Floating_positioning_new.Offset.t
-      ; match_anchor_side : Floating_positioning_new.Match_anchor_side.t option
+      { position : Byo_toplayer.Position.t
+      ; alignment : Byo_toplayer.Alignment.t
+      ; offset : Byo_toplayer.Offset.t
+      ; match_anchor_side_length : Byo_toplayer.Match_anchor_side.t option
       }
     [@@deriving typed_fields]
 
@@ -58,19 +58,19 @@ module Config = struct
       | Position ->
         Form.Elements.Dropdown.enumerable
           ~init:`First_item
-          (module Floating_positioning_new.Position)
+          (module Byo_toplayer.Position)
           graph
       | Alignment ->
         Form.Elements.Dropdown.enumerable
           ~init:`First_item
-          (module Floating_positioning_new.Alignment)
+          (module Byo_toplayer.Alignment)
           graph
       | Offset -> offset_form graph
-      | Match_anchor_side ->
+      | Match_anchor_side_length ->
         Form.Elements.Optional.dropdown
           (Form.Elements.Dropdown.enumerable
              ~init:`First_item
-             (module Floating_positioning_new.Match_anchor_side))
+             (module Byo_toplayer.Match_anchor_side))
           graph
     ;;
 
@@ -110,7 +110,8 @@ let interval_ms = 16
 
 let get_viewport_dimensions () =
   let open Js_of_ocaml in
-  Dom_html.window##.innerWidth, Dom_html.window##.innerHeight
+  ( Dom_html.document##.documentElement##.clientWidth
+  , Dom_html.document##.documentElement##.clientHeight )
 ;;
 
 let with_dom_anchor shift popovers graph =
@@ -136,27 +137,41 @@ let with_dom_anchor shift popovers graph =
        move ())
       graph
   in
-  let%map left, top = anchor_pos
-  and popovers in
-  let popover_attrs =
-    List.mapi
-      popovers
-      ~f:(fun i { Config.One_popover.position; alignment; offset; match_anchor_side } ->
-        Vdom_toplayer.popover
-          ~popover_attrs:[ [%css {|border: 1px solid red;|}] ]
+  let popovers_map =
+    Bonsai.assoc
+      (module Int)
+      (let%arr popovers in
+       List.mapi popovers ~f:(fun i p -> i, p) |> Int.Map.of_alist_exn)
+      ~f:(fun i config graph ->
+        let%sub { Config.One_popover.position
+                ; alignment
+                ; offset
+                ; match_anchor_side_length
+                }
+          =
+          config
+        in
+        Byo_toplayer.Popover.always_open
+          ~attrs:(return [ [%css {|border: 1px solid red;|}] ])
           ~position
           ~alignment
           ~offset
-          ?match_anchor_side_length:match_anchor_side
-          ~overflow_auto_wrapper:false
-          (Vdom.Node.div [ Vdom.Node.text [%string "Popover %{i#Int}!"] ]))
+          ~match_anchor_side_length
+          ~content:(fun _graph ->
+            let%arr i in
+            {%html|<div>Popover %{i#Int}!</div>|})
+          graph)
+      graph
   in
+  let%map left, top = anchor_pos
+  and popovers_map in
+  let popover_attrs = Map.to_alist popovers_map |> List.map ~f:snd in
   Vdom.Node.div
     [ Vdom.Node.div
         ~attrs:
           ([ [%css
                {|
-                 position: fixed;
+                 position: absolute;
                  left: %{(`Px left)#Css_gen.Length};
                  top: %{(`Px top)#Css_gen.Length};
                |}]
@@ -186,7 +201,7 @@ let component graph =
       ~attrs:
         [ [%css
             {|
-              position: fixed;
+              position: absolute;
               right: 0;
               top: 0;
             |}]
@@ -200,9 +215,10 @@ let component graph =
             & * {
               box-sizing: border-box;
             }
+
+            height: 100vh;
+            position: relative;
           |}]
       ]
     [ form_div; body ]
 ;;
-
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled

@@ -297,6 +297,50 @@ module Interpolating_the_view_function = struct
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
 
+module Shorter_tag_interpolation_and_ocaml_args = struct
+  let name = "Calling OCaml functions and passing arguments"
+
+  let description =
+    {|This is syntax sugar that makes it easier to use OCaml functions as tags.|}
+  ;;
+
+  let view =
+    let vdom, demo =
+      [%demo
+        let module Box = struct
+          module Wrapper = struct
+            let component children = Vdom.Node.div children
+          end
+
+          let component ?(color = "tomato") () =
+            {%html|
+              <div
+                style="background-color: %{`Name color#Css_gen.Color}; width: 2rem; height: 2rem"
+              ></div>
+            |}
+          ;;
+        end
+        in
+        {%html|
+          <View.hbox ~gap:%{`Rem 1.0}>
+            <Box.Wrapper.component>
+              <Box.component />
+            </Box.Wrapper.component>
+            <Box.Wrapper.component>
+              <Box.component />
+            </>
+            <Box.component ~color:%{"rebeccapurple"} />
+            <Box.component />
+          </>
+        |}]
+    in
+    fun _graph -> Bonsai.return (vdom, demo)
+  ;;
+
+  let selector = None
+  let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
+end
+
 module Interpolating_an_option = struct
   let name = "Option Interpolation"
 
@@ -378,6 +422,7 @@ let component graph =
            ; Gallery.make_demo (module Svg_example)
            ; Gallery.make_demo (module With_tailwind)
            ; Gallery.make_demo (module Interpolating_the_view_function)
+           ; Gallery.make_demo (module Shorter_tag_interpolation_and_ocaml_args)
            ; Gallery.make_demo (module Interpolating_an_option)
            ; Gallery.make_demo (module Interpolating_a_list)
            ] )

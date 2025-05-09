@@ -93,9 +93,9 @@ let%expect_test "linter error on duplicate keys" =
     Linting Failures:
 
     <div>
-      <div @key=a/> <- [ERRORS]: Siblings have same vdom key
+      <div @key=a></div> <- [ERRORS]: Siblings have same vdom key
       ...
-      <div @key=a/> <- [ERRORS]: Siblings have same vdom key
+      <div @key=a></div> <- [ERRORS]: Siblings have same vdom key
     </div>
 
     [Fatal] Siblings have same vdom key (failure expected)
@@ -131,7 +131,7 @@ let%expect_test "shows hello to a specified user" =
   [%expect
     {|
     <div>
-      <input @on_input> </input>
+      <input @on_input/>
       <span> hello  </span>
     </div>
     |}];
@@ -140,7 +140,7 @@ let%expect_test "shows hello to a specified user" =
   [%expect
     {|
       <div>
-        <input @on_input> </input>
+        <input @on_input/>
     -|  <span> hello  </span>
     +|  <span> hello Bob </span>
       </div>
@@ -150,7 +150,7 @@ let%expect_test "shows hello to a specified user" =
   [%expect
     {|
       <div>
-        <input @on_input> </input>
+        <input @on_input/>
     -|  <span> hello Bob </span>
     +|  <span> hello Alice </span>
       </div>

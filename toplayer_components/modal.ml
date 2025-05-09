@@ -202,22 +202,3 @@ module Modal_and_popover_interactions = struct
   let selector = None
   let filter_attrs = Some (fun k _ -> not (String.is_prefix k ~prefix:"style"))
 end
-
-let component graph =
-  let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in
-  View.Theme.set_for_app
-    theme
-    (Gallery.make_sections
-       ~theme_picker
-       [ ( "Bonsai_web_ui_toplayer"
-         , {| Modals are like popovers, but they make the rest of the web UI inert. |}
-         , [ Gallery.make_demo (module Modal)
-           ; Gallery.make_demo (module Modal_lock_body_scroll)
-           ; Gallery.make_demo (module Nested_modals)
-           ; Gallery.make_demo (module Modal_and_popover_interactions)
-           ] )
-       ])
-    graph
-;;
-
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
