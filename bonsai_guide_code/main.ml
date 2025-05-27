@@ -21,6 +21,8 @@ module _ = Control_flow_examples
 
 (* How-tos *)
 
+(* Benchmarking_examples shows how to run benchmarks, so we don't want to link it in. *)
+module _ = Bonsai_runtime_examples
 module _ = Css_examples
 module _ = Cutoff_examples
 module _ = Best_practices_examples
@@ -30,7 +32,9 @@ module _ = Effect_stale_examples
 module _ = Focus_examples
 module _ = Form_examples
 module _ = Higher_order_examples
+module _ = Javascript_interop_examples
 module _ = Lifecycle_examples
+module _ = Low_level_vdom_examples
 module _ = Organizing_state_examples
 module _ = Prt_examples
 module _ = Rpc_examples

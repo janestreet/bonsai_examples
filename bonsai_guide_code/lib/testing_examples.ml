@@ -2,13 +2,8 @@ open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
 
-(* $MDX part-begin=hello-world *)
-let hello_world = Vdom.Node.span [ Vdom.Node.text "hello world" ]
-
-(* $MDX part-end *)
-
 (* $MDX part-begin=hello-user *)
-let hello_user (name : string Bonsai.t) : Vdom.Node.t Bonsai.t =
+let hello_user (name : string Bonsai.t) _graph : Vdom.Node.t Bonsai.t =
   let%arr name in
   Vdom.Node.span [ Vdom.Node.textf "hello %s" name ]
 ;;
@@ -16,12 +11,20 @@ let hello_user (name : string Bonsai.t) : Vdom.Node.t Bonsai.t =
 (* $MDX part-end *)
 
 (* $MDX part-begin=hello-text-box *)
-let hello_textbox graph : Vdom.Node.t Bonsai.t =
+
+let hello_textbox ?test_selector graph : Vdom.Node.t Bonsai.t =
   let state, set = Bonsai.state "" graph in
-  let%arr message = hello_user state
+  let%arr message = hello_user state graph
   and set in
   Vdom.Node.div
-    [ Vdom.Node.input ~attrs:[ Vdom.Attr.on_input (fun _ text -> set text) ] (); message ]
+    [ Vdom.Node.input
+        ~attrs:
+          [ Vdom.Attr.on_input (fun _ text -> set text)
+          ; Test_selector.attr_of_opt test_selector
+          ]
+        ()
+    ; message
+    ]
 ;;
 
 (* $MDX part-end *)
@@ -29,6 +32,8 @@ let hello_textbox graph : Vdom.Node.t Bonsai.t =
 (* $MDX part-begin=hello-world-test *)
 module Handle = Bonsai_web_test.Handle
 module Result_spec = Bonsai_web_test.Result_spec
+
+let hello_world = Vdom.Node.span [ Vdom.Node.text "hello world" ]
 
 let%expect_test "it shows hello world" =
   let handle = Handle.create (Result_spec.vdom Fn.id) (fun _ -> return hello_world) in
@@ -60,10 +65,11 @@ let%expect_test "handlers in tests" =
 let%expect_test "shows hello to a user" =
   let user_var = Bonsai.Expert.Var.create "Bob" in
   let user = Bonsai.Expert.Var.value user_var in
-  let handle = Handle.create (Result_spec.vdom Fn.id) (fun _ -> hello_user user) in
+  let handle = Handle.create (Result_spec.vdom Fn.id) (hello_user user) in
   Handle.show handle;
   [%expect {| <span> hello Bob </span> |}];
   Bonsai.Expert.Var.set user_var "Alice";
+  [%expect {| |}];
   Handle.show handle;
   [%expect {| <span> hello Alice </span> |}]
 ;;
@@ -110,7 +116,7 @@ let%expect_test "linter error on duplicate keys" =
 let%expect_test "shows hello to a user" =
   let user_var = Bonsai.Expert.Var.create "Bob" in
   let user = Bonsai.Expert.Var.value user_var in
-  let handle = Handle.create (Result_spec.vdom Fn.id) (fun _ -> hello_user user) in
+  let handle = Handle.create (Result_spec.vdom Fn.id) (hello_user user) in
   Handle.show handle;
   [%expect {| <span> hello Bob </span> |}];
   Bonsai.Expert.Var.set user_var "Alice";
@@ -125,8 +131,14 @@ let%expect_test "shows hello to a user" =
 (* $MDX part-end *)
 
 (* $MDX part-begin=hello-text-box-diff-test *)
+open Bonsai_web_test
+
+let input_selector = Test_selector.make ()
+
 let%expect_test "shows hello to a specified user" =
-  let handle = Handle.create (Result_spec.vdom Fn.id) hello_textbox in
+  let handle =
+    Handle.create (Result_spec.vdom Fn.id) (hello_textbox ~test_selector:input_selector)
+  in
   Handle.show handle;
   [%expect
     {|
@@ -135,7 +147,11 @@ let%expect_test "shows hello to a specified user" =
       <span> hello  </span>
     </div>
     |}];
-  Handle.input_text handle ~get_vdom:Fn.id ~selector:"input" ~text:"Bob";
+  Handle.input_text
+    handle
+    ~get_vdom:Fn.id
+    ~selector:(test_selector input_selector)
+    ~text:"Bob";
   Handle.show_diff handle;
   [%expect
     {|
@@ -145,7 +161,11 @@ let%expect_test "shows hello to a specified user" =
     +|  <span> hello Bob </span>
       </div>
     |}];
-  Handle.input_text handle ~get_vdom:Fn.id ~selector:"input" ~text:"Alice";
+  Handle.input_text
+    handle
+    ~get_vdom:Fn.id
+    ~selector:(test_selector input_selector)
+    ~text:"Alice";
   Handle.show_diff handle;
   [%expect
     {|
@@ -155,6 +175,42 @@ let%expect_test "shows hello to a specified user" =
     +|  <span> hello Alice </span>
       </div>
     |}]
+;;
+
+(* $MDX part-end *)
+
+(* $MDX part-begin=test_selector_keyed *)
+open Bonsai_web_test
+
+let keyed_selector = Test_selector.Keyed.create (module Int) |> Test_selector.Keyed.get
+
+let%expect_test "shows hello to a specified user" =
+  let handle =
+    Handle.create (Result_spec.vdom Fn.id) (fun _ ->
+      let button i =
+        {%html|
+          <button
+            on_click=%{fun _ -> Effect.print_s [%message "Clicked!" (i : int)]}
+            %{keyed_selector i |> Test_selector.attr}
+          >
+            Button %{i#Int}
+          </button>
+        |}
+      in
+      return {%html|<div>%{button 1}%{button 2}%{button 3}%{button 4}</div>|})
+  in
+  Handle.show handle;
+  [%expect
+    {|
+    <div>
+      <button @on_click>  Button  1 </button>
+      <button @on_click>  Button  2 </button>
+      <button @on_click>  Button  3 </button>
+      <button @on_click>  Button  4 </button>
+    </div>
+    |}];
+  Handle.click_on handle ~get_vdom:Fn.id ~selector:(keyed_selector 3 |> test_selector);
+  [%expect {| (Clicked! (i 3)) |}]
 ;;
 
 (* $MDX part-end *)

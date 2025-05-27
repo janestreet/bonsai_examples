@@ -1,0 +1,6 @@
+(executables
+ (modes byte exe)
+ (names benchmarking_examples)
+ (libraries bonsai bonsai_bench core core_bench.js)
+ (preprocess
+  (pps js_of_ocaml-ppx ppx_css ppx_html bonsai.ppx_bonsai ppx_jane)))
