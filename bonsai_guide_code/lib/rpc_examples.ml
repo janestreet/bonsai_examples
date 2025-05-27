@@ -57,7 +57,7 @@ let current_time_implementation =
 
 (* $MDX part-end *)
 
-type Rpc_effect.Where_to_connect.Custom.t += Connection
+module Custom_connection = Rpc_effect.Where_to_connect.Register ()
 
 (* Below is some sleight-of-hand. We want the readers of the guide to think that
    we are using [Self], but we don't *actually* want to do that, since it would
@@ -65,11 +65,17 @@ type Rpc_effect.Where_to_connect.Custom.t += Connection
    display with the value we want use. *)
 
 (* $MDX part-begin=where_to_connect *)
-let where_to_connect : Rpc_effect.Where_to_connect.t = Self
+let where_to_connect : Rpc_effect.Where_to_connect.t =
+  Rpc_effect.Where_to_connect.self ~on_conn_failure:Retry_until_success ()
+;;
+
 (* $MDX part-end *)
 
 let () = ignore (where_to_connect : Rpc_effect.Where_to_connect.t)
-let where_to_connect : Rpc_effect.Where_to_connect.t = Custom Connection
+
+let where_to_connect : Rpc_effect.Where_to_connect.t Bonsai.t =
+  Bonsai.return Custom_connection.where_to_connect
+;;
 
 let connector =
   Rpc_effect.Connector.for_test
@@ -81,7 +87,7 @@ let connector =
 ;;
 
 let custom_connector = function
-  | Connection -> connector
+  | Custom_connection.T -> connector
   | _ -> Rpc_effect.Connector.test_fallback
 ;;
 

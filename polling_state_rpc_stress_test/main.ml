@@ -11,7 +11,7 @@ open Bonsai.Let_syntax
    implemented to clear its model and also call [forget_on_server]; since it
    does those two things, the leak shouldn't get triggered. *)
 
-type Rpc_effect.Where_to_connect.Custom.t += Connection
+module Custom_connection = Rpc_effect.Where_to_connect.Register ()
 
 module T = struct
   type t = { data : int Int.Map.t } [@@deriving sexp, diff, bin_io, equal]
@@ -57,7 +57,7 @@ let component (local_ graph) =
             ~equal_query:[%equal: Int.t]
             ~equal_response:[%equal: T.t]
             rpc
-            ~where_to_connect:(Custom Connection)
+            ~where_to_connect:(Bonsai.return Custom_connection.where_to_connect)
             ~every:(Bonsai.return (Time_ns.Span.of_sec 1.0))
             key
             graph
@@ -102,7 +102,7 @@ let implementation =
     (fun _ query -> implementation () query)
 ;;
 
-let run () =
+let () =
   let connector =
     Rpc_effect.Connector.for_test
       (Rpc.Implementations.create_exn
@@ -111,15 +111,10 @@ let run () =
          ~on_exception:Log_on_background_exn)
       ~connection_state:(fun conn -> (), conn)
   in
-  let () =
-    Bonsai_web.Start.start
-      ~custom_connector:(function
-        | Connection -> connector
-        | _ -> Rpc_effect.Connector.test_fallback)
-      component
-      ~enable_bonsai_telemetry:Enabled
-  in
-  Deferred.never ()
+  Bonsai_web.Start.start
+    ~custom_connector:(function
+      | Custom_connection.T -> connector
+      | _ -> Rpc_effect.Connector.test_fallback)
+    component
+    ~enable_bonsai_telemetry:Enabled
 ;;
-
-let () = don't_wait_for (run ())

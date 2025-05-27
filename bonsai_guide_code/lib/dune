@@ -5,4 +5,4 @@
    core polling_state_rpc.diffable_polling_state_rpc_response
    polling_state_rpc uri_parsing time_ago.vdom)
  (preprocess
-  (pps js_of_ocaml-ppx ppx_css bonsai.ppx_bonsai ppx_jane)))
+  (pps js_of_ocaml-ppx ppx_css bonsai.ppx_bonsai ppx_jane ppx_html)))
