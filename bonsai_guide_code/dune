@@ -1,15 +1,13 @@
 (executables
  (modes byte exe)
  (names main)
- (libraries async_js async_kernel async_rpc_kernel bonsai bonsai_bench
-   bonsai.extra bonsai_guide_code_lib bonsai_web
-   bonsai_web_components.web_ui_form
+ (libraries async_js async_kernel async_rpc_kernel bonsai bonsai.extra
+   bonsai_guide_code_lib bonsai_web bonsai_web_components.web_ui_form
    bonsai_web_components.web_ui_partial_render_table
    bonsai_web.web_ui_partial_render_table_styling
-   bonsai_web_components.web_ui_toplayer bonsai_web_components.web_ui_url_var
-   bonsai_web_components.byo_clipboard core core_bench.js virtual_dom.css_gen
-   incr_map.collate js_of_ocaml bonsai_web.kado legacy_diffable
-   polling_state_rpc uri uri_parsing)
+   bonsai_web_components.web_ui_url_var bonsai_web_components.byo_clipboard
+   core virtual_dom.css_gen incr_map.collate js_of_ocaml bonsai_web.kado
+   legacy_diffable polling_state_rpc uri uri_parsing)
  (preprocess
   (pps js_of_ocaml-ppx ppx_css ppx_html bonsai.ppx_bonsai ppx_jane))
  (js_of_ocaml
