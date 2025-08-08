@@ -29,58 +29,58 @@ let component graph =
       ~apply_action:Model.apply_action
       graph
   in
-  let drag_over_state, set_drag_over_state = Bonsai.state `Not_over graph in
-  let%arr seqnum
-  and image_state
-  and inject_image_state
-  and drag_over_state
-  and set_drag_over_state in
-  let upload_attr =
-    Bonsai_web_ui_file_upload_zone.attr
-      ~on_drag_over:(set_drag_over_state `Over)
-      ~on_drag_leave:(set_drag_over_state `Not_over)
+  let%tydi { drop_target; dragging_over } =
+    Byo_file.on_drop
       ~mime_types:[ "image/png" ]
-      (fun files ~files_not_matching_mime_type ->
-         let all_files =
-           List.map files ~f:Result.return
-           @ List.map files_not_matching_mime_type ~f:(fun file -> Error file)
-         in
-         let%bind.Effect seqnum in
-         List.mapi all_files ~f:(fun i -> function
-           | Error not_a_png ->
-             inject_image_state
-               ( seqnum
-               , i
-               , Error
-                   (Error.of_string
-                      (Js_of_ocaml.Js.to_string not_a_png##.name ^ " is not a png")) )
-           | Ok file ->
-             let file = Bonsai_web_ui_file_from_web_file.create ~mode:`As_data_url file in
-             (match%bind.Effect Bonsai_web_ui_file.contents file with
-              | Ok contents ->
-                inject_image_state (seqnum, i, Ok (Bigstring.to_string contents))
-              | Error e ->
-                Effect.print_s
-                  [%message
-                    "error reading"
-                      ~file:(Bonsai_web_ui_file.filename file)
-                      ~_:(e : Error.t)]))
-         |> Effect.Many)
+      ~f:
+        (let%arr seqnum and inject_image_state in
+         fun files ~files_not_matching_mime_type ->
+           let all_files =
+             List.map files ~f:Result.return
+             @ List.map files_not_matching_mime_type ~f:(fun file -> Error file)
+           in
+           let%bind.Effect seqnum in
+           List.mapi all_files ~f:(fun i -> function
+             | Error not_a_png ->
+               inject_image_state
+                 ( seqnum
+                 , i
+                 , Error
+                     (Error.of_string
+                        (Js_of_ocaml.Js.to_string not_a_png##.name ^ " is not a png")) )
+             | Ok file ->
+               let file =
+                 Bonsai_web_ui_file_from_web_file.create ~mode:`As_data_url file
+               in
+               (match%bind.Effect Bonsai_web_ui_file.contents file with
+                | Ok contents ->
+                  inject_image_state (seqnum, i, Ok (Bigstring.to_string contents))
+                | Error e ->
+                  Effect.print_s
+                    [%message
+                      "error reading"
+                        ~file:(Bonsai_web_ui_file.filename file)
+                        ~_:(e : Error.t)]))
+           |> Effect.Many)
+      graph
   in
+  let%arr image_state and dragging_over and drop_target in
   let images =
     Map.map image_state.files ~f:(function
       | Ok url -> {%html|<img src=%{url} />|}
       | Error e -> Vdom.Node.sexp_for_debugging [%sexp (e : Error.t)])
   in
   let background =
-    match drag_over_state with
-    | `Over -> "lightblue"
-    | `Not_over -> "unset"
+    match dragging_over with
+    | Some `All_files_valid -> "lightblue"
+    | Some `Some_files_valid -> "pink"
+    | Some `No_files_valid -> "red"
+    | None -> "unset"
   in
   {%html|
     <div>
       <div
-        %{upload_attr}
+        %{drop_target}
         style="
           width: 100px;
           height: 100px;

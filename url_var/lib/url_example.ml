@@ -281,7 +281,7 @@ let component (type a) (t : a t) graph =
       let module M = (val t.type_ : Sexpable with type t = a) in
       [ Feather_icon.svg
           Feather_icon.Alert_triangle
-          ~fill:Tailwind_colors.red500
+          ~fill:Tailwind_v3_colors.red500
           ~extra_attrs:[ Vdom.Attr.style (Css_gen.margin_right (`Px 16)) ]
       ; Vdom.Node.text
           ("Error parsing! Falling back to: " ^ Sexp.to_string (M.sexp_of_t t.fallback))

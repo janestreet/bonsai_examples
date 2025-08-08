@@ -110,7 +110,10 @@ let pure_rows graph =
              <button
                on_click=%{fun _ -> set_history_open_symbol (Some symbol)}
                %{popover_attr}
-               style="margin: 2px; paddding: 2px 3px"
+               style="
+                 margin: 2px;
+                 paddding: 2px 3px;
+               "
              >
                See History
              </button>

@@ -5,5 +5,5 @@ A mostly faithful implementation of the
 
 ## To run
 
-1. Add the containing directory to your jbuild. Ensure the build targets include `/javascript-DEFAULT` and `/javascript-exectuables`.
+1. Add the containing directory to your jbuild. Ensure the build targets include `/javascript-default` and `/javascript-executables`.
 2. Run a static file server. E.g. `python -m SimpleHTTPServer`.

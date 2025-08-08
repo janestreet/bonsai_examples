@@ -121,10 +121,10 @@ module Status = struct
   [@@deriving sexp, compare, quickcheck]
 
   let to_color = function
-    | Starting -> Tailwind_colors.amber500
-    | Running _ -> Tailwind_colors.blue500
-    | Failed _ -> Tailwind_colors.red500
-    | Done _ -> Tailwind_colors.emerald500
+    | Starting -> Tailwind_v3_colors.amber500
+    | Running _ -> Tailwind_v3_colors.blue500
+    | Failed _ -> Tailwind_v3_colors.red500
+    | Done _ -> Tailwind_v3_colors.emerald500
   ;;
 
   let to_percent_complete = function

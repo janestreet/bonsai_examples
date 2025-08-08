@@ -2,6 +2,6 @@
  (modes byte exe)
  (names main)
  (libraries bonsai bonsai_web bonsai_web_components.web_ui_gauge core
-   bonsai_web_components.tailwind_colors)
+   bonsai_web_components.tailwind_v3_colors)
  (preprocess
   (pps ppx_jane ppx_css bonsai.ppx_bonsai)))

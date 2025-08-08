@@ -46,16 +46,11 @@ let counters_for_users_scoped graph : Vdom.Node.t Bonsai.t =
     let%arr form in
     Form.value_or_default form ~default:"Alice"
   in
-  Bonsai.scope_model
-    (module String)
-    ~on:active_user
-    graph
-    ~for_:(fun graph ->
-      let%arr counter = State_examples.counter_ui graph
-      and name = active_user
-      and form in
-      Vdom.Node.div
-        [ Form.view_as_vdom form; Vdom.Node.p [ Vdom.Node.text name ]; counter ])
+  Bonsai.scope_model (module String) ~on:active_user graph ~for_:(fun graph ->
+    let%arr counter = State_examples.counter_ui graph
+    and name = active_user
+    and form in
+    Vdom.Node.div [ Form.view_as_vdom form; Vdom.Node.p [ Vdom.Node.text name ]; counter ])
 ;;
 
 (* $MDX part-end *)

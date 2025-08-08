@@ -115,12 +115,12 @@ let component graph =
       let open Float in
       let p = Percent.to_percentage p in
       if p < 30.0
-      then Tailwind_colors.amber600
+      then Tailwind_v3_colors.amber600
       else if p < 60.0
-      then Tailwind_colors.amber500
+      then Tailwind_v3_colors.amber500
       else if p < 90.0
-      then Tailwind_colors.red600
-      else Tailwind_colors.red500
+      then Tailwind_v3_colors.red600
+      else Tailwind_v3_colors.red500
     in
     let%arr percentage in
     Gauge.create ~percent_to_color ~radius percentage

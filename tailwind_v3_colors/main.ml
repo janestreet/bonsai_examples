@@ -2,7 +2,7 @@ open! Core
 open! Bonsai_web
 open Vdom
 
-let brightness_suffix : Tailwind_colors.Brightness.t -> string = function
+let brightness_suffix : Tailwind_v3_colors.Brightness.t -> string = function
   | `_50 -> "50"
   | `_100 -> "100"
   | `_200 -> "200"
@@ -13,7 +13,6 @@ let brightness_suffix : Tailwind_colors.Brightness.t -> string = function
   | `_700 -> "700"
   | `_800 -> "800"
   | `_900 -> "900"
-  | `_950 -> "950"
 ;;
 
 let abs_position_px t b l r =
@@ -23,11 +22,11 @@ let abs_position_px t b l r =
 let component _graph =
   Bonsai.return
     (Node.div
-       (List.map Tailwind_colors.Hue.all ~f:(fun hue ->
+       (List.map Tailwind_v3_colors.Hue.all ~f:(fun hue ->
           Node.div
             ~attrs:[ Attr.style (Css_gen.flex_container ~direction:`Row ()) ]
-            (List.map Tailwind_colors.Brightness.all ~f:(fun brightness ->
-               let palette_color = Tailwind_colors.create hue brightness in
+            (List.map Tailwind_v3_colors.Brightness.all ~f:(fun brightness ->
+               let palette_color = Tailwind_v3_colors.create hue brightness in
                Node.div
                  ~attrs:
                    [ Attr.style
@@ -54,7 +53,7 @@ let component _graph =
                          ~attrs:[ Attr.style (abs_position_px 40 60 0 0) ]
                          [ Node.textf
                              "%s%s"
-                             (Tailwind_colors.Hue.to_string hue)
+                             (Tailwind_v3_colors.Hue.to_string hue)
                              (brightness_suffix brightness)
                          ]
                      ]

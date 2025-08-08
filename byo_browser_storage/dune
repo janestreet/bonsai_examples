@@ -1,6 +1,6 @@
 (executables
  (modes byte exe)
  (names main)
- (libraries bonsai_web_components.experimental_fancy_textbox bonsai_web core)
+ (libraries bonsai_web byo_browser_storage core)
  (preprocess
   (pps ppx_jane bonsai.ppx_bonsai ppx_html)))
