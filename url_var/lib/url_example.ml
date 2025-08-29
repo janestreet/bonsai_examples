@@ -243,7 +243,7 @@ let component (type a) (t : a t) graph =
   end
   in
   let () =
-    Bonsai_extra.mirror
+    Bonsai_extra.Mirror.mirror
       ~sexp_of_model:[%sexp_of: T.t]
       ~equal:[%equal: T.t]
       ~store_set:typed_url_form_set

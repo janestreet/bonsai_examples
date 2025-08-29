@@ -1,6 +1,6 @@
 (executables
  (modes byte exe)
  (names main)
- (libraries js_of_ocaml web_sys)
+ (libraries browser js_of_ocaml)
  (preprocess
   (pps js_of_ocaml-ppx)))

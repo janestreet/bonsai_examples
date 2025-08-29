@@ -1,4 +1,4 @@
-open Web_sys
+open Browser
 
 let () =
   let window =

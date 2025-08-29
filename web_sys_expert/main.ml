@@ -1,5 +1,5 @@
 open Js_of_ocaml
-module Exp = Web_sys_expert
+module Exp = Browser_expert
 
 let () =
   let window : Exp.window Js.t = Js.Unsafe.global in
