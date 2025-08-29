@@ -117,17 +117,37 @@ let components graph =
       ~attr_merge_behavior:
         Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
+  let typeahead_multi_with_custom_input_no_tabbing ~all_options =
+    Typeahead.create_multi
+      ~to_string:(Bonsai.return Pokemon.to_string)
+      ~placeholder:(return "Select many pokemon")
+      ~pills_tab_behavior:(Bonsai.return `Prevent_tabbing)
+      ~handle_unknown_option:
+        (Bonsai.return (fun input ->
+           (* custom [handle_unknown_option] that does a check on unknown inputs *)
+           Option.some_if (String.contains ~pos:0 input 'B') (Pokemon.of_string input)))
+      ~all_options
+      (module Pokemon)
+      ~attr_merge_behavior:
+        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
+  in
   let%sub { view = typeahead_multi_with_empty_options_vdom; _ } =
     typeahead_multi_with_custom_input ~all_options:(Bonsai.return []) graph
   in
   let%sub { view = typeahead_multi_with_custom_input_vdom; _ } =
     typeahead_multi_with_custom_input ~all_options:(Bonsai.return Pokemon.all) graph
   in
+  let%sub { view = typeahead_multi_with_custom_input_vdom_no_tabbing; _ } =
+    typeahead_multi_with_custom_input_no_tabbing
+      ~all_options:(Bonsai.return Pokemon.all)
+      graph
+  in
   let%arr typeahead_single_vdom
   and typeahead_multi_vdom
   and typeahead_single_with_custom_input_vdom
   and typeahead_multi_with_empty_options_vdom
-  and typeahead_multi_with_custom_input_vdom in
+  and typeahead_multi_with_custom_input_vdom
+  and typeahead_multi_with_custom_input_vdom_no_tabbing in
   Vdom.Node.create
     "main"
     [ Vdom.Node.section
@@ -175,6 +195,15 @@ let components graph =
                 "What are all the pokemon you like? Choose from this list or input a \
                  custom value that starts with a \"B\"."
             ; typeahead_multi_with_custom_input_vdom
+            ]
+        ]
+    ; Vdom.Node.section
+        [ Vdom.Node.label
+            [ Vdom.Node.text
+                "What are all the pokemon you like? Choose from this list or input a \
+                 custom value that starts with a \"B\". You shouldn't be able to tab to \
+                 the pills"
+            ; typeahead_multi_with_custom_input_vdom_no_tabbing
             ]
         ]
     ]

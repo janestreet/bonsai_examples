@@ -1,7 +1,0 @@
-(executables
- (modes byte exe)
- (names main)
- (libraries bonsai_web bonsai_web_components.web_ui_gallery core
-   virtual_dom.css_gen virtual_dom.svg)
- (preprocess
-  (pps ppx_jane bonsai.ppx_bonsai ppx_html ppx_demo ppx_tailwind)))

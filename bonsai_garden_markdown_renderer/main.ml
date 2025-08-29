@@ -12,8 +12,9 @@ Extra text to move the page down
 
 Extra text to move the page down
 
-* # huh
-* ## huhhh
+* # Heading1 title in bulleted list
+* ## Heading2 title in bulleted list
+
 Extra text to move the page down
 
 Extra text to move the page down
@@ -113,8 +114,8 @@ Extra text to move the page down
 Extra text to move the page down
 
 Extra text to move the page down
-# hi
 
+# Intermediate title
 
 Extra text to move the page down
 
@@ -341,6 +342,7 @@ Extra text to move the page down
 Extra text to move the page down
 
 Extra text to move the page down
+
 # title should be green too [anchor testing here](#anchor_bottom){id=anchor_tag}
 ## title should be green too [anchor testing here](#anchor_bottom){id=anchor_tag}
 ### title should be green too [anchor testing here](#anchor_bottom){id=anchor_tag}
@@ -348,11 +350,12 @@ Extra text to move the page down
 ##### title should be green too [anchor testing here](#anchor_bottom){id=anchor_tag}
 ###### title should be green too [anchor testing here](#anchor_bottom){id=anchor_tag}
 
-some  kinda weird text
+Extra text to move the page down
+
 ```ocaml
 
 let () = 
-    let test_value = 3 in
+    let foo = 3 in
     ()
 ```
 
@@ -384,8 +387,7 @@ Extra text to move the page down
 
 Extra text to move the page down
 
-# _Hmm_ __what__ **yikes**
-Extra text to move the page down
+# _Italicised_ __bold__ regular text **also bold**
 
 Extra text to move the page down
 
@@ -401,8 +403,10 @@ Extra text to move the page down
 
 Extra text to move the page down
 
+Extra text to move the page down
 
-# `` `Interesting of Code ``
+
+# `` `Polyvar of Code ``
 Extra text to move the page down
 
 Extra text to move the page down
@@ -423,26 +427,30 @@ A
 
 50. Start at 50
 51. Next
-300. This might show up as something else since it's part of the previous list
+300. This number was set to 300 but will show up as 52
 
 
 
 
-[very far down](#anchor_tag){id=anchor_bottom}
+[Anchor tag that is far down](#anchor_tag){id=anchor_bottom}
 
     |markdown}
-  ; `Component (Bonsai.return {%html|<div>Testing component rendering</div>|})
+  ; `Component
+      (Bonsai.return
+         {%html|<div style="background-color: red">Render arbitrary vdom node on its own</div>|})
   ; `Component_example
-      ( Bonsai.return {%html|<div>Testing component EXAMPLE rendering</div>|}
+      ( Bonsai.return
+          {%html|<div>Render arbitrary vdom node inside of example block</div>|}
       , Bonsai_component_documentation_codeblock.Language.OCaml
       , Bonsai_component_documentation_codeblock.Language.Map.of_alist_exn
           [ ( Bonsai_component_documentation_codeblock.Language.OCaml
             , {|
                           let () = () in
-                          `Hi
+                          `Var
                |}
             )
-          ] )
+          ]
+        |> Bonsai.return )
   ]
 ;;
 

@@ -1,0 +1,9 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_component_documentation_codeblock
+   bonsai_garden_markdown_render_engine bonsai_garden_ppx_html_docs
+   bonsai_web bonsai_web_components.web_ui_gallery core virtual_dom.css_gen
+   virtual_dom.svg virtual_dom.vdom_test_helpers)
+ (preprocess
+  (pps ppx_jane bonsai.ppx_bonsai ppx_html ppx_demo ppx_tailwind ppx_css)))
