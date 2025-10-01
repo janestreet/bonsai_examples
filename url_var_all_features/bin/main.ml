@@ -7,6 +7,7 @@ let url_var =
     (module Lib.T)
     ~navigation:Lib.navigation
     ~encoding_behavior:Correct
+    ~trailing_slash_behavior:Drop_trailing_slashes
     ~fallback:Lib.fallback
     Lib.versioned_parser
 ;;

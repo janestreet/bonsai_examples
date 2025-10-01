@@ -1,0 +1,11 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries bonsai_component_documentation_codeblock bonsai_garden_docs_lib
+   bonsai_garden_front_page bonsai_garden_gen_config bonsai_garden_homepage
+   bonsai_garden_markdown_render_engine bonsai_garden_ppx_css_docs
+   bonsai_garden_ppx_html_docs bonsai_garden_snips_docs
+   bonsai_garden_toplayer_docs bonsai_garden_web_ui_accordion_docs bonsai_web
+   browser codicons core virtual_dom.css_gen js_of_ocaml)
+ (preprocess
+  (pps ppx_jane js_of_ocaml-ppx bonsai.ppx_bonsai ppx_css ppx_demo ppx_html)))

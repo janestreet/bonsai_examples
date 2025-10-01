@@ -166,7 +166,10 @@ let typed_url_form
           typed_components)
       ~unparse:(fun components ->
         let typed_components =
-          Typed.Components.of_original_components ~encoding_behavior:Correct components
+          Typed.Components.of_original_components
+            ~encoding_behavior:Correct
+            ~trailing_slash_behavior:Drop_trailing_slashes
+            components
         in
         try (Projection.parse_exn parser typed_components).result with
         | _ -> fallback)
@@ -185,6 +188,7 @@ let component (type a) (t : a t) graph =
              t.parser
              (Typed.Components.of_original_components
                 ~encoding_behavior:Correct
+                ~trailing_slash_behavior:Drop_trailing_slashes
                 components)
          in
          false
