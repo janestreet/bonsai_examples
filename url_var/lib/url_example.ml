@@ -166,7 +166,10 @@ let typed_url_form
           typed_components)
       ~unparse:(fun components ->
         let typed_components =
-          Typed.Components.of_original_components ~encoding_behavior:Correct components
+          Typed.Components.of_original_components
+            ~encoding_behavior:Correct
+            ~trailing_slash_behavior:Drop_trailing_slashes
+            components
         in
         try (Projection.parse_exn parser typed_components).result with
         | _ -> fallback)
@@ -185,6 +188,7 @@ let component (type a) (t : a t) (local_ graph) =
              t.parser
              (Typed.Components.of_original_components
                 ~encoding_behavior:Correct
+                ~trailing_slash_behavior:Drop_trailing_slashes
                 components)
          in
          false
@@ -243,7 +247,7 @@ let component (type a) (t : a t) (local_ graph) =
   end
   in
   let () =
-    Bonsai_extra.mirror
+    Bonsai_extra.Mirror.mirror
       ~sexp_of_model:[%sexp_of: T.t]
       ~equal:[%equal: T.t]
       ~store_set:typed_url_form_set
@@ -281,7 +285,7 @@ let component (type a) (t : a t) (local_ graph) =
       let module M = (val t.type_ : Sexpable with type t = a) in
       [ Feather_icon.svg
           Feather_icon.Alert_triangle
-          ~fill:Tailwind_colors.red500
+          ~fill:Tailwind_v3_colors.red500
           ~extra_attrs:[ Vdom.Attr.style (Css_gen.margin_right (`Px 16)) ]
       ; Vdom.Node.text
           ("Error parsing! Falling back to: " ^ Sexp.to_string (M.sexp_of_t t.fallback))

@@ -15,11 +15,12 @@ type t =
 [@@deriving compare, typed_fields, bin_io]
 
 let random_time_ns () =
-  let now = Time_ns.now () |> Time_ns.to_span_since_epoch |> Time_ns.Span.to_ms in
+  let now_ns = Time_ns.of_string "2025-08-15 12:17:55.320525045-04:00" in
+  let now = now_ns |> Time_ns.to_span_since_epoch |> Time_ns.Span.to_ms in
   let some_time_before_now =
-    Time_ns.now ()
+    now_ns
     |> Time_ns.to_span_since_epoch
-    |> Time_ns.Span.(fun t -> t - Time_ns.Span.of_sec 1000.0)
+    |> Time_ns.Span.(fun t -> t - Time_ns.Span.of_sec (Random.float_range 1.0 1000.0))
     |> Time_ns.Span.to_ms
   in
   Random.float_range some_time_before_now now
@@ -47,6 +48,7 @@ let random () : t =
 ;;
 
 let many_random n =
+  let () = Random.init 42 in
   List.init n ~f:(fun _ -> random ())
   |> List.fold ~init:String.Map.empty ~f:(fun acc data ->
     let { symbol = key; _ } = data in

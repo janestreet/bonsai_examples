@@ -85,7 +85,7 @@ let component (local_ graph) =
       graph
   in
   let () =
-    Bonsai_extra.mirror
+    Bonsai_extra.Mirror.mirror
       ~sexp_of_model:[%sexp_of: Parameters.t]
       ~equal:[%equal: Parameters.t]
       ~store_set:(Bonsai.return (Persistent_var.effect form_store))

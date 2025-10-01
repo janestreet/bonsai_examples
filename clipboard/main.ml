@@ -32,7 +32,8 @@ let component (local_ graph) =
             Ui_effect.Expert.handle
               (Effect.ignore_m
                  (Js_clipboard.Asynchronous.copy_text
-                    (Js.string (Form.value_or_default form ~default:""))));
+                    (Js.string (Form.value_or_default form ~default:""))))
+              ~on_exn:(fun exn -> Exn.reraise exn "Unhandled exception raised in effect");
             Effect.Ignore)
         ]
       [ Vdom.Node.text "copy to clipboard (legacy behaviour)" ]

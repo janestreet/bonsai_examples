@@ -544,7 +544,7 @@ let component (local_ graph) =
     Gallery.Theme_picker.component ~default:Kado_light ~standalone:false () graph
   in
   let () =
-    Bonsai_extra.exactly_once
+    Bonsai_extra.Effects.exactly_once
       (Bonsai.return
          (Effect.of_sync_fun
             (fun () ->
