@@ -59,6 +59,7 @@ let component graph =
             rpc
             ~where_to_connect:(Bonsai.return Custom_connection.where_to_connect)
             ~every:(Bonsai.return (Time_ns.Span.of_sec 1.0))
+            ~output_type:Legacy_record
             key
             graph
         in
@@ -69,7 +70,7 @@ let component graph =
               [ Vdom.Node.text "Remove" ]
           ; Vdom.Node.div
               [ Vdom.Node.sexp_for_debugging
-                  [%sexp (response : (int, T.t) Rpc_effect.Poll_result.t)]
+                  [%sexp (response : (int, T.t) Rpc_effect.Poll_result.Legacy_record.t)]
               ]
           ])
       graph
