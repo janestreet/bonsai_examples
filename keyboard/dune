@@ -1,7 +1,15 @@
-(executables
- (modes byte exe)
- (names main)
- (libraries bonsai_web core js_of_ocaml virtual_dom.ui_effect
+(executable
+ (name main)
+ (modes js)
+ (libraries
+   core
+   js_of_ocaml
+   bonsai_web
+   virtual_dom.ui_effect
    virtual_dom.keyboard)
  (preprocess
   (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_css ppx_jane)))
+
+(install
+ (section bin)
+ (files (main.bc.js as main.bc.js)))
