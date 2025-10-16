@@ -4,7 +4,7 @@ ENV OPAMYES=1 OPAMJOBS=4
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential m4 pkg-config git curl rsync ca-certificates \
-    libgmp-dev libssl-dev zlib1g-dev libffi-dev \
+    libgmp-dev libssl-dev zlib1g-dev libffi-dev python3 \
  && rm -rf /var/lib/apt/lists/*
 USER opam
 

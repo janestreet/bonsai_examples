@@ -9,7 +9,3 @@
    virtual_dom.keyboard)
  (preprocess
   (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_css ppx_jane)))
-
-(install
- (section bin)
- (files (main.bc.js as main.bc.js)))

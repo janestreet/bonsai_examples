@@ -2,4 +2,6 @@ _build
 *.install
 *.merlin
 _opam
+*.bc.js
+*.js.map
 
