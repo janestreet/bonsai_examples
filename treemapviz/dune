@@ -3,6 +3,6 @@
  (names main)
  (libraries bonsai_experimental_treemapviz bonsai_web
    bonsai_web_components.web_ui_element_size_hooks core virtual_dom.css_gen
-   bonsai_web_components.feather_icon core_kernel.nonempty_list)
+   bonsai_web_components.feather_icon)
  (preprocess
   (pps bonsai.ppx_bonsai ppx_css ppx_jane)))
