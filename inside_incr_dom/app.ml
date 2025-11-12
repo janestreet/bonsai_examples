@@ -62,6 +62,14 @@ let on_display bonsai_subcomponent =
     on_display state ~schedule_action
 ;;
 
+let before_display bonsai_subcomponent =
+  let%map bonsai_subcomponent in
+  let before_display = Component.before_display bonsai_subcomponent in
+  fun state ~schedule_action ->
+    let schedule_action a = schedule_action (Action.Subcomponent_action a) in
+    before_display state ~schedule_action
+;;
+
 let create model ~old_model ~inject =
   let bonsai_subcomponent =
     let input = Incr.const () in
@@ -73,6 +81,7 @@ let create model ~old_model ~inject =
   let%map model
   and apply_action = apply_action model bonsai_subcomponent
   and view = view model bonsai_subcomponent ~inject
-  and on_display = on_display bonsai_subcomponent in
-  Component.create ~on_display ~apply_action model view
+  and on_display = on_display bonsai_subcomponent
+  and before_display = before_display bonsai_subcomponent in
+  Component.create ~on_display ~before_display ~apply_action model view
 ;;

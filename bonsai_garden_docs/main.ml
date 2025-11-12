@@ -39,10 +39,12 @@ let run () =
           |> Bonsai.return)
         Library.
           [ create
-              ~index_page:Bonsai_garden_front_page.component
+              ~index_page:(module Custom_title)
               ~as_index_route:true
               ~name:"Bonsai Garden"
-              ~logo:(Bonsai.return (`Img_src "bonsai.svg"))
+              ~display_name:"Garden bonsai"
+              ~description:"Bonsai garden Docs"
+              ~logo:(`Img_src "bonsai.svg")
               Category.
                 [ page_with_sidebar
                     ~name:"Page 1"
@@ -50,17 +52,18 @@ let run () =
                       [ page ~name:"Snips" (module Bonsai_garden_snips_docs)
                       ; section
                           ~name:"UI Component"
+                          ~display_name:"Front end library components"
                           Section.
                             [ page
                                 ~name:"Accordion"
+                                ~display_name:"Accordion longer name"
                                 (module Bonsai_garden_web_ui_accordion_docs)
                             ; page ~name:"Toplayer" (module Bonsai_garden_toplayer_docs)
                             ]
                       ; section
                           ~name:"Library"
                           Section.
-                            [ page ~name:"Snips" (module Bonsai_garden_snips_docs)
-                            ; subsection
+                            [ subsection
                                 ~name:"PPX"
                                 Subsection.
                                   [ page
@@ -72,112 +75,19 @@ let run () =
                                   ]
                             ]
                       ]
-                ; page_with_sidebar
-                    ~name:"Page 2"
-                    Sidebar.
-                      [ page ~name:"Snips" (module Bonsai_garden_snips_docs)
-                      ; section
-                          ~name:"UI Component"
-                          Section.
-                            [ page
-                                ~name:"Accordion"
-                                (module Bonsai_garden_web_ui_accordion_docs)
-                            ; page ~name:"Toplayer" (module Bonsai_garden_toplayer_docs)
-                            ]
-                      ; section
-                          ~name:"Library"
-                          Section.
-                            [ page ~name:"Snips" (module Bonsai_garden_snips_docs)
-                            ; subsection
-                                ~name:"PPX"
-                                Subsection.
-                                  [ page
-                                      ~name:"PPX HTML"
-                                      (module Bonsai_garden_ppx_html_docs)
-                                  ; page
-                                      ~name:"PPX CSS"
-                                      (module Bonsai_garden_ppx_css_docs)
-                                  ]
-                            ]
-                      ]
-                ; custom_page ~name:"Page for testing not found" (fun _graph ->
-                    Bonsai.return
-                      {%html|
-                        <div>
-                          <a href="/nonexistent-url"> Click this link to go to a nonexistent url </a>
-                        </div>
-                      |})
+                ; custom_page
+                    ~unique_module_name:"Page_testing_notexistent"
+                    ~name:"Page for testing not found"
+                    (fun _graph ->
+                       Bonsai.return
+                         {%html|
+                           <div>
+                             <a href="/nonexistent-url"> Click this link to go to a nonexistent url </a>
+                           </div>
+                         |})
                 ]
-          ; create
-              ~index_page:Bonsai_garden_front_page.component
-              ~name:"Different one"
-              ~logo:(Bonsai.return (`Img_src "bonsai.svg"))
-              Category.
-                [ page_with_sidebar
-                    ~name:"Page 1"
-                    Sidebar.
-                      [ page ~name:"Snips" (module Bonsai_garden_snips_docs)
-                      ; section
-                          ~name:"UI Component"
-                          Section.
-                            [ page
-                                ~name:"Accordion"
-                                (module Bonsai_garden_web_ui_accordion_docs)
-                            ; page ~name:"Toplayer" (module Bonsai_garden_toplayer_docs)
-                            ]
-                      ; section
-                          ~name:"Library"
-                          Section.
-                            [ page ~name:"Snips" (module Bonsai_garden_snips_docs)
-                            ; subsection
-                                ~name:"PPX"
-                                Subsection.
-                                  [ page
-                                      ~name:"PPX HTML"
-                                      (module Bonsai_garden_ppx_html_docs)
-                                  ; page
-                                      ~name:"PPX CSS"
-                                      (module Bonsai_garden_ppx_css_docs)
-                                  ]
-                            ]
-                      ]
-                ; page_with_sidebar
-                    ~name:"Page 2"
-                    Sidebar.
-                      [ page ~name:"Snips" (module Bonsai_garden_snips_docs)
-                      ; section
-                          ~name:"UI Component"
-                          Section.
-                            [ page
-                                ~name:"Accordion"
-                                (module Bonsai_garden_web_ui_accordion_docs)
-                            ; page ~name:"Toplayer" (module Bonsai_garden_toplayer_docs)
-                            ]
-                      ; section
-                          ~name:"Library"
-                          Section.
-                            [ page ~name:"Snips" (module Bonsai_garden_snips_docs)
-                            ; subsection
-                                ~name:"PPX"
-                                Subsection.
-                                  [ page
-                                      ~name:"PPX HTML"
-                                      (module Bonsai_garden_ppx_html_docs)
-                                  ; page
-                                      ~name:"PPX CSS"
-                                      (module Bonsai_garden_ppx_css_docs)
-                                  ]
-                            ]
-                      ]
-                ; custom_page ~name:"Page for testing not found" (fun _graph ->
-                    Bonsai.return
-                      {%html|
-                        <div>
-                          <a href="/nonexistent-url"> Click this link to go to a nonexistent url </a>
-                        </div>
-                      |})
-                ]
-          ])
+          ]
+      |> Tuple3.get1)
       graph)
   |> Bonsai_web.Start.start ~enable_bonsai_telemetry:Enabled
 ;;

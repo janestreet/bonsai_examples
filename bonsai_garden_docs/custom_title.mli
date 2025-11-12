@@ -1,0 +1,3 @@
+open! Core
+open! Bonsai_web
+include Bonsai_garden_markdown_render_engine.Documentation_page

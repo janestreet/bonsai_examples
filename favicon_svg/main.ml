@@ -29,28 +29,7 @@ let widget uri : Vdom.Node.t =
   Vdom.Node.widget
     ~id:(Type_equal.Id.create ~name:"favicon" (const [%sexp "favicon"]))
     ~init:(fun () ->
-      let open Js_of_ocaml in
-      let icon_node = Dom_html.document##querySelector (Js.string {|link[rel="icon"]|}) in
-      let href_value = uri |> Uri.to_string in
-      (match Js.Opt.to_option icon_node with
-       | Some icon_node ->
-         icon_node##setAttribute (Js.string "href") (Js.string href_value)
-       | None ->
-         let head = Dom_html.document##querySelector (Js.string "head") in
-         let link =
-           let open Vdom in
-           Node.create
-             "link"
-             ~attrs:
-               [ Attr.type_ "image/svg+xml"
-               ; Attr.create "rel" "icon"
-               ; Attr.href href_value
-               ]
-             []
-           |> Node.to_dom
-         in
-         let link = (link :> Dom.node Js.t) in
-         Js.Opt.iter head (fun head -> ignore (head##appendChild link : Dom.node Js.t)));
+      let _ : unit Or_error.t = Byo_favicon.set_favicon (Uri.to_string uri) in
       (), Vdom.Node.to_dom Vdom.Node.none)
     ()
 ;;
