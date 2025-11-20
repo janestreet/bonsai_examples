@@ -259,8 +259,8 @@ module _ = struct
             match binding with
             | Some b -> Effect.Many [ Effect.Prevent_default; b ]
             | None -> Effect.Ignore)
-          (* [tabindex=0] allows browser focus to be set on the table.
-             We then remove the default focus ring with [outline: none] css. *)
+          (* [tabindex=0] allows browser focus to be set on the table. We then remove the
+             default focus ring with [outline: none] css. *)
         ; Vdom.Attr.tabindex 0
         ; {%css|outline: none;|}
         ]
@@ -499,7 +499,7 @@ module _ = struct
       ; visible_range = copied_range
       }
     in
-    (* In practice, this would probably need some kind of error handling.*)
+    (* In practice, this would probably need some kind of error handling. *)
     let data = fetch_data_polling_rpc query in
     let table =
       Table.component

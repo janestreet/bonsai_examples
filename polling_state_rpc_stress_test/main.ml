@@ -4,12 +4,11 @@ open! Async_kernel
 open! Async_rpc_kernel
 open Bonsai.Let_syntax
 
-(* This example is more of a stress-test than as demo. It starts both a client
-   and a server in the same browser page. If you click the "Add" button a ton
-   of times, it will attempt to trigger a memory leak on the server. The memory
-   leak gets triggered if [Rpc_effect.Polling_state_rpc.poll] is not
-   implemented to clear its model and also call [forget_on_server]; since it
-   does those two things, the leak shouldn't get triggered. *)
+(* This example is more of a stress-test than as demo. It starts both a client and a
+   server in the same browser page. If you click the "Add" button a ton of times, it will
+   attempt to trigger a memory leak on the server. The memory leak gets triggered if
+   [Rpc_effect.Polling_state_rpc.poll] is not implemented to clear its model and also call
+   [forget_on_server]; since it does those two things, the leak shouldn't get triggered. *)
 
 module Custom_connection = Rpc_effect.Where_to_connect.Register ()
 

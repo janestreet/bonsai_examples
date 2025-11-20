@@ -4,9 +4,10 @@ open! Bonsai.Let_syntax
 module Markdown = Bonsai_garden_markdown_render_engine
 module Codemirror = Bonsai_web_ui_codemirror_read_only
 
-let markdown_with_toc =
-  [ `Markdown
-      {markdown|
+let component (graph @ local) =
+  let markdown_with_toc =
+    [ `Markdown
+        {markdown|
 
 Extra text to move the page down
 
@@ -435,26 +436,15 @@ A
 [Anchor tag that is far down](#anchor_tag){id=anchor_bottom}
 
     |markdown}
-  ; `Component
-      (Bonsai.return
-         {%html|<div style="background-color: red">Render arbitrary vdom node on its own</div>|})
-  ; `Component_example
-      ( Bonsai.return
-          {%html|<div>Render arbitrary vdom node inside of example block</div>|}
-      , Bonsai_component_documentation_codeblock.Language.OCaml
-      , Bonsai_component_documentation_codeblock.Language.Map.of_alist_exn
-          [ ( Bonsai_component_documentation_codeblock.Language.OCaml
-            , {|
-                          let () = () in
-                          `Var
-               |}
-            )
-          ]
-        |> Bonsai.return )
-  ]
-;;
-
-let component (graph @ local) =
+    ; `Component
+        (Bonsai.return
+           {%html|<div style="background-color: red">Render arbitrary vdom node on its own</div>|})
+    ; Bonsai_garden_docs_common.singleton_doc
+        (Static
+           [%demo {%html|<div>Render arbitrary vdom node inside of example block</div>|}])
+        graph
+    ]
+  in
   Markdown.generate_docs
     ~max_level:3
     ~code_block:(fun ~attributes:_ ~language code ->

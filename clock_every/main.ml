@@ -459,7 +459,7 @@ let component (local_ graph) =
     let%arr time_span_form in
     Form.value_or_default time_span_form ~default:Random_time_span.default
   in
-  let now = Bonsai.Clock.now graph in
+  let now = Bonsai.Clock.Expert.now graph in
   let initial_time =
     Bonsai.freeze
       ~sexp_of_model:[%sexp_of: Time_ns.Alternate_sexp.t]

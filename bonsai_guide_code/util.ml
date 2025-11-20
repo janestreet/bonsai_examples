@@ -8,8 +8,8 @@ let valid_hash_provided = ref false
 
 let run ?custom_connector ~id computation =
   all_hashes := Set.add !all_hashes id;
-  (* Because we're iframing into this app from docpub, we look up what the
-     current url-hash is, and only run the requested example. *)
+  (* Because we're iframing into this app from docpub, we look up what the current
+     url-hash is, and only run the requested example. *)
   let current_hash = Dom_html.window##.location##.hash |> Js.to_string in
   print_s [%message (current_hash : string) (id : string)];
   if String.equal current_hash ("#" ^ id)

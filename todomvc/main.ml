@@ -256,7 +256,8 @@ let todo_list (model : Model.t Bonsai.t) ~inject (local_ graph) =
       Attr.many
         [ Dom_helpers.filtered_attrs [ Style.checked, is_checked ]
         ; Vdom.Attr.bool_property "checked" is_checked
-          (* weirdly, todomvc expects this checkbox to have both a class and an id named toggle-all. *)
+          (* weirdly, todomvc expects this checkbox to have both a class and an id named
+             toggle-all. *)
         ; Vdom.Attr.id "toggle-all"
         ; Style.toggle_all
         ; Attr.type_ "checkbox"

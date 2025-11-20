@@ -66,9 +66,9 @@ let dynamic_cols (local_ graph) =
 let pure_rows (local_ graph) =
   (* Note that even though we _can_ instantiate a separate popover for each row (or even
      per cell), we only want to show one popover at a time, so we can define it outside.
-     The downside is that whenever the focused row changes, the entire table will be recomputed,
-     but this is usually ok, because these popovers won't be opened / closed in a tight
-     loop.
+     The downside is that whenever the focused row changes, the entire table will be
+     recomputed, but this is usually ok, because these popovers won't be opened / closed
+     in a tight loop.
 
      If we wanted to support multiple history popovers open at a time, we'd need to create
      separate ones per row via [Stateful_rows]. *)

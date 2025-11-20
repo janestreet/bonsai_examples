@@ -441,7 +441,7 @@ module Splits = struct
           Snips.top (red "header")
           |+| Snips.split_h
                 [ Snips.body (blue lorem_ipsum)
-                  (* remove-this-line  (for line breaking purposes) *)
+                  (* remove-this-line (for line breaking purposes) *)
                 ; Snips.body (green lorem_ipsum)
                 ]
         in
@@ -525,7 +525,7 @@ module Splits_on_splits = struct
                     ; Snips.body (blue "Left 3")
                     ]
                 ; Snips.right (blue "R")
-                  (* remove-this-line  (for line breaking purposes) *)
+                  (* remove-this-line (for line breaking purposes) *)
                   |+| Snips.body (normal lorem_ipsum)
                 ]
         in

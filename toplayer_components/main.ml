@@ -3,9 +3,9 @@ open! Bonsai_web
 open! Bonsai.Let_syntax
 module Gallery = Bonsai_web_ui_gallery
 
-(* These tests are intended for app writers.
-   There are additional demos in [toplayer_testing], which are lower-level, and intended
-   for toplayer devs to test changes. *)
+(* These tests are intended for app writers. There are additional demos in
+   [toplayer_testing], which are lower-level, and intended for toplayer devs to test
+   changes. *)
 
 let component (local_ graph) =
   let%sub theme, theme_picker = Gallery.Theme_picker.component () graph in

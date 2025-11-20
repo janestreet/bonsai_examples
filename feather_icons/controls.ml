@@ -166,8 +166,8 @@ let component (local_ graph) =
   and stroke_width_slider
   and stroke_input
   and { value = fill; reset = reset_fill; view = fill_view } = fill in
-  (* We could have several of these forms using Form.Typed.Record, but
-     refrained in order to retain control over the UI layout. *)
+  (* We could have several of these forms using Form.Typed.Record, but refrained in order
+     to retain control over the UI layout. *)
   let t =
     let size = Form.value_or_default size_slider ~default:default.size in
     let stroke_width =

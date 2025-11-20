@@ -96,9 +96,9 @@ let kanban_column ~extra_dnd ~dnd ~items ~column ~title (local_ graph) =
   let map =
     let%map items
     and model = dnd >>| Drag_and_drop.model in
-    (* Only display items from this column or items that are being hovered
-       over this column; exclude any items that have been dragged away and
-       are hovered over a different column *)
+    (* Only display items from this column or items that are being hovered over this
+       column; exclude any items that have been dragged away and are hovered over a
+       different column *)
     Map.filteri items ~f:(fun ~key ~data:(_, item_column) ->
       match model with
       | Not_dragging | Dragging { target = None; _ } ->

@@ -16,8 +16,8 @@ let string_duplicator input_string (local_ graph) =
   let repeated_string =
     List.init num_duplicated ~f:(Fn.const input_string) |> String.concat ~sep:" "
   in
-  (* [inject] is used to produce an [Event.t] which is handled by Bonsai, and
-     the action comes back in to be processed by [apply_action]. *)
+  (* [inject] is used to produce an [Event.t] which is handled by Bonsai, and the action
+     comes back in to be processed by [apply_action]. *)
   let on_click = Vdom.Attr.on_click (fun _ -> inject_duplicate ()) in
   let button = Vdom.Node.button ~attrs:[ on_click ] [ Vdom.Node.text "duplicate" ] in
   Vdom.Node.div [ button; Vdom.Node.text repeated_string ]
@@ -45,7 +45,7 @@ let string_to_repeat (local_ graph) =
 
 let app
   (* let%sub can decompose the [(string * Vdom.Node.t) Value.t] into both a
-         [string Value.t] and a [Vdom.Node.t Value.t]. *)
+     [string Value.t] and a [Vdom.Node.t Value.t]. *)
   (local_ graph)
   =
   let%sub string, textbox_view = string_to_repeat graph in

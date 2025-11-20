@@ -257,7 +257,7 @@ let component (local_ graph) =
       ~container_attr:(Vdom.Attr.many [ controls; {%css|margin-left: 10px;|} ])
       layout
   in
-  (* DANGER! Do NOT write this in real app code, use [match%sub] instead.*)
+  (* DANGER! Do NOT write this in real app code, use [match%sub] instead. *)
   Bonsai.Let_syntax.Let_syntax.switch
     ~here:[%here]
     ~match_

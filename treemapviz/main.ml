@@ -16,8 +16,8 @@ module Tree = struct
     ; weight :
         (float[@quickcheck.generator Base_quickcheck.Generator.float_inclusive 1.0 200.0])
     ; color :
-        ((* NOTE: [color] color corresponds to the percent move. Roughly 3.0 means green -3
-            means red and everything in between is a gradient.*)
+        ((* NOTE: [color] color corresponds to the percent move. Roughly 3.0 means green
+            -3 means red and everything in between is a gradient. *)
          float
         [@quickcheck.generator percent_range_generator])
     ; children : t list
