@@ -214,6 +214,7 @@ let component (local_ graph) =
         graph
     in
     Bonsai.Edge.on_change
+      ~trigger:`After_display
       ~sexp_of_model:[%sexp_of: int * int]
       ~equal:[%equal: int * int]
       range

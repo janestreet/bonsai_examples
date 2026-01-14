@@ -9,6 +9,20 @@ let component (graph @ local) =
     [ `Markdown
         {markdown|
 
+# Heading1 `code` trailing
+## Heading2 `code` trailing
+### Heading3 `code` trailing
+#### Heading4 `code` trailing
+##### Heading5 `code` trailing
+###### Heading6 `code` trailing
+
+| A | B | C ||
+| - | - | - | - |
+| Collapsed row ||||
+| 1 | 2 | 3 | 4 |
+|||||
+| Span 2 || Span 2||
+
 Extra text to move the page down
 
 Extra text to move the page down
@@ -447,15 +461,21 @@ A
   in
   Markdown.generate_docs
     ~max_level:3
-    ~code_block:(fun ~attributes:_ ~language code ->
-      let language =
-        match language with
-        | "ocaml" -> Codemirror.Language.OCaml
-        | _ -> Codemirror.Language.Plaintext
-      in
-      Codemirror.make ~language ~theme:Codemirror.Theme.Basic_light code)
-    ~text:(fun ~attributes:_ text ->
-      {%html|<span style="color: green; font-weight: bold">#{text}</span>|})
+    ~config:
+      (object
+         inherit Markdown.garden_config
+
+         method! code_block ~attributes:_ ~language code =
+           let language =
+             match language with
+             | "ocaml" -> Codemirror.Language.OCaml
+             | _ -> Codemirror.Language.Plaintext
+           in
+           Codemirror.make ~language ~theme:Codemirror.Theme.Basic_light code
+
+         method! text ~attributes:_ text =
+           {%html|<span style="color: green; font-weight: bold">#{text}</span>|}
+      end)
     markdown_with_toc
     graph
 ;;

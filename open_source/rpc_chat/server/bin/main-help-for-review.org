@@ -1,11 +1,11 @@
 * main.exe
 
 : Start server for rpc-chat
-: 
-:   main.exe 
-: 
+:
+:   main.exe
+:
 : === flags ===
-: 
+:
 :   [-port port]               . on which to serve
 :   [-build-info]              . print info about this build and exit
 :   [-version]                 . print the version of this build and exit

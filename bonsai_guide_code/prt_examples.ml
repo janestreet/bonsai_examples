@@ -512,6 +512,7 @@ module _ = struct
     in
     let%sub { range = table_range; _ } = table in
     Bonsai.Edge.on_change
+      ~trigger:`Before_display
       ~equal:[%equal: int * int]
       table_range
       ~callback:

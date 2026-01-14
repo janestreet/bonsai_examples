@@ -47,6 +47,7 @@ let position (local_ graph) =
   in
   let () =
     Bonsai.Edge.on_change
+      ~trigger:`After_display
       ~sexp_of_model:[%sexp_of: Model.t]
       ~equal:[%equal: Model.t]
       positions
