@@ -43,7 +43,8 @@ let run () =
               ~as_index_route:true
               ~name:"Bonsai Garden"
               ~display_name:"Garden bonsai"
-              ~logo:(Bonsai.return (`Img_src "bonsai.svg"))
+              ~description:"Bonsai garden Docs"
+              ~logo:(`Img_src "bonsai.svg")
               Category.
                 [ page_with_sidebar
                     ~name:"Page 1"

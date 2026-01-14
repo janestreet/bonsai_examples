@@ -27,14 +27,14 @@ module Boxes = struct
           background-color: blue;
         }
       |}
-      (* [ppx_css] appends a hash to the end of each classname to allow you to be able
-           to re-use classnames in multiple calls to [%css stylesheet] avoiding sadness
-           for css identifier collisions like in this example where container is used
-           multiple times.
+      (* [ppx_css] appends a hash to the end of each classname to allow you to be able to
+         re-use classnames in multiple calls to [%css stylesheet] avoiding sadness for css
+         identifier collisions like in this example where container is used multiple
+         times.
 
-           Sometimes, like when interacting with customization APIs that require specific
-           classnames for CSS customization, hashing could get in your way, so you can 
-           disable hashing with the ~dont_hash parameter
+         Sometimes, like when interacting with customization APIs that require specific
+         classnames for CSS customization, hashing could get in your way, so you can
+         disable hashing with the ~dont_hash parameter
       *)
       ~dont_hash:[ "blue"; "container" ]]
 
@@ -69,9 +69,9 @@ module Themeable = struct
           font-family: sans-serif;
         }
       |}
-      (* Sometimes it might be useful to be able to use the same class-name
-           defined from another call to [%css stylesheet] which you can do using the
-           "~dont_hash" optional flag.*)
+      (* Sometimes it might be useful to be able to use the same class-name defined from
+         another call to [%css stylesheet] which you can do using the "~dont_hash"
+         optional flag. *)
       ~dont_hash:[ "container" ]]
 
   let component ?(style = Style.default) () =

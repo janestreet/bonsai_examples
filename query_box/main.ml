@@ -177,8 +177,8 @@ let component graph =
       map
   in
   let query_box =
-    (* [filter_strategy] is not a dynamic parameter to [Query_box.stringable],
-       so we have to add introduce dynamism ourselves with [match%sub]. *)
+    (* [filter_strategy] is not a dynamic parameter to [Query_box.stringable], so we have
+       to add introduce dynamism ourselves with [match%sub]. *)
     match%sub filter_strategy with
     | Fuzzy_match ->
       Query_box.stringable

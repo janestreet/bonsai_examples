@@ -2,10 +2,10 @@ open! Core
 open Bonsai_web
 open Bonsai.Let_syntax
 
-(* An example of a small Bonsai component for creating counter
-   widgets ("+" and "-" buttons allow you to increment and decrement a
-   number). The state of each counter is housed in a shared [Map]. Adding
-   a new counter is as simple as adding a value to the map. *)
+(* An example of a small Bonsai component for creating counter widgets ("+" and "-"
+   buttons allow you to increment and decrement a number). The state of each counter is
+   housed in a shared [Map]. Adding a new counter is as simple as adding a value to the
+   map. *)
 
 let component graph =
   let state, inject =

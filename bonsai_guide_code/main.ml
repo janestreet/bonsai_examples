@@ -2,14 +2,13 @@ open! Core
 open! Bonsai_web
 
 (* !!!TURN AWAY!!! *)
-(* This is not good code!  It's made to interact in weird ways with docpub, and
-   you shouldn't be looking here for inspiration.
-   Of particular note:
+(* This is not good code! It's made to interact in weird ways with docpub, and you
+   shouldn't be looking here for inspiration. Of particular note:
 
-   - The ui-components and call to "Bonsai.Start.start" are in the same file;
-     they should be in separate files to encourage testability
-   - Some code is written non-idiomatically because the ordering of the guide
-     makes it undesierable to use concepts that weren't explained yet *)
+   - The ui-components and call to "Bonsai.Start.start" are in the same file; they should
+     be in separate files to encourage testability
+   - Some code is written non-idiomatically because the ordering of the guide makes it
+     undesierable to use concepts that weren't explained yet *)
 
 module _ = Bonsai_types
 module _ = Intro_examples

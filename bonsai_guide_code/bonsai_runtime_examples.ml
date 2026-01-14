@@ -5,7 +5,7 @@ module My_app = struct
 end
 
 (* We don't want to unconditionally start an app, contaminating the [bonsai_guide_code]
-   app that powers inline examples.*)
+   app that powers inline examples. *)
 module Bonsai_web = struct
   module Start = struct
     let start (_ : Bonsai.graph -> Bonsai_web.Vdom.Node.t Bonsai.t) = ()

@@ -60,7 +60,7 @@ let pausable ~equal ~f graph =
         let%map set_previous_value in
         fun v -> set_previous_value (Some v)
       in
-      Bonsai.Edge.on_change ~equal to_return graph ~callback;
+      Bonsai.Edge.on_change ~trigger:`After_display ~equal to_return graph ~callback;
       to_return
   in
   let view =

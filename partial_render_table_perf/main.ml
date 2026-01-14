@@ -214,6 +214,7 @@ let component graph =
         graph
     in
     Bonsai.Edge.on_change
+      ~trigger:`After_display
       ~sexp_of_model:[%sexp_of: int * int]
       ~equal:[%equal: int * int]
       range
@@ -257,7 +258,7 @@ let component graph =
       ~container_attr:(Vdom.Attr.many [ controls; {%css|margin-left: 10px;|} ])
       layout
   in
-  (* DANGER! Do NOT write this in real app code, use [match%sub] instead.*)
+  (* DANGER! Do NOT write this in real app code, use [match%sub] instead. *)
   Bonsai.Let_syntax.Let_syntax.switch
     ~here:[%here]
     ~match_

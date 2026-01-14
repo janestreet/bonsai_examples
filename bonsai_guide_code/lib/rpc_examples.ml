@@ -59,10 +59,10 @@ let current_time_implementation =
 
 module Custom_connection = Rpc_effect.Where_to_connect.Register ()
 
-(* Below is some sleight-of-hand. We want the readers of the guide to think that
-   we are using [Self], but we don't *actually* want to do that, since it would
-   require having a server to connect to. Thus, we shadow the text we want to
-   display with the value we want use. *)
+(* Below is some sleight-of-hand. We want the readers of the guide to think that we are
+   using [Self], but we don't *actually* want to do that, since it would require having a
+   server to connect to. Thus, we shadow the text we want to display with the value we
+   want use. *)
 
 (* $MDX part-begin=where_to_connect *)
 let where_to_connect : Rpc_effect.Where_to_connect.t =

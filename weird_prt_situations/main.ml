@@ -85,6 +85,7 @@ let component graph =
   in
   let () =
     Bonsai.Edge.on_change
+      ~trigger:`After_display
       ~sexp_of_model:[%sexp_of: Table_id.t]
       ~equal:[%equal: Table_id.t]
       focused_table

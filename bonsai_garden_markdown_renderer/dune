@@ -2,7 +2,7 @@
  (modes byte exe)
  (names main)
  (libraries bonsai_component_documentation_codeblock
-   bonsai_garden_markdown_render_engine bonsai_web
+   bonsai_garden_docs_common bonsai_garden_markdown_render_engine bonsai_web
    bonsai_web_ui_codemirror_read_only browser core virtual_dom.css_gen
    js_of_ocaml)
  (preprocess
