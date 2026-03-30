@@ -30,7 +30,7 @@ let component graph =
       graph
   in
   let%tydi { drop_target; dragging_over } =
-    Byo_file.on_drop
+    Bonsai_web_file.on_drop
       ~mime_types:[ "image/png" ]
       ~f:
         (let%arr seqnum and inject_image_state in
@@ -95,4 +95,4 @@ let component graph =
   |}
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

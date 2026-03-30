@@ -67,4 +67,4 @@ let app graph =
   |}
 ;;
 
-let () = Bonsai_web.Start.start ~enable_bonsai_telemetry:Enabled app
+let () = Bonsai_web.Start.start app

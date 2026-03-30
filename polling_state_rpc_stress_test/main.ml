@@ -116,5 +116,4 @@ let () =
       | Custom_connection.T -> connector
       | _ -> Rpc_effect.Connector.test_fallback)
     component
-    ~enable_bonsai_telemetry:Enabled
 ;;

@@ -2,6 +2,6 @@
  (modes byte exe)
  (names main)
  (libraries bonsai_web bonsai_web_ui_drilldown
-   bonsai_web_components.web_ui_tree_layout core virtual_dom)
+   bonsai_web_components.tree_layout core virtual_dom)
  (preprocess
   (pps ppx_jane ppx_css bonsai.ppx_bonsai)))

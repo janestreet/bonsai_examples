@@ -252,7 +252,7 @@ let table
             | _ -> None
           in
           match binding with
-          | Some b -> Effect.Many [ Effect.Prevent_default; b ]
+          | Some b -> Effect.Many [ (Effect.Prevent_default [@alert "-deprecated"]); b ]
           | None -> Effect.Ignore))
       data
   | `Cell ->
@@ -294,7 +294,7 @@ let table
             | _ -> None
           in
           match binding with
-          | Some b -> Effect.Many [ Effect.Prevent_default; b ]
+          | Some b -> Effect.Many [ (Effect.Prevent_default [@alert "-deprecated"]); b ]
           | None -> Effect.Ignore))
       data
 ;;
@@ -545,4 +545,4 @@ let component_with_theme graph =
   View.Theme.set_for_app theme (component ~theme_picker) graph
 ;;
 
-let () = Bonsai_web.Start.start component_with_theme ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component_with_theme

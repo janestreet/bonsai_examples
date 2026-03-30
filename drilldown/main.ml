@@ -97,4 +97,4 @@ let app : Bonsai.graph -> Vdom.Node.t Bonsai.t =
        ])
 ;;
 
-let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start app

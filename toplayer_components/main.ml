@@ -44,5 +44,5 @@ let component graph =
 
 let () =
   Async_js.init ();
-  Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+  Bonsai_web.Start.start component
 ;;

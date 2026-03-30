@@ -35,7 +35,5 @@ let component =
 ;;
 
 let () =
-  Bonsai_web.Start.start
-    (fun _graph -> Bonsai.return (Vdom.Node.div [ component ]))
-    ~enable_bonsai_telemetry:Enabled
+  Bonsai_web.Start.start (fun _graph -> Bonsai.return (Vdom.Node.div [ component ]))
 ;;

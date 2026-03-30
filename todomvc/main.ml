@@ -357,4 +357,4 @@ let root_component graph =
   Vdom.Node.div [ app; info ]
 ;;
 
-let () = Bonsai_web.Start.start root_component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start root_component

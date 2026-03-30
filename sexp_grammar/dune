@@ -1,8 +1,8 @@
 (executables
  (modes byte exe)
  (names main)
- (libraries bonsai_web bonsai_web_components.web_ui_auto_generated
-   bonsai_web_components.web_ui_form core)
+ (libraries bonsai_web bonsai_web_components.auto_generated
+   bonsai_web_components.form core)
  (preprocess
   (pps bonsai.ppx_bonsai ppx_jane)))
 

@@ -41,4 +41,4 @@ let component graph =
   Tabs.Result.combine_trivially contents
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

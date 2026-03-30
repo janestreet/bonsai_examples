@@ -41,4 +41,4 @@ let component graph =
   Vdom.Node.div [ view; Vdom.Node.text capitalized ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

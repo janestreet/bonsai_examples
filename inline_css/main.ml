@@ -106,15 +106,13 @@ module My_theme =
     |}]
 
 let () =
-  Bonsai_web.Start.start
-    (fun _graph ->
-      Bonsai.return
-        (Vdom.Node.div
-           [ Vdom.Node.h1 [ Vdom.Node.text "Boxes" ]
-           ; Boxes.component
-           ; Vdom.Node.h1 [ Vdom.Node.text "Themeable Component" ]
-           ; Themeable.component ()
-           ; Themeable.component ~style:(module My_theme) ()
-           ]))
-    ~enable_bonsai_telemetry:Enabled
+  Bonsai_web.Start.start (fun _graph ->
+    Bonsai.return
+      (Vdom.Node.div
+         [ Vdom.Node.h1 [ Vdom.Node.text "Boxes" ]
+         ; Boxes.component
+         ; Vdom.Node.h1 [ Vdom.Node.text "Themeable Component" ]
+         ; Themeable.component ()
+         ; Themeable.component ~style:(module My_theme) ()
+         ]))
 ;;

@@ -63,5 +63,5 @@ let () =
        just project out the view and return that for the application component. *)
     Bonsai.map ~f:Form.view_as_vdom table_form
   in
-  Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled
+  Bonsai_web.Start.start app
 ;;

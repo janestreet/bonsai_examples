@@ -108,4 +108,4 @@ let component graph =
     [ Form.view_as_vdom num_lists; View.hbox (Map.data lists); dragged_element ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

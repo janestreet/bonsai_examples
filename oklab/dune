@@ -1,7 +1,7 @@
 (executables
  (modes byte exe)
  (names main)
- (libraries bonsai_web bonsai_web_components.web_ui_form core
-   virtual_dom.css_gen bonsai_web.kado oklab)
+ (libraries bonsai_web bonsai_web_components.form core virtual_dom.css_gen
+   bonsai_web.kado oklab)
  (preprocess
   (pps ppx_jane ppx_css bonsai.ppx_bonsai)))

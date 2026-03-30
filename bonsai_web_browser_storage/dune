@@ -1,6 +1,6 @@
 (executables
  (modes byte exe)
  (names main)
- (libraries bonsai_web byo_browser_storage core)
+ (libraries bonsai_web skyline.bonsai_web_components.browser_storage core)
  (preprocess
   (pps ppx_jane bonsai.ppx_bonsai ppx_html)))

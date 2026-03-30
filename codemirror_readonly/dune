@@ -2,6 +2,6 @@
  (modes byte exe)
  (names main)
  (libraries bonsai_experimental_animation bonsai_web
-   bonsai_web_ui_codemirror_read_only core)
+   bonsai_web_components.bonsai_codemirror_read_only core)
  (preprocess
   (pps ppx_jane bonsai.ppx_bonsai ppx_embed_file ppx_css)))

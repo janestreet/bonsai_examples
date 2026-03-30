@@ -87,4 +87,4 @@ let component graph =
     [ pause_controlls; Cm_ro.make ~language:OCaml ~theme:Basic_light source_code ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

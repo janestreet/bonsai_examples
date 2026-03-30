@@ -18,4 +18,4 @@ let app =
   View.Theme.set_for_app theme my_component
 ;;
 
-let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start app

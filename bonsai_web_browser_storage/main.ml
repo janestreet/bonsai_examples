@@ -54,8 +54,12 @@ end
 let component graph =
   let unique_id, set_unique_id = Bonsai.state "unique_id" graph in
   let make_example ~description graph =
-    let item1, set_item1 = Byo_browser_storage.item (module Fruit) ~unique_id graph in
-    let item2, set_item2 = Byo_browser_storage.item (module Fruit) ~unique_id graph in
+    let item1, set_item1 =
+      Bonsai_web_browser_storage.item (module Fruit) ~unique_id graph
+    in
+    let item2, set_item2 =
+      Bonsai_web_browser_storage.item (module Fruit) ~unique_id graph
+    in
     let%arr item1 and set_item1 and item2 and set_item2 and unique_id and set_unique_id in
     let on_click_item1 =
       Vdom.Attr.on_click (fun _ -> set_item1 (Fruit.random ~but_not:item1))
@@ -98,14 +102,14 @@ let component graph =
     |}
   in
   let example1 =
-    Byo_browser_storage.with_storage
+    Bonsai_web_browser_storage.with_storage
       ~f:
         (make_example
            ~description:
              {%html|
                <div>
-                 Wrapped with <code>Byo_browser_storage.with_storage</code>: writes should be
-                 synced to both items.
+                 Wrapped with <code>Bonsai_web_browser_storage.with_storage</code>: writes
+                 should be synced to both items.
                </div>
              |})
       graph
@@ -115,8 +119,9 @@ let component graph =
       ~description:
         {%html|
           <div>
-            Not wrapped with <code>Byo_browser_storage.with_storage</code>: writes should
-            only affect one item. There should also be a warning in the browser console.
+            Not wrapped with <code>Bonsai_web_browser_storage.with_storage</code>: writes
+            should only affect one item. There should also be a warning in the browser
+            console.
           </div>
         |}
       graph
@@ -129,12 +134,12 @@ let component graph =
                     margin-block: 24px;
                   }">
         <p>
-          <code> Byo_browser_storage.item </code> demo. Expected behavior:
+          <code> Bonsai_web_browser_storage.item </code> demo. Expected behavior:
           <ul>
               <li> Values should be persisted across page refreshes </li>
               <li> If you open this same page in another tab, values should sync up between the tabs </li>
               <li> Changing the localStorage key should reset all values </li>
-              <li> Same-tab syncing between items depends on whether <code>Byo_browser_storage.with_storage</code> is used. </li>
+              <li> Same-tab syncing between items depends on whether <code>Bonsai_web_browser_storage.with_storage</code> is used. </li>
           </ul>
         </p>
         <div>
@@ -147,4 +152,4 @@ let component graph =
     |}
 ;;
 
-let () = Bonsai_web.Start.start ~enable_bonsai_telemetry:Enabled component
+let () = Bonsai_web.Start.start component

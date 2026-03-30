@@ -133,11 +133,11 @@ let component graph =
             | _ -> None
           in
           match binding with
-          | Some b -> Effect.Many [ Effect.Prevent_default; b ]
+          | Some b -> Effect.Many [ (Effect.Prevent_default [@alert "-deprecated"]); b ]
           | None -> Effect.Ignore)
       ]
   in
   Vdom.Node.div ~attrs:[ attr ] [ Form.view_as_vdom which_form; tables ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

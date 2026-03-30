@@ -29,7 +29,7 @@ let widget uri : Vdom.Node.t =
   Vdom.Node.widget
     ~id:(Type_equal.Id.create ~name:"favicon" (const [%sexp "favicon"]))
     ~init:(fun () ->
-      let _ : unit Or_error.t = Byo_favicon.set_favicon (Uri.to_string uri) in
+      let _ : unit Or_error.t = Bonsai_web_favicon.set_favicon (Uri.to_string uri) in
       (), Vdom.Node.to_dom Vdom.Node.none)
     ()
 ;;
@@ -206,7 +206,7 @@ let component graph =
 
 let run () =
   Async_js.init ();
-  Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+  Bonsai_web.Start.start component
 ;;
 
 let () = run ()

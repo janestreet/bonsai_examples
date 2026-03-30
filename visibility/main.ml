@@ -82,4 +82,4 @@ let component graph =
   Vdom.Node.div [ boxes; debug ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component
