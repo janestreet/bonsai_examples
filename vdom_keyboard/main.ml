@@ -152,4 +152,4 @@ let component (local_ graph) =
   with_keyboard_handler view handler
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

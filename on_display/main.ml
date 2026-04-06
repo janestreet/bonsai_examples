@@ -15,4 +15,4 @@ let component (local_ graph) =
   Vdom.Node.textf "Number of frames rendered: %d" state
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

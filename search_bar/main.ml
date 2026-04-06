@@ -97,7 +97,5 @@ let component input (local_ graph) =
 
 let () =
   let input = Bonsai.Expert.Var.create (Input.default ()) in
-  Bonsai_web.Start.start
-    (component (Bonsai.Expert.Var.value input))
-    ~enable_bonsai_telemetry:Enabled
+  Bonsai_web.Start.start (component (Bonsai.Expert.Var.value input))
 ;;

@@ -2,7 +2,8 @@ open! Core
 open Composition_infix
 
 module Die = struct
-  type t = { num_faces : int } [@@deriving bin_io, compare, equal, sexp]
+  type t = { num_faces : int }
+  [@@deriving bin_io, compare ~localize, equal ~localize, sexp]
 
   let of_int num_faces = { num_faces }
   let to_string_hum { num_faces } = "d" ^ Int.to_string num_faces
@@ -24,7 +25,7 @@ type t =
       ; die : Die.t
       }
   | Add of t list
-[@@deriving bin_io, compare, equal, sexp]
+[@@deriving bin_io, compare ~localize, equal ~localize, sexp]
 
 let add ts =
   match ts with

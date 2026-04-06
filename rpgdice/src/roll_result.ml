@@ -6,14 +6,14 @@ module Die = struct
     { num_faces : int
     ; result : int
     }
-  [@@deriving bin_io, compare, equal, fields ~getters, sexp]
+  [@@deriving bin_io, compare ~localize, equal ~localize, fields ~getters, sexp]
 end
 
 type t =
   { dice : Die.t list
   ; const : int
   }
-[@@deriving bin_io, compare, equal, sexp]
+[@@deriving bin_io, compare ~localize, equal ~localize, sexp]
 
 let to_int { dice; const } = List.sum (module Int) dice ~f:Die.result + const
 

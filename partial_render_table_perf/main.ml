@@ -245,7 +245,7 @@ let component (local_ graph) =
           | _ -> None
         in
         match binding with
-        | Some b -> Effect.Many [ Effect.Prevent_default; b ]
+        | Some b -> Effect.Many [ (Effect.Prevent_default [@alert "-deprecated"]); b ]
         | None -> Effect.Ignore)
     in
     let layout =
@@ -269,7 +269,5 @@ let component (local_ graph) =
 let () =
   component
   |> View.Theme.set_for_app (Bonsai.return (Kado.theme ~version:Bleeding ()))
-  |> Bonsai_web.Start.start
-       ~use_new_experimental_implementation:true
-       ~enable_bonsai_telemetry:Enabled
+  |> Bonsai_web.Start.start ~use_new_experimental_implementation:true
 ;;

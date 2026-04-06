@@ -40,4 +40,4 @@ let app (local_ graph) =
   build_result ~input ~roller ~input_method_selector
 ;;
 
-let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start app

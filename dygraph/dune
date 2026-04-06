@@ -3,5 +3,5 @@
  (names main)
  (preprocess
   (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_jane))
- (libraries bonsai_web core dygraph dygraph_jane gen_js_api js_of_ocaml
-   virtual_dom.input_widgets))
+ (libraries bonsai_web core bonsai_web_components.dygraph dygraph_jane
+   gen_js_api js_of_ocaml virtual_dom.input_widgets))

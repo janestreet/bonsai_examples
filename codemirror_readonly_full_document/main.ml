@@ -37,4 +37,4 @@ let component graph =
   View.vbox [ settings_view; editor_view ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

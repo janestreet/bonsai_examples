@@ -257,7 +257,7 @@ module _ = struct
               | _ -> None
             in
             match binding with
-            | Some b -> Effect.Many [ Effect.Prevent_default; b ]
+            | Some b -> Effect.Many [ (Effect.Prevent_default [@alert "-deprecated"]); b ]
             | None -> Effect.Ignore)
           (* [tabindex=0] allows browser focus to be set on the table. We then remove the
              default focus ring with [outline: none] css. *)
@@ -350,7 +350,7 @@ module _ = struct
               | _ -> None
             in
             match binding with
-            | Some b -> Effect.Many [ Effect.Prevent_default; b ]
+            | Some b -> Effect.Many [ (Effect.Prevent_default [@alert "-deprecated"]); b ]
             | None -> Effect.Ignore)
           (* Allows browser focus to be set on the table. *)
         ; Vdom.Attr.tabindex 0 (* Unsets default browser styling for focused elements. *)

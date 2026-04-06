@@ -2,6 +2,6 @@
  (modes byte exe)
  (names main)
  (libraries all_url_var_features_example bonsai_web
-   bonsai_web_components.web_ui_url_var core)
+   bonsai_web_components.url_var core)
  (preprocess
   (pps js_of_ocaml-ppx ppx_jane ppx_css)))

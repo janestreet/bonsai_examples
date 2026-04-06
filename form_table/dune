@@ -2,6 +2,6 @@
  (modes byte exe)
  (names main)
  (libraries bonsai_experimental_table_form bonsai_web
-   bonsai_web_components.web_ui_form core username_kernel)
+   bonsai_web_components.form core username_kernel)
  (preprocess
   (pps ppx_jane bonsai.ppx_bonsai ppx_css)))

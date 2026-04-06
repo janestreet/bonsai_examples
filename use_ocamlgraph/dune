@@ -1,6 +1,0 @@
-(executables
- (modes byte exe)
- (names main)
- (libraries bonsai_web core ocamlgraph)
- (preprocess
-  (pps ppx_jane)))

@@ -54,4 +54,4 @@ let app
   Vdom.Node.div [ textbox_view; duplicated ]
 ;;
 
-let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start app

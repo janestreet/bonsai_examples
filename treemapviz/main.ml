@@ -320,4 +320,4 @@ let component (local_ graph) =
   Vdom.Node.div ~attrs:[ Style.top ] [ button; content ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

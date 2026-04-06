@@ -11,4 +11,4 @@ let component (local_ _graph) =
        [ Vdom.Node.text "attempting to leave this page will show a warning" ])
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

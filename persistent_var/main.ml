@@ -55,4 +55,4 @@ let component (local_ graph) =
   Vdom.Node.div [ local_storage_node; Vdom.Node.br (); session_storage_node ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

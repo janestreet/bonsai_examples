@@ -50,4 +50,4 @@ let component (local_ graph) =
   |}
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

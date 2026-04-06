@@ -23,4 +23,4 @@ let component (local_ graph) =
   Vdom.Node.div [ Vdom.Node.div ~attrs:[ examples_column ] examples ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

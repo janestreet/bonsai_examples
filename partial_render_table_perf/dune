@@ -2,7 +2,7 @@
  (modes byte exe)
  (names main)
  (libraries bonsai_web_components.experimental_snips bonsai_web
-   bonsai_web_components.web_ui_form
+   bonsai_web_components.form
    bonsai_web_ui_partial_render_table_configs_for_testing capitalization core
    incr_map.collate js_of_ocaml bonsai_web.kado)
  (preprocess

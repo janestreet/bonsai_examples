@@ -2,6 +2,6 @@
  (modes byte exe)
  (names main)
  (libraries bonsai_web bonsai_web_counters_example
-   bonsai_web_components.web_ui_extendy core)
+   bonsai_web_components.extendy core)
  (preprocess
   (pps bonsai.ppx_bonsai ppx_jane ppx_pattern_bind)))

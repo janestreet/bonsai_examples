@@ -3,6 +3,9 @@ open! Bonsai_web
 open Bonsai.Let_syntax
 module Table = Bonsai_web_ui_partial_render_table
 module Row = Row
+module Focus_control = Bonsai_web_ui_partial_render_table.Focus_by_row
+module Form = Bonsai_web_ui_form.With_automatic_view
+module How_to_scroll = Bonsai_web_ui_scroll_utilities.How_to_scroll
 
 module Time_ns_option = struct
   type t = Time_ns.t option [@@deriving compare]
@@ -173,11 +176,36 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) (local_ graph) =
       data
       graph
   in
+  let jump_to_row_form =
+    let key_form = Form.Elements.Textbox.string ~placeholder:(return "Symbol") () graph in
+    let how_to_scroll_form =
+      Form.Elements.Dropdown.enumerable_opt
+        (module How_to_scroll)
+        ~placeholder:"How to scroll"
+        graph
+    in
+    let%arr key_form
+    and how_to_scroll_form
+    and { focus; _ } = table in
+    let btn_attrs =
+      match Form.value key_form, Form.value how_to_scroll_form with
+      | Error _, _ | _, Error _ -> [ Vdom.Attr.disabled ]
+      | Ok key, Ok how_to_scroll ->
+        [ Vdom.Attr.on_click (fun _ ->
+            Focus_control.focus ?how:how_to_scroll focus key ())
+        ]
+    in
+    {%html|
+      <div style="display: flex; flex-direction: row; align-items: center">
+        %{Form.view_as_vdom key_form} %{Form.view_as_vdom how_to_scroll_form}
+        <button *{btn_attrs}>Jump to symbol</button>
+      </div>
+    |}
+  in
   let controls =
     let%arr { focus; num_filtered_rows; _ } = table in
     Vdom.Attr.on_keydown (fun kbc ->
       let binding =
-        let module Focus_control = Bonsai_web_ui_partial_render_table.Focus_by_row in
         match Js_of_ocaml.Dom_html.Keyboard_code.of_event kbc with
         | ArrowDown | KeyJ -> Some (Focus_control.focus_down focus)
         | ArrowUp | KeyK -> Some (Focus_control.focus_up focus)
@@ -189,20 +217,29 @@ let component ?filter (data : Row.t String.Map.t Bonsai.t) (local_ graph) =
         | _ -> None
       in
       match binding with
-      | Some b -> Effect.Many [ Effect.Prevent_default; b ]
+      | Some b -> Effect.Many [ (Effect.Prevent_default [@alert "-deprecated"]); b ]
       | None -> Effect.Ignore)
   in
   let table_view =
     let%arr { view; _ } = table in
     view
   in
-  let%arr table_view and controls and shuffle_button in
-  {%html|<div %{controls}>%{shuffle_button}%{table_view}</div>|}
+  let%arr table_view and controls and shuffle_button and jump_to_row_form in
+  {%html|
+    <div %{controls}>
+      <div
+        style="display: flex; flex-direction: row; align-items: center; gap: 10rem"
+      >
+        %{shuffle_button}%{jump_to_row_form}
+      </div>
+      %{table_view}
+    </div>
+  |}
 ;;
 
 let () =
   let input = Bonsai.return (Row.many_random 100_000) in
   component input
   |> View.Theme.set_for_app (Bonsai.return (Kado.theme ~style:Light ~version:V1 ()))
-  |> Bonsai_web.Start.start ~enable_bonsai_telemetry:Enabled
+  |> Bonsai_web.Start.start
 ;;

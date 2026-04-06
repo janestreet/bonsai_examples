@@ -114,7 +114,7 @@ let copy_to_clipboard_button (data : Big_data.t Bonsai.t) (label : string Bonsai
   let on_click =
     let%arr data in
     let serialized_data = Big_data.sexp_of_t data |> Sexp.to_string in
-    Byo_clipboard.copy_text serialized_data
+    Bonsai_web_clipboard.copy_text serialized_data
   in
   let%arr on_click and label in
   Vdom.Node.button
@@ -142,7 +142,7 @@ let copy_to_clipboard_button (data : Big_data.t Bonsai.t) (label : string Bonsai
     let%bind.Effect serialized_data =
       Effect.of_thunk (fun () -> Big_data.sexp_of_t data |> Sexp.to_string)
     in
-    Byo_clipboard.copy_text serialized_data
+    Bonsai_web_clipboard.copy_text serialized_data
   in
   let%arr on_click and label in
   Vdom.Node.button

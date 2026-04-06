@@ -79,4 +79,4 @@ let app (local_ graph) =
   Vdom.Node.div ~attrs:[ App.class_ ] [ header; main ]
 ;;
 
-let () = Bonsai_web.Start.start app ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start app

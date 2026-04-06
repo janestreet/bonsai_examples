@@ -13,4 +13,4 @@ let url_var =
 ;;
 
 let component = Lib.component ~url_var
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

@@ -294,4 +294,4 @@ let component (local_ graph) =
   Vdom.Node.div [ buttons; page_component ]
 ;;
 
-let () = Bonsai_web.Start.start component ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start component

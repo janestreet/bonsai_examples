@@ -33,4 +33,4 @@ let _two_counters__computation_map_style (local_ graph) =
   Vdom.Node.div [ counter_1; counter_2 ]
 ;;
 
-let () = Bonsai_web.Start.start two_counters ~enable_bonsai_telemetry:Enabled
+let () = Bonsai_web.Start.start two_counters
