@@ -5,7 +5,7 @@ open! Vdom
 module Style = Todomvc
 
 (* Module for getting a Value.t tracking the global URL fragment. Best practice is usually
-   to use Bonsai_web_ui_url_var. As of this writing, that module does not support tracking
+   to use Bonsai_web_url_var. As of this writing, that module does not support tracking
    URL Fragments. As a lightweight workaround, I created the Url_hash module. *)
 module Url_hash : sig
   val get : unit -> string Bonsai.t

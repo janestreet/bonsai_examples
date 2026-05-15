@@ -61,13 +61,13 @@ module _ = struct
   (* $MDX part-end *)
 
   (* $MDX part-begin=variant_structure *)
-  module Structure = Bonsai_web_ui_partial_render_table.Column_structure
+  module Structure = Bonsai_web_partial_render_table.Column_structure
 
   let structure =
     Structure.Group.(
       [ leaf Col_id.Symbol
       ; group
-          ~label:(return {%html|Position|})
+          ~label:(return {%html.jsx|Position|})
           [ leaf Col_id.Price; leaf Col_id.Num_owned ]
       ; leaf Col_id.Last_updated
       ]
@@ -104,7 +104,7 @@ module _ = struct
   (* $MDX part-end *)
 
   (* $MDX part-begin=variant_columns *)
-  module Table = Bonsai_web_ui_partial_render_table.Basic
+  module Table = Bonsai_web_partial_render_table.Basic
 
   let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
     Table.Columns.build
@@ -152,7 +152,7 @@ module _ = struct
   ;;
 
   (* $MDX part-begin=sort_variant *)
-  module Sort_kind = Bonsai_web_ui_partial_render_table.Sort_kind
+  module Sort_kind = Bonsai_web_partial_render_table.Sort_kind
 
   let sorts (col_id : Col_id.t Bonsai.t) _graph =
     let%arr col_id in
@@ -257,7 +257,9 @@ module _ = struct
               | _ -> None
             in
             match binding with
-            | Some b -> Effect.Many [ (Effect.Prevent_default [@alert "-deprecated"]); b ]
+            | Some b ->
+              kbc##preventDefault;
+              b
             | None -> Effect.Ignore)
           (* [tabindex=0] allows browser focus to be set on the table. We then remove the
              default focus ring with [outline: none] css. *)
@@ -282,7 +284,7 @@ module _ = struct
         ~styling:
           (This_one
              (Bonsai.return
-                Bonsai_web_ui_partial_render_table_styling.(
+                Bonsai_web_partial_render_table_styling.(
                   create
                     { colors =
                         { page_bg = `Hex "#f0f4f8"
@@ -376,13 +378,13 @@ module _ = struct
   (* $MDX part-end *)
 
   (* $MDX part-begin=typed_fields_structure *)
-  module Structure = Bonsai_web_ui_partial_render_table.Column_structure
+  module Structure = Bonsai_web_partial_render_table.Column_structure
 
   let structure =
     let open Structure.Group in
     let pack_leaf x = leaf (Col_id.pack x) in
     [ pack_leaf Symbol
-    ; group ~label:(return {%html|Position|}) [ pack_leaf Price; pack_leaf Num_owned ]
+    ; group ~label:(return {%html.jsx|Position|}) [ pack_leaf Price; pack_leaf Num_owned ]
     ; pack_leaf Last_updated
     ]
     |> lift
@@ -391,7 +393,7 @@ module _ = struct
   (* $MDX part-end *)
 
   (* $MDX part-begin=typed_fields_sorts *)
-  module Sort_kind = Bonsai_web_ui_partial_render_table.Sort_kind
+  module Sort_kind = Bonsai_web_partial_render_table.Sort_kind
 
   let sort (type a) (module S : Comparable with type t = a) (field : a Row.Typed_field.t) =
     Some
@@ -411,7 +413,7 @@ module _ = struct
   (* $MDX part-end *)
 
   (* $MDX part-begin=typed_fields_columns *)
-  module Table = Bonsai_web_ui_partial_render_table.Basic
+  module Table = Bonsai_web_partial_render_table.Basic
 
   let columns : (Symbol.t, Row.t, Col_id.t) Table.Columns.t =
     Table.Columns.build
@@ -441,7 +443,7 @@ module _ = struct
   module Query = struct
     type t =
       { filter_params : unit
-      ; sort_order : Row.Typed_field.Packed.t Bonsai_web_ui_partial_render_table.Order.t
+      ; sort_order : Row.Typed_field.Packed.t Bonsai_web_partial_render_table.Order.t
       ; visible_range : int * int
       }
   end
@@ -449,14 +451,14 @@ module _ = struct
   let fetch_data_polling_rpc _query = return Incr_map_collate.Collated.empty
 
   (* $MDX part-begin=server_side_columns *)
-  module Table = Bonsai_web_ui_partial_render_table.Expert
+  module Table = Bonsai_web_partial_render_table.Expert
 
   module Col_id = struct
     include Row.Typed_field.Packed
     include Comparator.Make (Row.Typed_field.Packed)
   end
 
-  module Structure = Bonsai_web_ui_partial_render_table.Column_structure
+  module Structure = Bonsai_web_partial_render_table.Column_structure
 
   let component graph =
     (* We need to create the sortable state outside of the table. *)

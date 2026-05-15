@@ -34,18 +34,13 @@ let time_now graph =
     graph;
   let%arr state in
   let span = Time_ns.Span.of_int63_ns state in
-  {%html|
-    <div>
-      This counter should show the # of seconds since the page opened:
-      %{span#Time_ns.Span}
-    </div>
-  |}
+  {%html.jsx|<div>#{" This counter should show the # of seconds since the page opened: "}%{span#Time_ns.Span}</div>|}
 ;;
 
 let component graph =
   let%arr bonsai_time_source = testable_bonsai_clock graph
   and time_now = time_now graph in
-  {%html|
+  {%html.jsx|
     <div>
       <h2>Bonsai Time Source</h2>
       <div>%{bonsai_time_source}</div>

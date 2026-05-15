@@ -1,8 +1,8 @@
 open! Core
 open! Bonsai_web
 open! Bonsai.Let_syntax
-module Gallery = Bonsai_web_ui_gallery
-module Toplayer = Bonsai_web_ui_toplayer
+module Gallery = Bonsai_web_contrib_gallery
+module Toplayer = Bonsai_web_themed_toplayer
 
 module Popover = struct
   let name = "Popover"

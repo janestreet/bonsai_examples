@@ -1,0 +1,7 @@
+(library
+ (name widget_fastdom_example)
+ (libraries bonsai_web core virtual_dom.css_gen fastdom js_of_ocaml
+   skyline.field_v2 skyline.switch_input_v2 skyline.tokens_v2 virtual_dom)
+ (flags :standard -alert -skyline_beta)
+ (preprocess
+  (pps js_of_ocaml-ppx ppx_html bonsai.ppx_bonsai ppx_jane)))

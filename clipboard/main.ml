@@ -2,7 +2,7 @@ open! Core
 open! Bonsai_web
 open Js_of_ocaml
 open Bonsai.Let_syntax
-module Form = Bonsai_web_ui_form.With_automatic_view
+module Form = Bonsai_web_form.With_automatic_view
 
 let component graph =
   let form = Form.Elements.Textbox.string ~allow_updates_when_focused:`Never () graph in

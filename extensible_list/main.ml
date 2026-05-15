@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Extendy = Bonsai_web_ui_extendy
+module Extendy = Bonsai_kernel_extendy
 
 let component graph =
   let wrap_remove view remove_event =

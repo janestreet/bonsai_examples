@@ -1,0 +1,7 @@
+(executables
+ (modes byte exe)
+ (names main)
+ (libraries async_js async_kernel bonsai_web core js_of_ocaml
+   widget_fastdom_example)
+ (preprocess
+  (pps bonsai.ppx_bonsai ppx_jane js_of_ocaml-ppx ppx_css ppx_pattern_bind)))

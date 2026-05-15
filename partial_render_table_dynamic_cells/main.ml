@@ -29,7 +29,7 @@ module type S = sig
   val to_string : t -> string
 end
 
-module Prt = Bonsai_web_ui_partial_render_table
+module Prt = Bonsai_web_partial_render_table
 module Indexed_column_id = Prt.Indexed_column_id
 module Table = Prt.Basic
 module Column = Table.Columns.Dynamic_cells
@@ -299,7 +299,7 @@ let table
       data
 ;;
 
-module Forms = Bonsai_web_ui_form.With_automatic_view
+module Forms = Bonsai_web_form.With_automatic_view
 
 module Layout_form = struct
   module Multisort_columns_when = struct
@@ -450,12 +450,12 @@ let component ~theme_picker graph =
       let theme = View.Theme.current graph in
       let%arr theme in
       View.For_components.Prt.styling theme
-      |> Bonsai_web_ui_partial_render_table_styling.Expert.add_attrs
+      |> Bonsai_web_partial_render_table_styling.Expert.add_attrs
            ~header_cell:[ {%css|background-color: tomato;|} ]
     in
     let no_styling =
       return
-        (Bonsai_web_ui_partial_render_table_styling.Expert.lift
+        (Bonsai_web_partial_render_table_styling.Expert.lift
            { table_vars = Vdom.Attr.empty
            ; table = Vdom.Attr.empty
            ; header = Vdom.Attr.empty
@@ -531,8 +531,7 @@ let component ~theme_picker graph =
     Vdom.Node.sexp_for_debugging
       [%sexp
         (column_widths
-         : (Bonsai_web_ui_partial_render_table.Indexed_column_id.t
-           * [ `Px_float of float ])
+         : (Bonsai_web_partial_render_table.Indexed_column_id.t * [ `Px_float of float ])
              list)]
   in
   Vdom.Node.div
@@ -541,7 +540,9 @@ let component ~theme_picker graph =
 ;;
 
 let component_with_theme graph =
-  let%sub theme, theme_picker = Bonsai_web_ui_gallery.Theme_picker.component () graph in
+  let%sub theme, theme_picker =
+    Bonsai_web_contrib_gallery.Theme_picker.component () graph
+  in
   View.Theme.set_for_app theme (component ~theme_picker) graph
 ;;
 

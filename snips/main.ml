@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open! Bonsai.Let_syntax
-module Gallery = Bonsai_web_ui_gallery
+module Gallery = Bonsai_web_contrib_gallery
 module Snips = Bonsai_experimental_snips
 open! Snips.Infix
 

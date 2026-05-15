@@ -3,7 +3,7 @@ open! Bonsai_web
 
 let components graph =
   let open! Bonsai.Let_syntax in
-  let open! Bonsai_web_ui_freeform_multiselect in
+  let open! Bonsai_web_contrib_freeform_multiselect in
   let control =
     Freeform_multiselect.create ~placeholder:"Enter something here.." () graph
   in

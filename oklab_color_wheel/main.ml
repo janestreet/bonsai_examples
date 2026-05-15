@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Ll_vdom = Bonsai_web_ui_low_level_vdom
+module Ll_vdom = Bonsai_web_low_level_vdom
 
 module Canvas = struct
   open Js_of_ocaml

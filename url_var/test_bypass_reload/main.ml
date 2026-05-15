@@ -19,30 +19,28 @@ let parser =
 
 let component graph =
   let url_var =
-    Bonsai_web_ui_url_var.Typed.make
+    Bonsai_web_url_var.Typed.make
       ~navigation:`Intercept
       (module For_reloader)
       parser
       ~fallback:(fun _ _ -> failwith "Unable to parse URL")
   in
-  let url = Bonsai_web_ui_url_var.value url_var in
+  let url = Bonsai_web_url_var.value url_var in
   let time = Bonsai.Clock.approx_now ~tick_every:(Time_ns.Span.of_sec 1.) graph in
   let start_time = Bonsai.freeze time graph in
   let%arr time and start_time and url in
   let time = Time_ns.diff time start_time |> Time_ns.Span.to_string in
-  {%html|
+  {%html.jsx|
     <div>
       <div>
         <button on_click=%{fun _ -> Effect.reload_page}>
-          <code>Effect.reload</code>
+          <code>#{"Effect.reload"}</code></button
+        ><button on_click=%{fun _ -> Bonsai_web_url_var.reload_without_intercepting}>
+          <code>#{"Bonsai_web_url_var.reload_without_intercepting"}</code>
         </button>
-        <button on_click=%{fun _ -> Bonsai_web_ui_url_var.reload_without_intercepting}>
-          <code>Bonsai_web_ui_url_var.reload_without_intercepting</code>
-        </button>
-
-        <div>Seconds since last hard reload: #{time}</div>
+        <div>#{"Seconds since last hard reload: "}#{time}</div>
         <div>
-          URL:
+          #{" URL: "}
           <pre>#{Sexp.to_string_hum [%sexp (url  : For_reloader.t)]}</pre>
         </div>
       </div>

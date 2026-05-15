@@ -1,8 +1,8 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Form = Bonsai_web_ui_form.With_manual_view
-module Cm_ro = Bonsai_web_ui_codemirror_read_only
+module Form = Bonsai_web_form.With_manual_view
+module Cm_ro = Bonsai_web_codemirror_read_only
 
 let settings graph =
   let lines_count_form = Form.Elements.Number.int ~default:1000 ~step:1 () graph in

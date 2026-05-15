@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open! Bonsai.Let_syntax
-module Vis = Bonsai_web_ui_visibility
+module Vis = Bonsai_web_visibility
 
 module Style =
   [%css

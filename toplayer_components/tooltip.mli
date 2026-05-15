@@ -1,5 +1,5 @@
 open! Core
-module Gallery = Bonsai_web_ui_gallery
+module Gallery = Bonsai_web_contrib_gallery
 
 (* Demos *)
 module Tooltip : Gallery.Demo

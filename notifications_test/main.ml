@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Gallery = Bonsai_web_ui_gallery
+module Gallery = Bonsai_web_contrib_gallery
 
 module Basic_notification = struct
   let name = "Basic Notifications test"
@@ -13,7 +13,7 @@ there are no changes to the previous API.|}
 
   include
     [%demo
-    module Notifications = Bonsai_web_ui_notifications
+    module Notifications = Bonsai_web_notifications
 
     let component graph =
       let notifications = Notifications.Basic.create () graph in
@@ -32,13 +32,13 @@ there are no changes to the previous API.|}
         [ View.button
             theme
             ~on_click:
-              (Bonsai_web_ui_notifications.Basic.add_success notifications ~text:"Yay!")
+              (Bonsai_web_notifications.Basic.add_success notifications ~text:"Yay!")
             ~intent:Success
             "Send success notification"
         ; View.button
             theme
             ~on_click:
-              (Bonsai_web_ui_notifications.Basic.add_error
+              (Bonsai_web_notifications.Basic.add_error
                  notifications
                  ~error:(Error.of_string "Something went wrong.")
                  ~text:"Whoops!")

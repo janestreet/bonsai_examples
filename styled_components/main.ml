@@ -1,8 +1,8 @@
 open! Core
 open! Bonsai_web
 open! Bonsai.Let_syntax
-module Gallery = Bonsai_web_ui_gallery
-module Form = Bonsai_web_ui_form.With_automatic_view
+module Gallery = Bonsai_web_contrib_gallery
+module Form = Bonsai_web_form.With_automatic_view
 
 module Basic = struct
   let name = "Basic"

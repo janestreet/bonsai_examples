@@ -6,7 +6,7 @@ module Result_spec = Bonsai_web_test.Result_spec
 module Example = Bonsai_drag_and_drop_example
 
 let board = Example.board "board"
-let run = Bonsai_web_ui_drag_and_drop_testing.run ~get_vdom:Fn.id ~name:"board"
+let run = Bonsai_web_drag_and_drop_testing.run ~get_vdom:Fn.id ~name:"board"
 
 let%expect_test "drag between containers" =
   let handle = Handle.create (Result_spec.vdom Fn.id) board in

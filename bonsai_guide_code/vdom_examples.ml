@@ -27,7 +27,7 @@ let () = Util.run_vdom bulleted_list ~id:"bulleted_list"
 
 (* $MDX part-begin=bulleted_list_with_ppx_html *)
 let bulleted_list =
-  {%html|
+  {%html.jsx|
     <div>
       <h3>Norwegian Pancakes</h3>
       <ul>

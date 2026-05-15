@@ -1,8 +1,8 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Gallery = Bonsai_web_ui_gallery
-module Notifications = Bonsai_web_ui_notifications
+module Gallery = Bonsai_web_contrib_gallery
+module Notifications = Bonsai_web_notifications
 
 module User_defined_notification = struct
   let name = "User defined notifications"

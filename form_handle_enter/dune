@@ -2,6 +2,6 @@
  (modes byte exe)
  (names main)
  (libraries bonsai_web bonsai_web_components.auto_generated
-   bonsai_web_components.form bonsai_web_ui_notifications core)
+   bonsai_web_components.form bonsai_web_notifications core)
  (preprocess
   (pps bonsai.ppx_bonsai ppx_css ppx_jane)))

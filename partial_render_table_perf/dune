@@ -3,7 +3,7 @@
  (names main)
  (libraries bonsai_web_components.experimental_snips bonsai_web
    bonsai_web_components.form
-   bonsai_web_ui_partial_render_table_configs_for_testing capitalization core
+   bonsai_web_partial_render_table_configs_for_testing capitalization core
    incr_map.collate js_of_ocaml bonsai_web.kado)
  (preprocess
   (pps bonsai.ppx_bonsai ppx_css ppx_html ppx_jane)))
