@@ -241,7 +241,7 @@ let create_treemap ~elements (local_ graph) =
   in
   let tracker =
     let%arr set_dimensions in
-    Bonsai_web_ui_element_size_hooks.Size_tracker.on_change
+    Bonsai_web_element_size_hooks.Size_tracker.on_change
       (fun { border_box = { width; height }; content_box = _ } ->
          set_dimensions (Some { Dimensions.height; width }))
   in

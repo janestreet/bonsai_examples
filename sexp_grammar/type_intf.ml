@@ -1,5 +1,5 @@
 open! Core
-module Auto_generated = Bonsai_web_ui_auto_generated
+module Auto_generated = Bonsai_web_auto_generated
 
 module T = struct
   type record =

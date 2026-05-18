@@ -42,21 +42,18 @@ let textbox_container_styles =
 
 let app graph =
   let%arr textbox = component graph in
-  {%html|
+  {%html.jsx|
     <div style="font-family: sans-serif">
       <div>
-        This is a fancy textarea component. It has two fancy features:
+        #{" This is a fancy textarea component. It has two fancy features: "}
         <ol>
           <li>
-            <b>The textarea grows and shrinks to fit its content.</b> <br />
-            Try adding new lines and long lines and then manipulate the size of the
-            parent container to see how it responds to layout constraints
+            <b>#{"The textarea grows and shrinks to fit its content."}</b
+            >#{" "}<br />#{" Try adding new lines and long lines and then manipulate the size of the\n            parent container to see how it responds to layout constraints "}
           </li>
           <li>
-            <b>The user can arbitrarily colorize the content of the textarea.</b>
-            <br />
-            In this example, I color each word according to the number of
-            non-whitespace chars in the word: red for an even number, blue for odd.
+            <b>#{"The user can arbitrarily colorize the content of the textarea."}</b
+            ><br />#{" In this example, I color each word according to the number of\n            non-whitespace chars in the word: red for an even number, blue for odd. "}
           </li>
         </ol>
       </div>

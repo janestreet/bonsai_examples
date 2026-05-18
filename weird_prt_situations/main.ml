@@ -3,9 +3,9 @@ open! Bonsai_web
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Table = Bonsai_web_ui_partial_render_table.Basic
+module Table = Bonsai_web_partial_render_table.Basic
 module Column = Table.Columns.Dynamic_cells
-module Form = Bonsai_web_ui_form.With_automatic_view
+module Form = Bonsai_web_form.With_automatic_view
 
 let header text = Vdom.Node.text text |> Bonsai.return
 

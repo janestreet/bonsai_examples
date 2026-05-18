@@ -1,8 +1,8 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Form = Bonsai_web_ui_form.With_manual_view
-open Bonsai_web_ui_partial_render_table_configs_for_testing
+module Form = Bonsai_web_form.With_manual_view
+open Bonsai_web_partial_render_table_configs_for_testing
 module Config = All_apis_configs
 module Snips = Bonsai_experimental_snips
 

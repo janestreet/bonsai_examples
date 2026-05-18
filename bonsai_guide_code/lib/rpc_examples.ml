@@ -123,7 +123,7 @@ module Css =
     |}]
 
 let zone_form (local_ graph) =
-  let module Form = Bonsai_web_ui_form.With_automatic_view in
+  let module Form = Bonsai_web_form.With_automatic_view in
   let form =
     Form.Elements.Textbox.string
       ~placeholder:(Bonsai.return "timezone")

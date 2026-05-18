@@ -30,7 +30,7 @@ let component (local_ graph) =
       graph
   in
   let%tydi { drop_target; dragging_over } =
-    Bonsai_web_file.on_drop
+    Bonsai_web_drop_file.on_drop
       ~mime_types:[ "image/png" ]
       ~f:
         (let%arr seqnum and inject_image_state in
@@ -49,17 +49,15 @@ let component (local_ graph) =
                      (Error.of_string
                         (Js_of_ocaml.Js.to_string not_a_png##.name ^ " is not a png")) )
              | Ok file ->
-               let file =
-                 Bonsai_web_ui_file_from_web_file.create ~mode:`As_data_url file
-               in
-               (match%bind.Effect Bonsai_web_ui_file.contents file with
+               let file = Bonsai_web_file_from_web_file.create ~mode:`As_data_url file in
+               (match%bind.Effect Bonsai_web_file.contents file with
                 | Ok contents ->
                   inject_image_state (seqnum, i, Ok (Bigstring.to_string contents))
                 | Error e ->
                   Effect.print_s
                     [%message
                       "error reading"
-                        ~file:(Bonsai_web_ui_file.filename file)
+                        ~file:(Bonsai_web_file.filename file)
                         ~_:(e : Error.t)]))
            |> Effect.Many)
       graph
@@ -67,7 +65,7 @@ let component (local_ graph) =
   let%arr image_state and dragging_over and drop_target in
   let images =
     Map.map image_state.files ~f:(function
-      | Ok url -> {%html|<img src=%{url} />|}
+      | Ok url -> {%html.jsx|<img src=%{url} />|}
       | Error e -> Vdom.Node.sexp_for_debugging [%sexp (e : Error.t)])
   in
   let background =
@@ -77,7 +75,7 @@ let component (local_ graph) =
     | Some `No_files_valid -> "red"
     | None -> "unset"
   in
-  {%html|
+  {%html.jsx|
     <div>
       <div
         %{drop_target}
@@ -88,7 +86,7 @@ let component (local_ graph) =
           background: %{background};
         "
       >
-        Drop images here
+        #{" Drop images here "}
       </div>
       %{Vdom.Node.Map_children.div (images)}
     </div>

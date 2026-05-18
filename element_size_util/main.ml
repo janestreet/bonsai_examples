@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Size_hooks = Bonsai_web_ui_element_size_hooks
+module Size_hooks = Bonsai_web_element_size_hooks
 
 module Page = struct
   type t =
@@ -144,11 +144,11 @@ let fit (local_ _graph) =
           ~key:"resizable-using-css"
           ~attrs:
             [ Style.resizable_using_css
-            ; Bonsai_web_ui_element_size_hooks.Resize_to_fit.attr_for_parent__recommended
+            ; Bonsai_web_element_size_hooks.Resize_to_fit.attr_for_parent__recommended
             ]
           [ Node.span
               ~attrs:
-                [ Bonsai_web_ui_element_size_hooks.Resize_to_fit.attr ~behavior ()
+                [ Bonsai_web_element_size_hooks.Resize_to_fit.attr ~behavior ()
                 ; Vdom.Attr.create "contenteditable" ""
                 ; Vdom.Attr.style (Css_gen.outline ~style:`None ())
                 ]

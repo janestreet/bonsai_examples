@@ -1,6 +1,0 @@
-(executables
- (modes byte exe)
- (names main)
- (libraries bonsai_web core virtual_dom.css_gen skyline.tailwind_colors)
- (preprocess
-  (pps ppx_jane)))

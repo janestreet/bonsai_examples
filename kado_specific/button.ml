@@ -1,8 +1,8 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Autogen = Bonsai_web_ui_auto_generated
-module Form = Bonsai_web_ui_form.With_automatic_view
+module Autogen = Bonsai_web_auto_generated
+module Form = Bonsai_web_form.With_automatic_view
 
 module Parameters = struct
   module Disabled = Bool

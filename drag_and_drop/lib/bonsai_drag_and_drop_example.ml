@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Drag_and_drop = Bonsai_web_ui_drag_and_drop
+module Drag_and_drop = Bonsai_web_drag_and_drop
 module Node = Vdom.Node
 
 module Style =

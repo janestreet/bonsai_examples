@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Form = Bonsai_web_ui_form.With_automatic_view
+module Form = Bonsai_web_form.With_automatic_view
 
 module One = struct
   type t = { a : string } [@@deriving sexp, sexp_grammar]
@@ -25,11 +25,9 @@ module Css =
     |}]
 
 let component (local_ graph) =
-  let notifications =
-    Bonsai_web_ui_notifications.component ~equal:[%equal: Unit.t] graph
-  in
+  let notifications = Bonsai_web_notifications.component ~equal:[%equal: Unit.t] graph in
   let rendered_notifications =
-    Bonsai_web_ui_notifications.render
+    Bonsai_web_notifications.render
       notifications
       ~f:(fun ~close:_ _ (local_ _graph) ->
         Bonsai.return
@@ -38,48 +36,48 @@ let component (local_ graph) =
   in
   let notify =
     let%arr notifications in
-    Bonsai_web_ui_notifications.send_notification
+    Bonsai_web_notifications.send_notification
       ~close_after:(Time_ns.Span.of_sec 5.0)
       notifications
       ()
   in
   let form1 =
-    Bonsai_web_ui_auto_generated.form
+    Bonsai_web_auto_generated.form
       (module One)
       ~textbox_for_string:()
       graph
       ~allow_updates_when_focused:`Never
   in
   let form2 =
-    Bonsai_web_ui_auto_generated.form
+    Bonsai_web_auto_generated.form
       (module One)
       ~textbox_for_string:()
       graph
       ~allow_updates_when_focused:`Never
   in
   let form3 =
-    Bonsai_web_ui_auto_generated.form
+    Bonsai_web_auto_generated.form
       (module One)
       ~textbox_for_string:()
       graph
       ~allow_updates_when_focused:`Never
   in
   let form4 =
-    Bonsai_web_ui_auto_generated.form
+    Bonsai_web_auto_generated.form
       (module Two)
       ~textbox_for_string:()
       graph
       ~allow_updates_when_focused:`Never
   in
   let form5 =
-    Bonsai_web_ui_auto_generated.form
+    Bonsai_web_auto_generated.form
       (module Two)
       ~textbox_for_string:()
       graph
       ~allow_updates_when_focused:`Never
   in
   let form6 =
-    Bonsai_web_ui_auto_generated.form
+    Bonsai_web_auto_generated.form
       (module Two)
       ~textbox_for_string:()
       graph

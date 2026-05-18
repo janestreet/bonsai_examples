@@ -33,7 +33,7 @@ depends: [
   "js_of_ocaml-ppx"     {= "6.0.1+ox"}
   "uri"                 {>= "3.0.0"}
 ]
-available: arch != "arm32" & arch != "x86_32"
+available: arch != "x86_32"
 synopsis: "Examples for bonsai_web, a library for building dynamic webapps, using Js_of_ocaml"
 description: "
 A collection of bonsai_web examples. Bonsai is a library for building

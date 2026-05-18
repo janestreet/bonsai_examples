@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open! Bonsai.Let_syntax
-module Gallery = Bonsai_web_ui_gallery
+module Gallery = Bonsai_web_contrib_gallery
 
 module Basic_accordion = struct
   let name = "Basic Accordion Usage"
@@ -11,7 +11,7 @@ module Basic_accordion = struct
     let vdom, demo =
       [%demo
         let%sub { view; is_open = _; open_ = _; toggle = _; close = _ } =
-          Bonsai_web_ui_accordion.component
+          Bonsai_web_legacy_accordion.component
             ~starts_open:true
             ~title:
               (Bonsai.return (Vdom.Node.text "I am an accordion, click me to toggle!"))
@@ -43,7 +43,7 @@ module Accordion_with_controls = struct
       [%demo
         let theme = View.Theme.current graph in
         let accordion =
-          Bonsai_web_ui_accordion.component
+          Bonsai_web_legacy_accordion.component
             ~starts_open:false
             ~title:(Bonsai.return (Vdom.Node.text "Important!"))
             ~content:(fun (local_ _graph) ->

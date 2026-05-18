@@ -44,7 +44,7 @@ end
 
 let components (local_ graph) =
   let open! Bonsai.Let_syntax in
-  let open! Bonsai_web_ui_typeahead in
+  let open! Bonsai_web_contrib_typeahead in
   let all_options, inject_all_options =
     Bonsai.state
       Pokemon.all
@@ -71,7 +71,7 @@ let components (local_ graph) =
       ~sexp_of:Pokemon.sexp_of_t
       ~equal:[%equal: Pokemon.t]
       ~attr_merge_behavior:
-        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
+        Bonsai_web_contrib_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let%sub { selected = favourite_pokemon; view = typeahead_single_vdom; _ } =
     typeahead_single () graph
@@ -94,7 +94,7 @@ let components (local_ graph) =
       ~all_options
       graph
       ~attr_merge_behavior:
-        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
+        Bonsai_web_contrib_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let%sub { view = typeahead_single_with_custom_input_vdom; _ } =
     typeahead_single
@@ -115,7 +115,7 @@ let components (local_ graph) =
       ~all_options
       (module Pokemon)
       ~attr_merge_behavior:
-        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
+        Bonsai_web_contrib_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let typeahead_multi_with_custom_input_no_tabbing ~all_options =
     Typeahead.create_multi
@@ -129,7 +129,7 @@ let components (local_ graph) =
       ~all_options
       (module Pokemon)
       ~attr_merge_behavior:
-        Bonsai_web_ui_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
+        Bonsai_web_contrib_typeahead.Typeahead.Attr_merge_behavior.Legacy_do_not_merge
   in
   let%sub { view = typeahead_multi_with_empty_options_vdom; _ } =
     typeahead_multi_with_custom_input ~all_options:(Bonsai.return []) graph

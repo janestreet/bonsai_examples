@@ -3,4 +3,4 @@
  (names main)
  (libraries bonsai_web core)
  (preprocess
-  (pps ppx_jane bonsai.ppx_bonsai)))
+  (pps ppx_jane bonsai.ppx_bonsai ppx_html ppx_css)))

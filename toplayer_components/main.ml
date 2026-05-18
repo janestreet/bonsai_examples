@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open! Bonsai.Let_syntax
-module Gallery = Bonsai_web_ui_gallery
+module Gallery = Bonsai_web_contrib_gallery
 
 (* These tests are intended for app writers. There are additional demos in
    [toplayer_testing], which are lower-level, and intended for toplayer devs to test

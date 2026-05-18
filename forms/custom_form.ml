@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Form = Bonsai_web_ui_form.With_manual_view
+module Form = Bonsai_web_form.With_manual_view
 
 let form (local_ graph) =
   let state, set_state =

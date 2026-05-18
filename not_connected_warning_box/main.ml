@@ -7,7 +7,7 @@ let component (local_ graph) =
     Bonsai.state false ~sexp_of_model:[%sexp_of: Bool.t] ~equal:[%equal: Bool.t] graph
   in
   let not_connected_warning_box =
-    Bonsai_web_ui_not_connected_warning_box.(
+    Bonsai_web_contrib_not_connected_warning_box.(
       component ~create_message:message_for_async_durable is_connected graph)
   in
   let%arr not_connected_warning_box and is_connected and set_is_connected in

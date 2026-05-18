@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open! Bonsai.Let_syntax
-module Url_var = Bonsai_web_ui_url_var
+module Url_var = Bonsai_web_url_var
 
 module My_google_clone = struct
   (* $MDX part-begin=type *)

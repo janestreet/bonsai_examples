@@ -2,8 +2,8 @@ open! Core
 open! Bonsai_web
 open! Vdom
 open Bonsai.Let_syntax
-module Form = Bonsai_web_ui_form.With_automatic_view
-module Query_box = Bonsai_web_ui_query_box
+module Form = Bonsai_web_form.With_automatic_view
+module Query_box = Bonsai_web_contrib_query_box
 
 module Css =
   [%css
@@ -43,7 +43,7 @@ module Example_params = struct
     { suggestion_list_kind = Transient_overlay
     ; expand_direction = Down
     ; on_focus = Focus_first_item
-    ; on_hover_item = Bonsai_web_ui_query_box.On_hover_item.Focus_hovered_item
+    ; on_hover_item = Bonsai_web_contrib_query_box.On_hover_item.Focus_hovered_item
     ; max_visible_items = 10
     ; input_source = Small_and_static_list_of_fruits
     ; filter_strategy = Fuzzy_search_and_score

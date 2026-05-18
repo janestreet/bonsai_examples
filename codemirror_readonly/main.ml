@@ -1,7 +1,7 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Cm_ro = Bonsai_web_ui_codemirror_read_only
+module Cm_ro = Bonsai_web_codemirror_read_only
 module Animation = Bonsai_experimental_animation
 
 let this_source_code = [%embed_file_as_string "./main.ml"]

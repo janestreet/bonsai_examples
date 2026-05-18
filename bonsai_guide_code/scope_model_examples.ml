@@ -32,7 +32,7 @@ let counters_for_users_assoc (local_ graph) : Vdom.Node.t Bonsai.t =
 let () = Util.run counters_for_users_assoc ~id:"counters_for_users_assoc"
 
 (* $MDX part-begin=counters_for_users_scoped *)
-module Form = Bonsai_web_ui_form.With_automatic_view
+module Form = Bonsai_web_form.With_automatic_view
 
 let counters_for_users_scoped (local_ graph) : Vdom.Node.t Bonsai.t =
   let form =

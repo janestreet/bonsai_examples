@@ -4,7 +4,7 @@ open Bonsai.Let_syntax
 
 module Elements = struct
   let grid children =
-    {%html|
+    {%html.jsx|
       <div
         style="
           display: grid;
@@ -24,7 +24,7 @@ module Elements = struct
   ;;
 
   let preview value =
-    {%html|
+    {%html.jsx|
       <div style="font-family: monospace; box-shadow: 0 1px 0 0 black">
         *{value}
       </div>
@@ -75,7 +75,7 @@ let component (local_ graph) =
     let item1_str = [%message (item1 : Fruit.t option)] |> Sexp.to_string in
     let item2_str = [%message (item2 : Fruit.t option)] |> Sexp.to_string in
     let unique_id_str = [%message (unique_id : string)] |> Sexp.to_string in
-    {%html|
+    {%html.jsx|
       <div
         style="
           display: grid;
@@ -106,10 +106,9 @@ let component (local_ graph) =
       ~f:
         (make_example
            ~description:
-             {%html|
+             {%html.jsx|
                <div>
-                 Wrapped with <code>Bonsai_web_browser_storage.with_storage</code>: writes
-                 should be synced to both items.
+                 #{" Wrapped with "}<code>#{"Bonsai_web_browser_storage.with_storage"}</code>#{": writes\n                 should be synced to both items. "}
                </div>
              |})
       graph
@@ -117,38 +116,20 @@ let component (local_ graph) =
   let example2 =
     make_example
       ~description:
-        {%html|
+        {%html.jsx|
           <div>
-            Not wrapped with <code>Bonsai_web_browser_storage.with_storage</code>: writes
-            should only affect one item. There should also be a warning in the browser
-            console.
+            #{" Not wrapped with "}<code>#{"Bonsai_web_browser_storage.with_storage"}</code>#{": writes\n            should only affect one item. There should also be a warning in the browser\n            console. "}
           </div>
         |}
       graph
   in
   let%arr example1 and example2 in
-  {%html|
+  {%html.jsx|
       <div style="max-width: min(90vw, 800px);
                   margin: auto;
                   > * {
                     margin-block: 24px;
-                  }">
-        <p>
-          <code> Bonsai_web_browser_storage.item </code> demo. Expected behavior:
-          <ul>
-              <li> Values should be persisted across page refreshes </li>
-              <li> If you open this same page in another tab, values should sync up between the tabs </li>
-              <li> Changing the localStorage key should reset all values </li>
-              <li> Same-tab syncing between items depends on whether <code>Bonsai_web_browser_storage.with_storage</code> is used. </li>
-          </ul>
-        </p>
-        <div>
-        %{example1}
-        </div>
-        <div>
-        %{example2}
-        </div>
-      </div>
+                  }"><p><code>#{" Bonsai_web_browser_storage.item "}</code>#{" demo. Expected behavior: "}<ul><li>#{" Values should be persisted across page refreshes "}</li><li>#{" If you open this same page in another tab, values should sync up between the tabs "}</li><li>#{" Changing the localStorage key should reset all values "}</li><li>#{" Same-tab syncing between items depends on whether "}<code>#{"Bonsai_web_browser_storage.with_storage"}</code>#{" is used. "}</li></ul></p><div>%{example1}</div><div>%{example2}</div></div>
     |}
 ;;
 

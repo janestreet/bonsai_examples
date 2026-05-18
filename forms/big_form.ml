@@ -1,8 +1,8 @@
 open! Core
 open! Bonsai_web
 open Bonsai.Let_syntax
-module Form = Bonsai_web_ui_form.With_automatic_view
-module Codemirror_form = Bonsai_web_ui_codemirror_form.With_automatic_view
+module Form = Bonsai_web_form.With_automatic_view
+module Codemirror_form = Bonsai_web_codemirror_form.With_automatic_view
 module E = Form.Elements
 
 module Query_box_css =
@@ -243,7 +243,7 @@ type t =
   ; many : A_B_or_C.t list
   ; many2 : A_B_or_C.t list
   ; string_set : String.Set.t
-  ; files : Bonsai_web_ui_file.t Filename.Map.t
+  ; files : Bonsai_web_file.t Filename.Map.t
   ; rank : string list
   ; query_box : string
   ; nested_record : Nested_record.Outer.t
@@ -345,7 +345,7 @@ let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t 
       ~to_option_description:(Bonsai.return Rodents.to_description)
       ~handle_unknown_option:(Bonsai.return (fun s -> Some (Rodents.Other s)))
       ~all_options:(Bonsai.return Rodents.all)
-      ~on_hover_item:(Bonsai.return Bonsai_web_ui_query_box.On_hover_item.Do_nothing)
+      ~on_hover_item:(Bonsai.return Bonsai_web_contrib_query_box.On_hover_item.Do_nothing)
       graph
   | String_option ->
     E.Dropdown.list_opt
@@ -415,7 +415,7 @@ let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t 
         Map.filter_map input ~f:(fun data ->
           if String.is_prefix ~prefix:query data then Some (Vdom.Node.text data) else None))
       ()
-      ~on_hover_item:(Bonsai.return Bonsai_web_ui_query_box.On_hover_item.Do_nothing)
+      ~on_hover_item:(Bonsai.return Bonsai_web_contrib_query_box.On_hover_item.Do_nothing)
       graph
   | Nested_record -> Nested_record.form graph
   | Record_list_as_table -> Record_for_list.form graph
