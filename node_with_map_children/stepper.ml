@@ -180,7 +180,7 @@ let component
         [ Vdom.Node.textarea
             ~attrs:
               [ Vdom.Attr.many [ Style.header; Style.debug ]
-              ; Vdom.Attr.value_prop ([%sexp_of: Model.t] state |> Sexp.to_string_hum)
+              ; Vdom.Attr.value ([%sexp_of: Model.t] state |> Sexp.to_string_hum)
               ; Vdom.Attr.on_change (fun _ text ->
                   text
                   |> Sexp.of_string

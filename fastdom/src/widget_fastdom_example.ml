@@ -93,7 +93,7 @@ module Bar_widget_good = struct
 
   let create input_value =
     let vdom =
-      {%html.jsx|<div %{Style.bar_fill} data-bar-value=%{input_value#Float}></div>|}
+      {%html|<div %{Style.bar_fill} data-bar-value=%{input_value#Float}></div>|}
     in
     let element = vdom |> Vdom.Node.to_dom in
     let () = element##.style##.width := Js.string [%string "%{input_value#Float}px"] in
@@ -136,7 +136,7 @@ module Bar_widget = struct
 
   let create input_value =
     let vdom =
-      {%html.jsx|<div %{Style.bar_fill} data-bar-value=%{input_value#Float}></div>|}
+      {%html|<div %{Style.bar_fill} data-bar-value=%{input_value#Float}></div>|}
     in
     let element = vdom |> Vdom.Node.to_dom in
     let () = element##.style##.width := Js.string [%string "%{input_value#Float}px"] in
@@ -206,7 +206,7 @@ let component (local_ graph) =
         in
         acc /. (List.length time_between |> Int.to_float) |> Time_ns.Span.of_ns
     in
-    {%html.jsx|<div>Avg time between frames: %{avg_time#Time_ns.Span}</div>|}
+    {%html|<div>Avg time between frames: %{avg_time#Time_ns.Span}</div>|}
   in
   let use_which, set_use_which = Bonsai.state `Bad graph in
   Bonsai.Clock.every
@@ -247,13 +247,13 @@ let component (local_ graph) =
       | `Bad -> "bad"
       | `Good -> "good"
     in
-    {%html.jsx|<span>Currently using <b>#{which}</b></span>|}
+    {%html|<span>Currently using <b>#{which}</b></span>|}
   in
   let metric_rows =
     Map.fold data ~init:[] ~f:(fun ~key:_ ~data:metric acc ->
       let _data_attr = Vdom.Attr.create "data-bar-value" (sprintf "%.6f" metric.value) in
       let row =
-        {%html.jsx|
+        {%html|
           <div %{Style.metric_row}>
             <span %{Style.label}>%{metric.label#String}</span>
             <div %{Style.bar_container}>%{bar_widget metric.value}</div>
@@ -264,7 +264,7 @@ let component (local_ graph) =
       row :: acc)
     |> List.rev
   in
-  {%html.jsx|
+  {%html|
     <div %{Style.dashboard}>
       <h1
         style="

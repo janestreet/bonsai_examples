@@ -3,105 +3,20 @@ open! Async_kernel
 open! Bonsai_web
 open Bonsai.Let_syntax
 
-(* $MDX part-begin=counter *)
-let counter (local_ graph) : Vdom.Node.t Bonsai.t * int Bonsai.t =
-  let count, set_count = Bonsai.state 0 graph in
-  let view =
-    let%arr count and set_count in
-    (* view-construction logic *)
-    Vdom.Node.div
-      [ Vdom.Node.button
-          ~attrs:[ Vdom.Attr.on_click (fun _ -> set_count (count - 1)) ]
-          [ Vdom.Node.text "-1" ]
-      ; Vdom.Node.text [%string "Counter value: %{count#Int}"]
-      ; Vdom.Node.button
-          ~attrs:[ Vdom.Attr.on_click (fun _ -> set_count (count + 1)) ]
-          [ Vdom.Node.text "+1" ]
-      ]
-  in
-  view, count
-;;
-
-(* $MDX part-end *)
-
 let counter_ui (local_ graph) =
-  let view, _ = counter graph in
-  view
+  let count, set_count = Bonsai.state 0 graph in
+  let%arr count and set_count in
+  (* view-construction logic *)
+  Vdom.Node.div
+    [ Vdom.Node.button
+        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_count (count - 1)) ]
+        [ Vdom.Node.text "-1" ]
+    ; Vdom.Node.text [%string "Counter value: %{count#Int}"]
+    ; Vdom.Node.button
+        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_count (count + 1)) ]
+        [ Vdom.Node.text "+1" ]
+    ]
 ;;
-
-let () = Util.run counter_ui ~id:"counter_ui"
-
-(* $MDX part-begin=two_counters_correct *)
-let two_counters (local_ graph) =
-  let counter1, _count1 = counter graph in
-  let counter2, _count2 = counter graph in
-  let%arr counter1 and counter2 in
-  Vdom.Node.div [ counter1; counter2 ]
-;;
-
-(* $MDX part-end *)
-
-let () = Util.run two_counters ~id:"two_counters_correct"
-
-(* $MDX part-begin=two_counters_wrong_1 *)
-let two_counters_wrong_1 (local_ graph) =
-  let counter, _count = counter graph in
-  let%arr counter1 = counter
-  and counter2 = counter in
-  Vdom.Node.div [ counter1; counter2 ]
-;;
-
-(* $MDX part-end *)
-
-let () = Util.run two_counters_wrong_1 ~id:"two_counters_wrong_1"
-
-(* $MDX part-begin=two_counters_wrong_2 *)
-let two_counters_wrong_2 (local_ graph) =
-  let counter, _count = counter graph in
-  let%arr counter in
-  Vdom.Node.div [ counter; counter ]
-;;
-
-(* $MDX part-end *)
-
-let () = Util.run two_counters_wrong_2 ~id:"two_counters_wrong_2"
-
-(* $MDX part-begin=counter_state_machine *)
-
-let counter_state_machine (local_ graph) : Vdom.Node.t Bonsai.t * int Bonsai.t =
-  let count, inject =
-    Bonsai.state_machine
-      ~default_model:0
-      ~apply_action:(fun (_ : _ Bonsai.Apply_action_context.t) model action ->
-        match action with
-        | `Increment -> model + 1
-        | `Decrement -> model - 1)
-      graph
-  in
-  let view =
-    let%arr count and inject in
-    Vdom.Node.div
-      [ Vdom.Node.button
-          ~attrs:[ Vdom.Attr.on_click (fun _ -> inject `Decrement) ]
-          [ Vdom.Node.text "-1" ]
-      ; Vdom.Node.text [%string "Counter value: %{count#Int}"]
-      ; Vdom.Node.button
-          ~attrs:[ Vdom.Attr.on_click (fun _ -> inject `Increment) ]
-          [ Vdom.Node.text "+1" ]
-      ]
-  in
-  view, count
-;;
-
-(* $MDX part-end *)
-
-let () =
-  Util.run
-    (fun graph -> counter_state_machine graph |> Tuple2.get1)
-    ~id:"counter_state_machine"
-;;
-
-(* $MDX part-begin=counter_state_machine_with_input *)
 
 let counter_state_machine_with_input ~(step : int Bonsai.t) (local_ graph) =
   let count, inject =
@@ -111,7 +26,7 @@ let counter_state_machine_with_input ~(step : int Bonsai.t) (local_ graph) =
         match input with
         | Bonsai.Computation_status.Inactive ->
           (* This state machine is inactive, so it can't access the current value of
-             [input]. Just keep the original model *)
+             [input]. Just keep the original model. *)
           model
         | Active step ->
           (match action with
@@ -135,18 +50,4 @@ let counter_state_machine_with_input ~(step : int Bonsai.t) (local_ graph) =
   view, count
 ;;
 
-(* $MDX part-end *)
-
-(* $MDX part-begin=counter_state_machine_chained *)
-let counter_state_machine_chained (local_ graph) =
-  let counter1, count1 = counter_state_machine_with_input ~step:(Bonsai.return 1) graph in
-  let counter2, count2 = counter_state_machine_with_input ~step:count1 graph in
-  let counter3, _ = counter_state_machine_with_input ~step:count2 graph in
-  let%arr counter1 and counter2 and counter3 in
-  Vdom.Node.div [ counter1; counter2; counter3 ]
-;;
-
-(* $MDX part-end *)
-
-let () = Util.run counter_state_machine_chained ~id:"counter_state_machine_chained"
 let counter = counter_state_machine_with_input

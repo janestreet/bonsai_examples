@@ -30,7 +30,7 @@ let component (local_ graph) =
   let start_time = Bonsai.freeze time graph in
   let%arr time and start_time and url in
   let time = Time_ns.diff time start_time |> Time_ns.Span.to_string in
-  {%html.jsx|
+  {%html|
     <div>
       <div>
         <button on_click=%{fun _ -> Effect.reload_page}>

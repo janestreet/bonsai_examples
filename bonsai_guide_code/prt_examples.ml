@@ -67,7 +67,7 @@ module _ = struct
     Structure.Group.(
       [ leaf Col_id.Symbol
       ; group
-          ~label:(return {%html.jsx|Position|})
+          ~label:(return {%html|Position|})
           [ leaf Col_id.Price; leaf Col_id.Num_owned ]
       ; leaf Col_id.Last_updated
       ]
@@ -377,20 +377,17 @@ module _ = struct
   end
   (* $MDX part-end *)
 
-  (* $MDX part-begin=typed_fields_structure *)
   module Structure = Bonsai_web_partial_render_table.Column_structure
 
   let structure =
     let open Structure.Group in
     let pack_leaf x = leaf (Col_id.pack x) in
     [ pack_leaf Symbol
-    ; group ~label:(return {%html.jsx|Position|}) [ pack_leaf Price; pack_leaf Num_owned ]
+    ; group ~label:(return {%html|Position|}) [ pack_leaf Price; pack_leaf Num_owned ]
     ; pack_leaf Last_updated
     ]
     |> lift
   ;;
-
-  (* $MDX part-end *)
 
   (* $MDX part-begin=typed_fields_sorts *)
   module Sort_kind = Bonsai_web_partial_render_table.Sort_kind
