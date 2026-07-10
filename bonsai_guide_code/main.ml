@@ -11,18 +11,12 @@ open! Bonsai_web
      undesierable to use concepts that weren't explained yet *)
 
 module _ = Bonsai_types
-module _ = Intro_examples
-module _ = Vdom_examples
-module _ = Incrementality_examples
 module _ = State_examples
-module _ = Effect_examples
-module _ = Control_flow_examples
 
 (* How-tos *)
 
 (* Benchmarking_examples shows how to run benchmarks, so we don't want to link it in. *)
 module _ = Bonsai_runtime_examples
-module _ = Css_examples
 module _ = Cutoff_examples
 module _ = Best_practices_examples
 module _ = Edge_triggered_examples

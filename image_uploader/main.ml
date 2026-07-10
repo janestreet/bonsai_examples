@@ -65,7 +65,7 @@ let component graph =
   let%arr image_state and dragging_over and drop_target in
   let images =
     Map.map image_state.files ~f:(function
-      | Ok url -> {%html.jsx|<img src=%{url} />|}
+      | Ok url -> {%html|<img src=%{url} />|}
       | Error e -> Vdom.Node.sexp_for_debugging [%sexp (e : Error.t)])
   in
   let background =
@@ -75,7 +75,7 @@ let component graph =
     | Some `No_files_valid -> "red"
     | None -> "unset"
   in
-  {%html.jsx|
+  {%html|
     <div>
       <div
         %{drop_target}

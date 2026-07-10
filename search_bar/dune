@@ -9,4 +9,4 @@
  (targets style.css)
  (deps %{workspace_root}/lib/jane_web_style/src/css/style-4.css)
  (action
-  (bash "cat %{deps} > %{targets}")))
+  (copy %{workspace_root}/lib/jane_web_style/src/css/style-4.css style.css)))

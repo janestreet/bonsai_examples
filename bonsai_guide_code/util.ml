@@ -37,13 +37,13 @@ let no_hash_fallback_must_run_last () =
                Dom_html.window##.location##reload;
                Effect.Ignore
              in
-             {%html.jsx|
+             {%html|
                  <li>
                    <a href=%{url} on_click=%{on_click}>#{id}</a>
                  </li>
                |})
          in
-         {%html.jsx|
+         {%html|
              <div>
                <h1>#{"Invalid URL"}</h1>
                <p>#{" To use the Bonsai guide demos, please provide one of the example IDs as the\n                 hash in the URL. "}</p>

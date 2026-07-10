@@ -18,7 +18,7 @@ module Tooltip = struct
       let interactive =
         Toplayer.Tooltip.text ~hoverable_inside:true "I am an interactive tooltip!"
       in
-      {%html.jsx|
+      {%html|
         <%{View.hbox ~gap:(`Em 1)}>
           <span %{non_interactive}> Non-interactive Tooltip </span>
           <span %{interactive}> Interactive Tooltip </span>
@@ -47,7 +47,7 @@ module Tooltip_positioning = struct
       let tooltip position alignment =
         Toplayer.Tooltip.text ~position ~alignment "Hi, I am a tooltip"
       in
-      {%html.jsx|
+      {%html|
         <%{vbox}>
           <%{hbox}>
             <span %{tooltip Top Start}> Top, start </span>
@@ -91,14 +91,14 @@ module Tooltip_with_arbitrary_content = struct
       let tooltip =
         Toplayer.Tooltip.create
           ~hoverable_inside:true
-          {%html.jsx|
+          {%html|
             <%{View.vbox}
               >#{" do not click this button "}<button on_click=%{fun _ -> rickroll}>
                 #{"no clicky!"}
               </button></>
           |}
       in
-      {%html.jsx|<span %{tooltip}>cursed knowledge</span>|}]
+      {%html|<span %{tooltip}>cursed knowledge</span>|}]
   ;;
 
   let selector = None

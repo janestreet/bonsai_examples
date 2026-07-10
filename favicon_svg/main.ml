@@ -41,7 +41,7 @@ let slider ~min ~max ~value ~inject =
       [ Attr.type_ "range"
       ; Attr.min min
       ; Attr.max max
-      ; Attr.value (value |> string_of_int)
+      ; Attr.value_attr (value |> string_of_int)
       ; Attr.on_input (fun _ev value -> inject (int_of_string value))
       ]
     ()
@@ -183,7 +183,7 @@ let component graph =
          ; Node.input
              ~attrs:
                [ Attr.type_ "color"
-               ; Attr.value fg_color
+               ; Attr.value_attr fg_color
                ; Attr.on_input (fun _ev value -> inject_fg_color value)
                ]
              ()
@@ -194,7 +194,7 @@ let component graph =
          ; Node.input
              ~attrs:
                [ Attr.type_ "color"
-               ; Attr.value bg_color
+               ; Attr.value_attr bg_color
                ; Attr.on_input (fun _ev value -> inject_bg_color value)
                ]
              ()

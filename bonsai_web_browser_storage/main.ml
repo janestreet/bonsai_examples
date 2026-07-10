@@ -4,7 +4,7 @@ open Bonsai.Let_syntax
 
 module Elements = struct
   let grid children =
-    {%html.jsx|
+    {%html|
       <div
         style="
           display: grid;
@@ -24,7 +24,7 @@ module Elements = struct
   ;;
 
   let preview value =
-    {%html.jsx|
+    {%html|
       <div style="font-family: monospace; box-shadow: 0 1px 0 0 black">
         *{value}
       </div>
@@ -75,7 +75,7 @@ let component graph =
     let item1_str = [%message (item1 : Fruit.t option)] |> Sexp.to_string in
     let item2_str = [%message (item2 : Fruit.t option)] |> Sexp.to_string in
     let unique_id_str = [%message (unique_id : string)] |> Sexp.to_string in
-    {%html.jsx|
+    {%html|
       <div
         style="
           display: grid;
@@ -106,7 +106,7 @@ let component graph =
       ~f:
         (make_example
            ~description:
-             {%html.jsx|
+             {%html|
                <div>
                  #{" Wrapped with "}<code>#{"Bonsai_web_browser_storage.with_storage"}</code>#{": writes\n                 should be synced to both items. "}
                </div>
@@ -116,7 +116,7 @@ let component graph =
   let example2 =
     make_example
       ~description:
-        {%html.jsx|
+        {%html|
           <div>
             #{" Not wrapped with "}<code>#{"Bonsai_web_browser_storage.with_storage"}</code>#{": writes\n            should only affect one item. There should also be a warning in the browser\n            console. "}
           </div>
@@ -124,7 +124,7 @@ let component graph =
       graph
   in
   let%arr example1 and example2 in
-  {%html.jsx|
+  {%html|
       <div style="max-width: min(90vw, 800px);
                   margin: auto;
                   > * {

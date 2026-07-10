@@ -1,6 +1,7 @@
 (executables
  (modes byte exe)
  (names main)
- (libraries bonsai_web skyline.bonsai_web_components.browser_storage core)
+ (libraries bonsai_web skyline.bonsai_web_components.browser_storage core
+   js_of_ocaml)
  (preprocess
   (pps ppx_jane bonsai.ppx_bonsai ppx_html)))

@@ -42,7 +42,7 @@ let textbox_container_styles =
 
 let app graph =
   let%arr textbox = component graph in
-  {%html.jsx|
+  {%html|
     <div style="font-family: sans-serif">
       <div>
         #{" This is a fancy textarea component. It has two fancy features: "}

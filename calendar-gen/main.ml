@@ -70,7 +70,7 @@ let render ~year =
           if Date.is_weekend day then {%css|background: #e7fdff;|} else {%css||}
         in
         let attrs = {%css||} in
-        {%html.jsx|
+        {%html|
           <div %{weekend_attrs} %{attrs} %{box_css}>
             <div>
               <div style="padding: 0.5em; position: absolute; right: 0">
@@ -85,12 +85,12 @@ let render ~year =
       let spacer_count = if spacer_count = 0 then 7 else spacer_count in
       let spacer_count = spacer_count - 1 in
       List.range ~start:`exclusive ~stop:`inclusive 0 spacer_count
-      |> List.map ~f:(fun _ -> {%html.jsx|<div %{box_css}></div>|})
+      |> List.map ~f:(fun _ -> {%html|<div %{box_css}></div>|})
     in
     let boxes = spacing_boxes @ date_boxes in
     let view =
       View.hbox
-        ({%html.jsx|<div %{month_name_box}>#{ Month.to_string month |> String.lowercase }</div>|}
+        ({%html|<div %{month_name_box}>#{ Month.to_string month |> String.lowercase }</div>|}
          :: boxes)
     in
     view, List.length boxes
@@ -118,7 +118,7 @@ let render ~year =
         | 6 -> "sun"
         | _ -> assert false
       in
-      {%html.jsx|
+      {%html|
         <div
           %{box_css}
           style="
@@ -133,7 +133,7 @@ let render ~year =
           #{day_name}
         </div>
       |})
-    |> (fun day_names -> {%html.jsx|<div %{month_name_box}></div>|} :: day_names)
+    |> (fun day_names -> {%html|<div %{month_name_box}></div>|} :: day_names)
     |> View.hbox
   in
   View.vbox ~attrs:[ {%css|margin: 2em;|} ] (week_day_names :: months)
@@ -145,7 +145,7 @@ let component graph =
   let year = Form.value_or_default ~default:2024 year_picker in
   View.hbox
     [ View.vbox [ Form.view year_picker; render ~year ]
-    ; {%html.jsx|<div style="width: 20px"></div>|}
+    ; {%html|<div style="width: 20px"></div>|}
     ]
 ;;
 

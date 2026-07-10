@@ -3,7 +3,7 @@ open! Bonsai_web
 
 let component _graph =
   Bonsai.return
-    {%html.jsx|
+    {%html|
       <div
         style="
           display: flex;

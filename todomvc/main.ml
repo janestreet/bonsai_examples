@@ -141,7 +141,7 @@ let header_component ~inject graph =
     let attr =
       Attr.many
         [ Style.new_todo
-        ; Attr.value_prop state
+        ; Attr.value state
         ; Attr.on_input (fun _ input -> set_state input)
         ; Attr.placeholder "What needs to be done?"
         ; Attr.autofocus true
@@ -192,7 +192,7 @@ let todo_item_component
     in
     let attr =
       Attr.many
-        [ Attr.value todo.title
+        [ Attr.value_attr todo.title
         ; Style.edit
         ; Attr.on_blur handle_focus_leave
         ; Attr.on_keydown handle_enter
