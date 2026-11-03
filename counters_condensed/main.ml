@@ -34,7 +34,9 @@ let component graph =
   in
   let%arr state and inject in
   let button text action =
-    Node.button ~attrs:[ Attr.on_click (fun _ -> inject action) ] [ Node.text text ]
+    Node.button
+      ~attrs:[ Attr.on_click_js_of_ocaml (fun _ -> inject action) ]
+      [ Node.text text ]
   in
   let add_button = button "add" New in
   let for_each i c =

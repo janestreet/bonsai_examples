@@ -65,7 +65,7 @@ let component graph =
         let%arr key and inject and response in
         Vdom.Node.div
           [ Vdom.Node.button
-              ~attrs:[ Vdom.Attr.on_click (fun _ -> inject (`Remove key)) ]
+              ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject (`Remove key)) ]
               [ Vdom.Node.text "Remove" ]
           ; Vdom.Node.div
               [ Vdom.Node.sexp_for_debugging
@@ -77,7 +77,7 @@ let component graph =
   let%arr items and inject in
   Vdom.Node.div
     [ Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> inject `Add) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject `Add) ]
         [ Vdom.Node.text "Append Item" ]
     ; Vdom.Node.div (Map.data items)
     ]

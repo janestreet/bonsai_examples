@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Knobs = Knobs
 
@@ -34,8 +35,8 @@ module Style =
       }
 
       .overlay-container {
-        background: repeating-conic-gradient(black 0% 25%, white 0% 50%) 50% / 20px
-          20px;
+        background:
+          repeating-conic-gradient(black 0% 25%, white 0% 50%) 50% / 20px 20px;
       }
     |}]
 

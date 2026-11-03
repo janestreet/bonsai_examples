@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 
 let card ~theme ~name ~content =
@@ -13,19 +14,19 @@ let card ~theme ~name ~content =
 ;;
 
 let buttons graph =
-  let%map.Bonsai buttons = Button.component graph
+  let%arr.Bonsai buttons = Button.component graph
   and theme = View.Theme.current graph in
   card ~theme ~name:"buttons" ~content:buttons
 ;;
 
 let textbox graph =
-  let%map.Bonsai textbox = Textbox.component graph
+  let%arr.Bonsai textbox = Textbox.component graph
   and theme = View.Theme.current graph in
   card ~theme ~name:"input" ~content:textbox
 ;;
 
 let app graph =
-  let%map.Bonsai buttons = buttons graph
+  let%arr.Bonsai buttons = buttons graph
   and textbox = textbox graph in
   View.hbox ~gap:(`Em 1) [ buttons; textbox ]
 ;;

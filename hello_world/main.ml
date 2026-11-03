@@ -5,7 +5,7 @@ let component _graph =
   Bonsai.return
     {%html|
       <div
-        style="
+        css="
           display: flex;
           align-items: center;
           justify-content: center;

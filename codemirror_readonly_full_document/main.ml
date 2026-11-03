@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Form = Bonsai_web_form.With_manual_view
 module Cm_ro = Bonsai_web_codemirror_read_only

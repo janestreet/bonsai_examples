@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 
 (* $MDX part-begin=view_unthemed *)
@@ -35,7 +36,7 @@ open Virtual_dom
 
 let button =
   Vdom.Node.button
-    ~attrs:[ Vdom.Attr.on_click (fun _ -> do_thing) ]
+    ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> do_thing) ]
     [ Vdom.Node.text "click me" ]
 ;;
 

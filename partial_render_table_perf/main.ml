@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Form = Bonsai_web_form.With_manual_view
 open Bonsai_web_partial_render_table_configs_for_testing
@@ -219,14 +220,14 @@ let component graph =
       ~equal:[%equal: int * int]
       range
       ~callback:
-        (let%map set_rank_range in
+        (let%arr set_rank_range in
          fun (low, high) ->
            set_rank_range
              (Incr_map_collate.Collate_params.Which_range.Between (low, high)))
       graph;
     let%arr view and inject and which_api_view and params_view in
     let controls =
-      Vdom.Attr.on_keydown (fun kbc ->
+      Vdom.Attr.on_keydown_js_of_ocaml (fun kbc ->
         let binding =
           match Js_of_ocaml.Dom_html.Keyboard_code.of_event kbc with
           | ArrowDown | KeyJ -> Some (inject Sharable.Navigation_action.Focus_down)

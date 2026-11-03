@@ -43,7 +43,9 @@ module Styles =
         font-size: 24px;
         height: 100%;
         width: 100%;
-        font: 96px Open Sans, sans-serif;
+        font:
+          96px Open Sans,
+          sans-serif;
       }
 
       .first_panel {
@@ -134,7 +136,7 @@ let app graph =
         ~attrs:[ Styles.parameters ]
         [ parameters_form
         ; Node.button
-            ~attrs:[ Attr.on_click (fun _ -> inject_reset) ]
+            ~attrs:[ Attr.on_click_js_of_ocaml (fun _ -> inject_reset) ]
             [ Node.text "Reset to initial size" ]
         ]
     ]

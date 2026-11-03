@@ -28,7 +28,7 @@ let display_text_var ~doc storage_var _graph =
         ~attrs:
           [ Vdom.Attr.style (Css_gen.width (`Vw (Percent.of_mult 0.5)))
           ; Vdom.Attr.string_property "value" value
-          ; Vdom.Attr.on_input (fun _ s -> set_effect s)
+          ; Vdom.Attr.on_input_js_of_ocaml (fun _ s -> set_effect s)
           ]
         ()
     ]

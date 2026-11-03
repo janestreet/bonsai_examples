@@ -25,7 +25,7 @@ let comment_view ~close { Comment.title; content; _ } =
     <article>
       <h1>#{title}</h1>
       <p>#{content}</p>
-      <button on_click=%{fun _ -> close}>x</button>
+      <button on_click_js_of_ocaml=%{fun _ -> close}>x</button>
     </article>
   |}
 ;;
@@ -41,7 +41,7 @@ let comments graph =
         let close = set_selected_comment_view None in
         set_selected_comment_view (Some (comment_view ~close comment))
       in
-      {%html|<li on_click=%{on_click}>#{comment.title}</li>|})
+      {%html|<li on_click_js_of_ocaml=%{on_click}>#{comment.title}</li>|})
     |> Vdom.Node.ul
   in
   let comment_detail =
@@ -83,7 +83,7 @@ let comments graph =
     let%arr all_comments and set_selected_comment_id in
     List.map all_comments ~f:(fun comment ->
       let on_click _ = set_selected_comment_id (Some comment.id) in
-      {%html|<li on_click=%{on_click}>#{comment.title}</li>|})
+      {%html|<li on_click_js_of_ocaml=%{on_click}>#{comment.title}</li>|})
     |> Vdom.Node.ul
   in
   let selected_comment =

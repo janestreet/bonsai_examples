@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 module Form = Bonsai_web_form.With_automatic_view
 
 let tomato = `Hex "#FF6347"

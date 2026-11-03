@@ -231,7 +231,7 @@ module _ = struct
     let%arr { view; focus; num_filtered_rows; _ } = table in
     Vdom.Node.div
       ~attrs:
-        [ Vdom.Attr.on_keydown (fun kbc ->
+        [ Vdom.Attr.on_keydown_js_of_ocaml (fun kbc ->
             let binding =
               let current_or_first_column =
                 match Table.Focus.By_cell.focused focus with
@@ -326,7 +326,7 @@ module _ = struct
     let%arr { view; focus; num_filtered_rows; _ } = table in
     Vdom.Node.div
       ~attrs:
-        [ Vdom.Attr.on_keydown (fun kbc ->
+        [ Vdom.Attr.on_keydown_js_of_ocaml (fun kbc ->
             let binding =
               let current_or_first_column =
                 match Table.Focus.By_cell.focused focus with

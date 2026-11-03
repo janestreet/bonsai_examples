@@ -1,8 +1,8 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai.extra bonsai_web bonsai_web_components.drop_file
    bonsai_web_components.file bonsai_web_components.file_from_web_file core
    js_of_ocaml)
  (preprocess
-  (pps ppx_jane bonsai.ppx_bonsai ppx_html ppx_css js_of_ocaml-ppx)))
+  (pps ppx_jane bonsai.ppx_bonsai ppx_html ppx_css js_of_ocaml-ppx))
+ (modes js wasm byte exe))

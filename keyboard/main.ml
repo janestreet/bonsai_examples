@@ -121,7 +121,7 @@ let component graph =
   let%arr model and inject in
   let last_event = List.last model in
   Vdom.Node.div
-    ~attrs:[ Vdom.Attr.on_keydown (handle_event inject) ]
+    ~attrs:[ Vdom.Attr.on_keydown_js_of_ocaml (handle_event inject) ]
     [ Vdom.Node.div
         ~attrs:[ Style.red ]
         [ Vdom.Node.sexp_for_debugging

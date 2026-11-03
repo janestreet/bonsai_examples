@@ -1,9 +1,9 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries async_kernel bonsai bonsai_web bonsai_web_contrib_search_bar core)
  (preprocess
-  (pps bonsai.ppx_bonsai ppx_jane ppx_pattern_bind)))
+  (pps bonsai.ppx_bonsai ppx_jane ppx_pattern_bind))
+ (modes js wasm byte exe))
 
 (rule
  (targets style.css)

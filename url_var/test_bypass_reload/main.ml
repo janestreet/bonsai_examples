@@ -20,7 +20,7 @@ let parser =
 let component graph =
   let url_var =
     Bonsai_web_url_var.Typed.make
-      ~navigation:`Intercept
+      ~navigation:(`Intercept `Reset_scroll)
       (module For_reloader)
       parser
       ~fallback:(fun _ _ -> failwith "Unable to parse URL")
@@ -33,15 +33,21 @@ let component graph =
   {%html|
     <div>
       <div>
-        <button on_click=%{fun _ -> Effect.reload_page}>
-          <code>#{"Effect.reload"}</code></button
-        ><button on_click=%{fun _ -> Bonsai_web_url_var.reload_without_intercepting}>
+        <button on_click_js_of_ocaml=%{fun _ -> Effect.reload_page}>
+          <code>#{"Effect.reload"}</code>
+        </button>
+        <button
+          on_click_js_of_ocaml=%{fun _ -> Bonsai_web_url_var.reload_without_intercepting}
+        >
           <code>#{"Bonsai_web_url_var.reload_without_intercepting"}</code>
         </button>
-        <div>#{"Seconds since last hard reload: "}#{time}</div>
+        <div>
+          #{"Seconds since last hard reload: "}
+          #{time}
+        </div>
         <div>
           #{" URL: "}
-          <pre>#{Sexp.to_string_hum [%sexp (url  : For_reloader.t)]}</pre>
+          <pre>#{Sexp.to_string_hum [%sexp (url : For_reloader.t)]}</pre>
         </div>
       </div>
     </div>

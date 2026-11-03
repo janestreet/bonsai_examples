@@ -10,10 +10,10 @@ let counter graph =
   Vdom.Node.div
     [ Vdom.Node.textf "%d" current_value
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_value (current_value + 1)) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_value (current_value + 1)) ]
         [ Vdom.Node.text "increment" ]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_value (current_value - 1)) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_value (current_value - 1)) ]
         [ Vdom.Node.text "decrement" ]
     ]
 ;;
@@ -28,7 +28,7 @@ let two_counters graph =
 (* Note: because neither component that comprises [two_counters] depends on one another,
    it could instead be written using computation's let-syntax, like so *)
 let _two_counters__computation_map_style graph =
-  let%map counter_1 = counter graph
+  let%arr counter_1 = counter graph
   and counter_2 = counter graph in
   Vdom.Node.div [ counter_1; counter_2 ]
 ;;

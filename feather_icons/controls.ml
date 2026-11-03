@@ -180,7 +180,7 @@ let component graph =
     Vdom.Node.button
       ~attrs:
         [ Vdom.Attr.many [ Card_like.class_; Style.reset ]
-        ; Vdom.Attr.on_click (fun _ ->
+        ; Vdom.Attr.on_click_js_of_ocaml (fun _ ->
             let { size; stroke_width; stroke; fill = _ } = default in
             Fields.to_list
               ~size:(fun _ -> Form.set size_slider size)

@@ -27,6 +27,10 @@ let hello_textbox : Bonsai.graph -> Vdom.Node.t Bonsai.t =
   let message = hello_user state graph in
   let%arr message and set in
   Vdom.Node.div
-    [ Vdom.Node.input ~attrs:[ Vdom.Attr.on_input (fun _ text -> set text) ] (); message ]
+    [ Vdom.Node.input
+        ~attrs:[ Vdom.Attr.on_input_js_of_ocaml (fun _ text -> set text) ]
+        ()
+    ; message
+    ]
 ;;
 (* $MDX part-end *)

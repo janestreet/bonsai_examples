@@ -55,7 +55,7 @@ let components graph =
   let typeahead_single ?handle_unknown_option () =
     Typeahead.create
       ~on_select_change:
-        (let%map inject_all_options in
+        (let%arr inject_all_options in
          fun favourite_pokemon ->
            Option.value_map
              favourite_pokemon
@@ -81,7 +81,7 @@ let components graph =
       (module Pokemon)
       ~to_string:(Bonsai.return Pokemon.to_string)
       ~on_set_change:
-        (let%map inject_all_options and favourite_pokemon in
+        (let%arr inject_all_options and favourite_pokemon in
          fun not_good_pokemon ->
            (* Remove the favourite pokemon if it exists. *)
            let all_pokemon =

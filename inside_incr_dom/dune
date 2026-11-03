@@ -1,7 +1,7 @@
 (executables
- (modes byte exe)
  (names main)
- (libraries async_kernel bonsai_web bonsai_web_counters_example core incr_dom
-   js_of_ocaml)
+ (libraries async_kernel bonsai_web bonsai_web_counters_example
+   bonsai_web.ui_view core incr_dom js_of_ocaml)
  (preprocess
-  (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_jane ppx_css)))
+  (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_jane ppx_css))
+ (modes js wasm byte exe))

@@ -1,5 +1,4 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai_web core virtual_dom.css_gen
    bonsai_web_components.feather_icon js_of_ocaml)
@@ -8,4 +7,5 @@
  (preprocess
   (pps ppx_jane bonsai.ppx_bonsai ppx_css js_of_ocaml-ppx))
  (wasm_of_ocaml
-  (javascript_files ./validate.js)))
+  (javascript_files ./validate.js))
+ (modes js wasm byte exe))

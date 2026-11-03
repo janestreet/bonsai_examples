@@ -1,6 +1,6 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai_drag_and_drop_example bonsai_web core)
  (preprocess
-  (pps ppx_jane)))
+  (pps ppx_jane))
+ (modes js wasm byte exe))

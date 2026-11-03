@@ -22,7 +22,7 @@ let component graph =
   let%arr state and inject in
   let button text action =
     Vdom.Node.button
-      ~attrs:[ Vdom.Attr.on_click (fun _ -> inject action) ]
+      ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject action) ]
       [ Vdom.Node.text text ]
   in
   let add_button = button "add" `New_counter in

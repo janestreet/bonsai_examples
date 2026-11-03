@@ -31,7 +31,7 @@ let alert_effect =
 
 let component graph =
   let open Bonsai.Let_syntax in
-  let%map form = form graph in
+  let%arr form = form graph in
   let on_submit = Form.Submit.create ~f:(fun t -> alert_effect ([%sexp_of: T.t] t)) () in
   Vdom.Node.div
     [ Vdom.Node.h1 [ Vdom.Node.text "Form With Submit" ]

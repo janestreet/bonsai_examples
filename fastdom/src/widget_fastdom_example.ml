@@ -20,24 +20,24 @@ module Style =
         display: flex;
         align-items: center;
         padding: 4px 8px;
-        border-bottom: 1px solid %{Colors.Border.default#Css_gen.Color};
+        border-bottom: 1px solid #{Colors.Border.default#Css_gen.Color};
       }
 
       .metric_row:hover {
-        background: %{Colors.Background.two#Css_gen.Color};
+        background: #{Colors.Background.two#Css_gen.Color};
       }
 
       .label {
         width: 120px;
         font-size: 13px;
-        color: %{Colors.Text.secondary#Css_gen.Color};
+        color: #{Colors.Text.secondary#Css_gen.Color};
         flex-shrink: 0;
       }
 
       .bar_container {
         flex: 1;
         height: 20px;
-        background: %{Colors.Background.three#Css_gen.Color};
+        background: #{Colors.Background.three#Css_gen.Color};
         border-radius: 4px;
         overflow: hidden;
         margin: 0 12px;
@@ -45,7 +45,7 @@ module Style =
 
       .bar_fill {
         height: 100%;
-        background: %{Colors.Background.primary#Css_gen.Color};
+        background: #{Colors.Background.primary#Css_gen.Color};
         border-radius: 4px;
         transition: none;
       }
@@ -55,11 +55,11 @@ module Style =
         text-align: right;
         font-size: 13px;
         font-variant-numeric: tabular-nums;
-        color: %{Colors.Text.default#Css_gen.Color};
+        color: #{Colors.Text.default#Css_gen.Color};
       }
 
       .metrics_container {
-        border: 1px solid %{Colors.Border.default#Css_gen.Color};
+        border: 1px solid #{Colors.Border.default#Css_gen.Color};
         border-radius: 8px;
         overflow: hidden;
         max-height: 80vh;
@@ -70,11 +70,11 @@ module Style =
         display: flex;
         align-items: center;
         padding: 8px;
-        background: %{Colors.Background.two#Css_gen.Color};
-        border-bottom: 2px solid %{Colors.Border.default#Css_gen.Color};
+        background: #{Colors.Background.two#Css_gen.Color};
+        border-bottom: 2px solid #{Colors.Border.default#Css_gen.Color};
         font-weight: 600;
         font-size: 13px;
-        color: %{Colors.Text.default#Css_gen.Color};
+        color: #{Colors.Text.default#Css_gen.Color};
       }
     |}]
 
@@ -95,7 +95,7 @@ module Bar_widget_good = struct
     let vdom =
       {%html|<div %{Style.bar_fill} data-bar-value=%{input_value#Float}></div>|}
     in
-    let element = vdom |> Vdom.Node.to_dom in
+    let element = vdom |> Vdom.Node.to_dom_js_of_ocaml in
     let () = element##.style##.width := Js.string [%string "%{input_value#Float}px"] in
     (), element
   ;;
@@ -138,7 +138,7 @@ module Bar_widget = struct
     let vdom =
       {%html|<div %{Style.bar_fill} data-bar-value=%{input_value#Float}></div>|}
     in
-    let element = vdom |> Vdom.Node.to_dom in
+    let element = vdom |> Vdom.Node.to_dom_js_of_ocaml in
     let () = element##.style##.width := Js.string [%string "%{input_value#Float}px"] in
     (), element
   ;;
@@ -162,10 +162,12 @@ module Bar_widget = struct
   let to_vdom_for_testing = `Sexp_of_input
 end
 
-let bar_widget_bad = Vdom.Node.widget_of_module (module Bar_widget) |> Staged.unstage
+let bar_widget_bad =
+  Vdom.Node.widget_of_module_js_of_ocaml (module Bar_widget) |> Staged.unstage
+;;
 
 let bar_widget_good =
-  Vdom.Node.widget_of_module (module Bar_widget_good) |> Staged.unstage
+  Vdom.Node.widget_of_module_js_of_ocaml (module Bar_widget_good) |> Staged.unstage
 ;;
 
 let fiddle_with_data metrics =
@@ -247,7 +249,11 @@ let component graph =
       | `Bad -> "bad"
       | `Good -> "good"
     in
-    {%html|<span>Currently using <b>#{which}</b></span>|}
+    {%html|
+      <span>
+        Currently using <b>#{which}</b>
+      </span>
+    |}
   in
   let metric_rows =
     Map.fold data ~init:[] ~f:(fun ~key:_ ~data:metric acc ->
@@ -257,7 +263,10 @@ let component graph =
           <div %{Style.metric_row}>
             <span %{Style.label}>%{metric.label#String}</span>
             <div %{Style.bar_container}>%{bar_widget metric.value}</div>
-            <span %{Style.value_text}> %{sprintf "%.1f%%" (metric.value *. 100.0)#String} </span>
+            <span %{Style.value_text}>
+              #{" "}
+              %{sprintf "%.1f%%" (metric.value *. 100.0)#String}#{" "}
+            </span>
           </div>
         |}
       in
@@ -267,33 +276,48 @@ let component graph =
   {%html|
     <div %{Style.dashboard}>
       <h1
-        style="
+        css="
           font-size: 24px;
           font-weight: 600;
           margin-bottom: 16px;
-          color: %{Colors.Text.default#Css_gen.Color};
+          color: #{Colors.Text.default#Css_gen.Color};
         "
       >
         #{" Metrics Dashboard "}
       </h1>
       <div
-        style="display: flex; justify-content: space-between; margin-bottom: 8px"
+        css="
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+        "
       >
         <Skyline_field_v2.view
-          style="
+          css="
             display: flex;
             justify-content: space-between;
             gap: 8px;
             flex-direction: row-reverse;
           "
-          ~label:%{Skyline_field_v2.Label.content [ label]}
-          >%{toggle}</>%{avg_time_display}
+          ~label:%{Skyline_field_v2.Label.content [ label ]}
+          ~size:%{`Md}
+        >
+          %{toggle}
+        </>
+        %{avg_time_display}
       </div>
       <div %{Style.metrics_container}>
         <div %{Style.header}>
-          <span %{Style.label}>#{"Metric"}</span
-          ><span style="flex: 1; margin: 0 12px">#{"Value"}</span
-          ><span %{Style.value_text}>#{"%"}</span>
+          <span %{Style.label}>#{"Metric"}</span>
+          <span
+            css="
+              flex: 1;
+              margin: 0 12px;
+            "
+          >
+            #{"Value"}
+          </span>
+          <span %{Style.value_text}>#{"%"}</span>
         </div>
         *{metric_rows}
       </div>

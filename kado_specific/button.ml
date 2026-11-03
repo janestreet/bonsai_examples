@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Autogen = Bonsai_web_auto_generated
 module Form = Bonsai_web_form.With_automatic_view
@@ -91,10 +92,10 @@ let component graph =
       ~store_set:(Bonsai.return (Persistent_var.effect form_store))
       ~store_value:(Persistent_var.value form_store)
       ~interactive_value:
-        (let%map form in
+        (let%arr form in
          Form.value_or_default form ~default:Parameters.default)
       ~interactive_set:
-        (let%map form in
+        (let%arr form in
          Form.set form)
       graph
   in

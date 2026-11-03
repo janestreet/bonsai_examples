@@ -94,7 +94,7 @@ end
 
 let kanban_column ~extra_dnd ~dnd ~items ~column ~title graph =
   let map =
-    let%map items
+    let%arr items
     and model = dnd >>| Drag_and_drop.model in
     (* Only display items from this column or items that are being hovered over this
        column; exclude any items that have been dragged away and are hovered over a
@@ -206,7 +206,7 @@ let board ?extra_dnd name graph =
       ~source_id:(module Item_id)
       ~target_id:(module Column)
       ~on_drop:
-        (let%map inject in
+        (let%arr inject in
          fun item_id new_column -> inject (Move { item_id; new_column }))
       graph
   in
@@ -223,7 +223,7 @@ let board ?extra_dnd name graph =
       ~f:(fun item_id _graph ->
         let text =
           match%sub
-            let%map item_id and items in
+            let%arr item_id and items in
             Map.find items item_id
           with
           | Some (contents, _) -> contents

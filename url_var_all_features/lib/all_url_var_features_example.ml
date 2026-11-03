@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Url_var = Bonsai_web_url_var
 module Form = Bonsai_web_form.With_automatic_view
@@ -260,7 +261,7 @@ let%expect_test _ =
     |}]
 ;;
 
-let navigation = `Intercept
+let navigation = `Intercept `Reset_scroll
 let fallback _exn _components = T.Unable_to_parse
 
 let component ~url_var graph =
@@ -293,7 +294,8 @@ let component ~url_var graph =
     in
     let%arr update_effect in
     Vdom.Node.button
-      ~attrs:[ Vdom.Attr.on_click (fun _ -> update_effect ~f:(fun _ -> Homepage)) ]
+      ~attrs:
+        [ Vdom.Attr.on_click_js_of_ocaml (fun _ -> update_effect ~f:(fun _ -> Homepage)) ]
       [ Vdom.Node.text "Go to homepage via [update]" ]
   in
   let%arr form
@@ -318,7 +320,7 @@ let component ~url_var graph =
         [ Vdom.Node.text saved_to_history_text
         ; Vdom.Node.br ()
         ; Vdom.Node.button
-            ~attrs:[ Vdom.Attr.on_click (fun _ -> toggle_modify_history) ]
+            ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> toggle_modify_history) ]
             [ Vdom.Node.text "Toggle history saving" ]
         ]
     ; View.hbox [ update_button ]

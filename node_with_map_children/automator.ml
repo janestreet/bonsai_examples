@@ -17,7 +17,7 @@ let validate = Effect.of_sync_fun validate ()
 let driver ~reset_all ~step ~is_done ~set_has_error graph =
   let get_is_done = Bonsai.peek is_done graph in
   Bonsai.Edge.after_display
-    (let%map get_is_done and reset_all and set_has_error and step in
+    (let%arr get_is_done and reset_all and set_has_error and step in
      let%bind.Effect ok = validate in
      if not ok
      then set_has_error true

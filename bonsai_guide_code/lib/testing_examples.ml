@@ -19,7 +19,7 @@ let hello_textbox ?test_selector graph : Vdom.Node.t Bonsai.t =
   Vdom.Node.div
     [ Vdom.Node.input
         ~attrs:
-          [ Vdom.Attr.on_input (fun _ text -> set text)
+          [ Vdom.Attr.on_input_js_of_ocaml (fun _ text -> set text)
           ; Test_selector.attr_of_opt test_selector
           ]
         ()
@@ -49,7 +49,7 @@ let some_effect = Effect.Ignore
 let%expect_test "handlers in tests" =
   let clickable_div =
     Vdom.Node.div
-      ~attrs:[ Vdom.Attr.on_click (fun _ -> some_effect) ]
+      ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> some_effect) ]
       [ Vdom.Node.text "You can click me!" ]
   in
   let handle =
@@ -190,14 +190,23 @@ let%expect_test "shows hello to a specified user" =
       let button i =
         {%html|
           <button
-            on_click=%{fun _ -> Effect.print_s [%message "Clicked!" (i : int)]}
+            on_click_js_of_ocaml=%{fun _ -> Effect.print_s [%message "Clicked!" (i : int)]}
             %{keyed_selector i |> Test_selector.attr}
           >
-            #{" Button "}%{i#Int}
+            #{" Button "}
+            %{i#Int}
           </button>
         |}
       in
-      return {%html|<div>%{button 1}%{button 2}%{button 3}%{button 4}</div>|})
+      return
+        {%html|
+          <div>
+            %{button 1}
+            %{button 2}
+            %{button 3}
+            %{button 4}
+          </div>
+        |})
   in
   Handle.show handle;
   [%expect

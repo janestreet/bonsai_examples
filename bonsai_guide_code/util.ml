@@ -38,19 +38,26 @@ let no_hash_fallback_must_run_last () =
                Effect.Ignore
              in
              {%html|
-                 <li>
-                   <a href=%{url} on_click=%{on_click}>#{id}</a>
-                 </li>
+                <li>
+                  <a href=%{url} on_click_js_of_ocaml=%{on_click}>
+                    #{id}
+                  </a>
+                </li>
                |})
          in
          {%html|
-             <div>
-               <h1>#{"Invalid URL"}</h1>
-               <p>#{" To use the Bonsai guide demos, please provide one of the example IDs as the\n                 hash in the URL. "}</p>
-               <p>#{"Provided hash: "}#{current_hash}</p>
-               <ul>
-                 *{example_urls}
-               </ul>
-             </div>
+            <div>
+              <h1>#{"Invalid URL"}</h1>
+              <p>
+                #{" To use the Bonsai guide demos, please provide one of the example IDs \
+                   as the\n\
+                  \                 hash in the URL. "}
+              </p>
+              <p>
+                #{"Provided hash: "}
+                #{current_hash}
+              </p>
+              <ul>*{example_urls}</ul>
+            </div>
            |}))
 ;;

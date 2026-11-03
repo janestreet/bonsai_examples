@@ -70,7 +70,7 @@ module Noop_hook = struct
 
   (* It is important that the hook functor is called exactly once for each "class" of
      hooks. *)
-  include Vdom.Attr.Hooks.Make (T)
+  include Vdom.Attr.Hooks.Make_js_of_ocaml (T)
 end
 
 (* Typically, this would be a function that takes inputs, and passes them to
@@ -135,7 +135,7 @@ end
 (* As with [Vdom.Attr.Hooks.Make], it is important that [Vdom.Node.widget_of_module] is
    called exactly once for each "class" of widgets. *)
 let (trivial_widget : bool -> Vdom.Node.t) =
-  unstage (Vdom.Node.widget_of_module (module Trivial_widget))
+  unstage (Vdom.Node.widget_of_module_js_of_ocaml (module Trivial_widget))
 ;;
 
 let app graph =
@@ -145,7 +145,7 @@ let app graph =
   (* Note that each usage of widget has a separate internal state! *)
   {%html|
     <div>
-      <button on_click=%{fun _ -> toggle_invert}>Invert</button>
+      <button on_click_js_of_ocaml=%{fun _ -> toggle_invert}>Invert</button>
       %{widget} %{widget} %{widget}
     </div>
   |}
@@ -177,7 +177,7 @@ module Widget_using_diff_patch = struct
   end
 
   let create { Input.vdom; _ } =
-    let initial_element = Vdom.Node.to_dom vdom in
+    let initial_element = Vdom.Node.to_dom_js_of_ocaml vdom in
     let state = { State.num_patches = 0 } in
     state, initial_element
   ;;
@@ -192,7 +192,7 @@ module Widget_using_diff_patch = struct
     | true -> { State.num_patches }, element
     | false ->
       let patch = Vdom.Node.Patch.create ~previous:prev_input.vdom ~current:input.vdom in
-      let new_element = Vdom.Node.Patch.apply patch element in
+      let new_element = Vdom.Node.Patch.apply_js_of_ocaml patch element in
       { num_patches }, new_element
   ;;
 
@@ -201,7 +201,7 @@ module Widget_using_diff_patch = struct
 end
 
 let widget_using_diff_patch =
-  unstage (Vdom.Node.widget_of_module (module Widget_using_diff_patch))
+  unstage (Vdom.Node.widget_of_module_js_of_ocaml (module Widget_using_diff_patch))
 ;;
 
 let app graph =
@@ -225,9 +225,10 @@ let app graph =
   in
   {%html|
     <div>
-      <button on_click=%{fun _ -> update_num_clicks (fun x -> x + 1)}>
-        #{" Click me "}</button
-      >%{widget}
+      <button on_click_js_of_ocaml=%{fun _ -> update_num_clicks (fun x -> x + 1)}>
+        #{" Click me "}
+      </button>
+      %{widget}
     </div>
   |}
 ;;

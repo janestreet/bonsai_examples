@@ -1,6 +1,7 @@
 open! Core
 open! Async_kernel
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Form = Bonsai_web_form.With_manual_view
 
@@ -80,7 +81,8 @@ let with_submit_button (form : ('a, 'view) Form.t) ~(on_submit : 'a -> unit Effe
     let submit_button =
       match Form.value form with
       | Ok value ->
-        submit_button ~extra_attrs:[ Vdom.Attr.on_click (fun _ -> on_submit value) ]
+        submit_button
+          ~extra_attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> on_submit value) ]
       | Error _ -> submit_button ~extra_attrs:[ Vdom.Attr.disabled ]
     in
     View.vbox ~gap:(`Px 5) [ view; submit_button ])
@@ -114,7 +116,8 @@ let form_set graph =
   Vdom.Node.div
     [ View.hbox ~gap:(`Px 5) [ Vdom.Node.text "my textbox"; Form.view textbox ]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> Form.set textbox "hello world") ]
+        ~attrs:
+          [ Vdom.Attr.on_click_js_of_ocaml (fun _ -> Form.set textbox "hello world") ]
         [ Vdom.Node.text "click me" ]
     ]
 ;;

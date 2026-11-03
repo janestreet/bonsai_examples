@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Cm_ro = Bonsai_web_codemirror_read_only
 module Animation = Bonsai_experimental_animation
@@ -25,7 +26,7 @@ let back_and_forth graph =
   let forward, set_forward = Bonsai.state true graph in
   let get_forward = Bonsai.peek forward graph in
   let get_things_started =
-    let%map animate and get_forward and set_forward in
+    let%arr animate and get_forward and set_forward in
     let rec switch_directions () =
       let%bind.Effect forward =
         match%bind.Effect get_forward with
@@ -44,7 +45,7 @@ let back_and_forth graph =
     switch_directions ()
   in
   Bonsai.Edge.lifecycle ~on_activate:get_things_started graph;
-  let%map value in
+  let%arr value in
   String.sub this_source_code ~pos:0 ~len:value
 ;;
 
@@ -57,14 +58,14 @@ let pausable ~equal ~f graph =
     | _ ->
       let to_return = f graph in
       let callback =
-        let%map set_previous_value in
+        let%arr set_previous_value in
         fun v -> set_previous_value (Some v)
       in
       Bonsai.Edge.on_change ~trigger:`After_display ~equal to_return graph ~callback;
       to_return
   in
   let view =
-    let%map is_paused
+    let%arr is_paused
     and toggle_pause
     and theme = View.Theme.current graph in
     View.button theme ~on_click:toggle_pause (if is_paused then "play" else "pause")
@@ -76,7 +77,7 @@ let component graph =
   let source_code, pause_controlls =
     pausable ~equal:[%equal: string] graph ~f:back_and_forth
   in
-  let%map source_code and pause_controlls in
+  let%arr source_code and pause_controlls in
   View.vbox
     ~attrs:
       [ {%css|

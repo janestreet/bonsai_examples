@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 
 let compute_magic_number a b = a * b
@@ -52,7 +53,7 @@ let a_typical_function (input : int Bonsai.t) graph =
     [ Vdom.Node.h1
         [ Vdom.Node.text [%string "Today's Magic Number: %{magic_number#Int}"] ]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> log_current_magic_number) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> log_current_magic_number) ]
         [ Vdom.Node.text "Save it!" ]
     ; Vdom.Node.div [ Vdom.Node.text [%string "Saved Magic Numbers: %{logs}"] ]
     ]
@@ -72,6 +73,45 @@ let () =
       a_typical_function input graph)
     ~id:"typical_f"
 ;;
+
+(* $MDX part-begin=row_views_and_selectors *)
+let row_views_and_selectors (rows : string Int.Map.t Bonsai.t) graph
+  : Vdom.Node.t Int.Map.t Bonsai.t * (bool -> unit Effect.t) Int.Map.t Bonsai.t
+  =
+  let row_view_and_selector_by_id =
+    Bonsai.assoc
+      (module Int)
+      rows
+      ~f:(fun _id row graph ->
+        let is_selected, set_is_selected = Bonsai.state false graph in
+        let%arr row and is_selected and set_is_selected in
+        let selected_indicator = if is_selected then " (selected)" else "" in
+        let view =
+          {%html|
+            <div on_click=%{fun _ -> set_is_selected (not is_selected)}>
+              #{row}
+              #{selected_indicator}
+            </div>
+          |}
+        in
+        view, set_is_selected)
+      graph
+  in
+  let row_views_and_selectors =
+    let%arr row_view_and_selector_by_id in
+    Map.map row_view_and_selector_by_id ~f:fst, Map.map row_view_and_selector_by_id ~f:snd
+  in
+  let%sub ( (row_view_by_id : Vdom.Node.t Int.Map.t Bonsai.t)
+          , (set_selected_by_id : (bool -> unit Effect.t) Int.Map.t Bonsai.t) )
+    =
+    row_views_and_selectors
+  in
+  row_view_by_id, set_selected_by_id
+;;
+
+(* $MDX part-end *)
+
+let () = ignore row_views_and_selectors
 
 (* $MDX part-begin=state_with_resetter *)
 let state_with_resetter ~default_value graph

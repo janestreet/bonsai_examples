@@ -30,7 +30,7 @@ let modal
       and set_is_open in
       let close_button =
         Vdom.Node.button
-          ~attrs:[ Vdom.Attr.on_click (fun _ -> set_is_open false) ]
+          ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_is_open false) ]
           [ Vdom.Node.text "X" ]
       in
       Vdom.Node.div
@@ -75,7 +75,7 @@ let modal_example graph =
     ~attrs:[ {%css|height: 400px;|} ]
     [ modal_view
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> open_modal) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> open_modal) ]
         [ Vdom.Node.text "open modal" ]
     ]
 ;;

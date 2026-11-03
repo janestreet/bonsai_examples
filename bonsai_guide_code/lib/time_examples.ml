@@ -24,7 +24,8 @@ let vdom_time_ago graph =
   let%arr time_since and set_time_since in
   Vdom.Node.div
     [ Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_time_since (Time_ns.now ())) ]
+        ~attrs:
+          [ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_time_since (Time_ns.now ())) ]
         [ Vdom.Node.text "Update base time" ]
     ; Vdom_time_ago.view time_since
     ]
@@ -43,7 +44,7 @@ let measure_time graph =
   let%arr get_time = Bonsai.Clock.get_current_time graph in
   Vdom.Node.button
     ~attrs:
-      [ Vdom.Attr.on_click (fun _ ->
+      [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
           let%bind.Effect start = get_time in
           let%bind.Effect () = long_effect in
           let%bind.Effect end_ = get_time in
@@ -60,7 +61,7 @@ let clock_sleep_demo graph =
   let%arr sleep = Bonsai.Clock.sleep graph in
   Vdom.Node.button
     ~attrs:
-      [ Vdom.Attr.on_click (fun _ ->
+      [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
           let%bind.Effect () = sleep (Time_ns.Span.of_sec 2.) in
           Effect.alert "... 2 seconds later...")
       ]

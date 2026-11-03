@@ -225,7 +225,8 @@ module Node_data = struct
               ~attrs:[ Vdom.Attr.style (Css_gen.flex_container ~direction:`Row ()) ]
               [ name
               ; Feather_icon.svg
-                  ~extra_attrs:[ Styles.cursor; Vdom.Attr.on_click @@ Fn.const collapse ]
+                  ~extra_attrs:
+                    [ Styles.cursor; Vdom.Attr.on_click_js_of_ocaml @@ Fn.const collapse ]
                   (if collapsed
                    then Feather_icon.Chevron_down
                    else Feather_icon.Chevron_up)

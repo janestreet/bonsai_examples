@@ -5,7 +5,7 @@ let component _graph =
   Bonsai.return
     (Vdom.Node.div
        ~attrs:
-         [ Vdom.Attr.Global_listeners.beforeunload ~phase:Capture ~f:(fun _ ->
+         [ Vdom.Attr.Global_listeners.beforeunload_js_of_ocaml ~phase:Capture ~f:(fun _ ->
              Effect.return `Show_warning)
          ]
        [ Vdom.Node.text "attempting to leave this page will show a warning" ])

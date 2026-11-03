@@ -23,7 +23,7 @@ let reset_ui graph ~f =
   Vdom.Node.div
     [ view
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> reset) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> reset) ]
         [ Vdom.Node.text "Reset" ]
     ]
 ;;
@@ -50,7 +50,7 @@ let resettable_counters_from_inside graph =
           ]
         [ counter1
         ; Vdom.Node.button
-            ~attrs:[ Vdom.Attr.on_click (fun _ -> reset) ]
+            ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> reset) ]
             [ Vdom.Node.text "Reset" ]
         ; counter2
         ])
@@ -316,7 +316,7 @@ let trading_ui exchange graph =
     ; Vdom.Node.text [%string "Filled orders:"]
     ; Vdom.Node.sexp_for_debugging [%sexp (filled_orders : Order_id.t list)]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> inject_new_order) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject_new_order) ]
         [ Vdom.Node.text "New order" ]
     ]
 ;;
@@ -387,7 +387,7 @@ let trading_ui exchange graph =
     ; Vdom.Node.text [%string "Filled orders:"]
     ; Vdom.Node.sexp_for_debugging [%sexp (filled_orders : Order_id.t list)]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> inject_new_order) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject_new_order) ]
         [ Vdom.Node.text "New order" ]
     ]
 ;;

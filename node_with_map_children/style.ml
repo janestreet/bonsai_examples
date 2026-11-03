@@ -189,7 +189,7 @@ let color_class color =
 let icon_button icon (color : [ `Light | `Dark ]) ~on_click =
   let color_class = color_class color in
   Vdom.Node.div
-    ~attrs:[ button_container; Vdom.Attr.on_click (fun _ -> on_click) ]
+    ~attrs:[ button_container; Vdom.Attr.on_click_js_of_ocaml (fun _ -> on_click) ]
     [ Feather_icon.svg ~extra_attrs:[ svg_button; color_class ] icon ]
 ;;
 

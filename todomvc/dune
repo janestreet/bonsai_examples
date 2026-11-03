@@ -1,12 +1,17 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai_web core ppx_css.inline_css js_of_ocaml virtual_dom)
  (preprocess
-  (pps bonsai.ppx_bonsai ppx_jane js_of_ocaml-ppx)))
+  (pps bonsai.ppx_bonsai ppx_jane js_of_ocaml-ppx))
+ (modes js wasm byte exe))
 
 (rule
  (targets todomvc.ml todomvc.mli todomvc__generated.ml todomvc__generated.mli)
  (deps todomvc.css)
  (action
   (bash "%{bin:css_inliner} %{deps} \"()\"")))
+
+(env
+ (_
+  (env-vars
+   (OCAMLPARAM w=-46,keywords=5.2,_))))

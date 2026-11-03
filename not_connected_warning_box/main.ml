@@ -14,7 +14,9 @@ let component graph =
   Vdom.Node.div
     [ not_connected_warning_box
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_is_connected (not is_connected)) ]
+        ~attrs:
+          [ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_is_connected (not is_connected))
+          ]
         [ Vdom.Node.text "toggle is_connected" ]
     ; Vdom.Node.text
         "This button simulates connecting and disconnecting from the server. This \

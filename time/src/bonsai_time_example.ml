@@ -34,7 +34,12 @@ let time_now graph =
     graph;
   let%arr state in
   let span = Time_ns.Span.of_int63_ns state in
-  {%html|<div>#{" This counter should show the # of seconds since the page opened: "}%{span#Time_ns.Span}</div>|}
+  {%html|
+    <div>
+      #{" This counter should show the # of seconds since the page opened: "}
+      %{span#Time_ns.Span}
+    </div>
+  |}
 ;;
 
 let component graph =

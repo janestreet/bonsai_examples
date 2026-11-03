@@ -30,7 +30,10 @@ let lifecycle_demo graph =
     div
       [ div
           [ button
-              ~attrs:[ Vdom.Attr.on_click (fun _ -> Effect.all_unit [ toggle_show ]) ]
+              ~attrs:
+                [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
+                    Effect.all_unit [ toggle_show ])
+                ]
               [ text "toggle show" ]
           ; text log_val
           ]

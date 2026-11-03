@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Reorderable_list = Bonsai_web_reorderable_list
 module Form = Bonsai_web_form.With_automatic_view
@@ -25,7 +26,10 @@ module S =
       }
 
       .transition_transform {
-        transition: transform 0.3s, opacity 0.1s, background-color 0.3s;
+        transition:
+          transform 0.3s,
+          opacity 0.1s,
+          background-color 0.3s;
       }
     |}]
 
@@ -62,7 +66,7 @@ let component graph =
       ~when_to_start_next_effect:`Every_multiple_of_period_blocking
       ~trigger_on_activate:true
       (Bonsai.return (Time_ns.Span.of_sec 1.0))
-      (let%map extend_input in
+      (let%arr extend_input in
        extend_input ())
       graph
   in

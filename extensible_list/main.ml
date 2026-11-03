@@ -7,7 +7,7 @@ let component graph =
   let wrap_remove view remove_event =
     Vdom.Node.div
       [ Vdom.Node.button
-          ~attrs:[ Vdom.Attr.on_click (fun _ -> remove_event) ]
+          ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> remove_event) ]
           [ Vdom.Node.text "X" ]
       ; view
       ]
@@ -19,7 +19,7 @@ let component graph =
   let views = Map.data contents in
   Vdom.Node.div
     (Vdom.Node.button
-       ~attrs:[ Vdom.Attr.on_click (fun _ -> append) ]
+       ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> append) ]
        [ Vdom.Node.text "Add" ]
      :: views)
 ;;

@@ -55,7 +55,7 @@ let app graph =
   let y_labels = [ "Nominal"; "Real" ] in
   let%sub scale, scale_view = scale graph in
   let options =
-    match%map scale with
+    match%arr scale with
     | `log -> options ~logscale:true
     | `linear -> options ~logscale:false
   in

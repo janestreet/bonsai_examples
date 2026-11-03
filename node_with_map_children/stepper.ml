@@ -112,7 +112,7 @@ let component
       ~equal:[%equal: Input.t]
       input
       ~callback:
-        (let%map inject in
+        (let%arr inject in
          fun _ -> inject Restart)
       graph
   in
@@ -181,7 +181,7 @@ let component
             ~attrs:
               [ Vdom.Attr.many [ Style.header; Style.debug ]
               ; Vdom.Attr.value ([%sexp_of: Model.t] state |> Sexp.to_string_hum)
-              ; Vdom.Attr.on_change (fun _ text ->
+              ; Vdom.Attr.on_change_js_of_ocaml (fun _ text ->
                   text
                   |> Sexp.of_string
                   |> [%of_sexp: Model.t]

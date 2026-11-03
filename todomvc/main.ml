@@ -142,10 +142,10 @@ let header_component ~inject graph =
       Attr.many
         [ Style.new_todo
         ; Attr.value state
-        ; Attr.on_input (fun _ input -> set_state input)
+        ; Attr.on_input_js_of_ocaml (fun _ input -> set_state input)
         ; Attr.placeholder "What needs to be done?"
         ; Attr.autofocus true
-        ; Attr.on_keydown handle_enter
+        ; Attr.on_keydown_js_of_ocaml handle_enter
         ]
     in
     Node.input ~attrs:[ attr ] ()
@@ -172,7 +172,7 @@ let todo_item_component
       Attr.many
         [ Dom_helpers.filtered_attrs [ Style.toggle, true; Style.checked, todo.completed ]
         ; Attr.type_ "checkbox"
-        ; Attr.on_change handle_clicked
+        ; Attr.on_change_js_of_ocaml handle_clicked
         ; Attr.bool_property "checked" todo.completed
         ]
     in
@@ -194,8 +194,8 @@ let todo_item_component
       Attr.many
         [ Attr.value_attr todo.title
         ; Style.edit
-        ; Attr.on_blur handle_focus_leave
-        ; Attr.on_keydown handle_enter
+        ; Attr.on_blur_js_of_ocaml handle_focus_leave
+        ; Attr.on_keydown_js_of_ocaml handle_enter
         ]
     in
     Node.input ~attrs:[ attr ] ()
@@ -203,7 +203,7 @@ let todo_item_component
   let view =
     let remove_task_button =
       let on_click _ = inject (Delete_todo todo.id) in
-      let attr = Attr.many [ Style.destroy; Attr.on_click on_click ] in
+      let attr = Attr.many [ Style.destroy; Attr.on_click_js_of_ocaml on_click ] in
       Node.button ~attrs:[ attr ] []
     in
     let on_double_click _ = set_editing (not editing) in
@@ -211,7 +211,7 @@ let todo_item_component
       ~attrs:[ Style.view ]
       [ is_complete_checkbox
       ; Node.label
-          ~attrs:[ Attr.on_double_click on_double_click ]
+          ~attrs:[ Attr.on_double_click_js_of_ocaml on_double_click ]
           [ Node.text todo.title ]
       ; remove_task_button
       ]
@@ -227,7 +227,7 @@ let todo_item_component
 
 let todo_list (model : Model.t Bonsai.t) ~inject graph =
   let filtered_model =
-    let%map model
+    let%arr model
     and hash = Url_hash.get () in
     Map.filter model ~f:(fun todo ->
       match hash with
@@ -236,7 +236,7 @@ let todo_list (model : Model.t Bonsai.t) ~inject graph =
       | _ -> true)
   in
   let active_count =
-    let%map model in
+    let%arr model in
     Map.count model ~f:(fun todo -> not todo.completed)
   in
   let todo_items =
@@ -261,7 +261,7 @@ let todo_list (model : Model.t Bonsai.t) ~inject graph =
         ; Vdom.Attr.id "toggle-all"
         ; Style.toggle_all
         ; Attr.type_ "checkbox"
-        ; Attr.on_change handle_clicked
+        ; Attr.on_change_js_of_ocaml handle_clicked
         ]
     in
     Node.input ~attrs:[ attr ] ()
@@ -283,7 +283,7 @@ let footer_component
   =
   let%arr inject
   and active, completed =
-    let%map state in
+    let%arr state in
     let completed = Map.filter state ~f:(fun e -> e.completed) in
     let active = Map.filter state ~f:(fun e -> not e.completed) in
     active, completed
@@ -307,7 +307,9 @@ let footer_component
     | 0 -> Node.none
     | _ ->
       let on_click _ = inject Clear_completed in
-      let attr = Attr.many [ Style.clear_completed; Attr.on_click on_click ] in
+      let attr =
+        Attr.many [ Style.clear_completed; Attr.on_click_js_of_ocaml on_click ]
+      in
       Node.button ~attrs:[ attr ] [ Node.text "Clear completed" ]
   in
   Node.footer

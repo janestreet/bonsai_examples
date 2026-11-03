@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 
 module Style =
@@ -20,7 +21,7 @@ module Style =
       }
     |}]
 
-module Flashing_box_attr = Vdom.Attr.Hooks.Make (struct
+module Flashing_box_attr = Vdom.Attr.Hooks.Make_js_of_ocaml (struct
     open Js_of_ocaml
     module State = Unit
 

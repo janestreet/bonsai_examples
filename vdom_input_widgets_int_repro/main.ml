@@ -21,12 +21,13 @@ let component
   let debug = state |> [%sexp_of: M.t option] |> Sexp.to_string_hum |> Vdom.Node.text in
   let clear_button =
     Vdom.Node.button
-      ~attrs:[ Vdom.Attr.on_click (fun _ -> set_state None) ]
+      ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_state None) ]
       [ Vdom.Node.text "clear" ]
   in
   let set_constant =
     Vdom.Node.button
-      ~attrs:[ Vdom.Attr.on_click (fun _ -> set_state (Some some_constant_value)) ]
+      ~attrs:
+        [ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_state (Some some_constant_value)) ]
       [ Vdom.Node.text "set constant" ]
   in
   Vdom.Node.div [ Vdom.Node.text name; input; clear_button; set_constant; debug ]

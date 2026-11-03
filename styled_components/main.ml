@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 module Gallery = Bonsai_web_contrib_gallery
 module Form = Bonsai_web_form.With_automatic_view
@@ -72,9 +73,9 @@ module Interpolation = struct
         Vdom.Node.div
           ~attrs:
             [ {%css|
-                background-color: %{color};
-                width: %{width};
-                height: %{height};
+                background-color: #{color};
+                width: #{width};
+                height: #{height};
               |}
             ]
           []]
@@ -117,9 +118,9 @@ module Typed_interpolation = struct
         Vdom.Node.div
           ~attrs:
             [ {%css|
-                background-color: %{color#Css_gen.Color};
-                width: %{width#Css_gen.Length};
-                height: %{height#Css_gen.Length};
+                background-color: #{color#Css_gen.Color};
+                width: #{width#Css_gen.Length};
+                height: #{height#Css_gen.Length};
               |}
             ]
           []]
@@ -192,9 +193,9 @@ module Stylesheet_interpolation = struct
           stylesheet
             {|
               .square {
-                background-color: %{color#Css_gen.Color};
-                width: %{width#Css_gen.Length};
-                height: %{height#Css_gen.Length};
+                background-color: #{color#Css_gen.Color};
+                width: #{width#Css_gen.Length};
+                height: #{height#Css_gen.Length};
                 transition: 1s;
               }
 

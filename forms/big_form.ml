@@ -444,7 +444,7 @@ let component graph =
     [ Vdom.Node.h1 [ Vdom.Node.text "Big Form" ]
     ; Form.view_as_vdom ~editable form
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.(on_click (fun _ -> toggle_editable)) ]
+        ~attrs:[ Vdom.Attr.(on_click_js_of_ocaml (fun _ -> toggle_editable)) ]
         [ Vdom.Node.text "Toggle Editing" ]
     ; output
     ]

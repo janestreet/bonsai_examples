@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 module Gallery = Bonsai_web_contrib_gallery
 module Toplayer = Bonsai_web_themed_toplayer
@@ -12,7 +13,7 @@ module Tooltip = struct
   ;;
 
   let view _graph =
-    let%map () = return () in
+    let%arr () = return () in
     [%demo
       let non_interactive = Toplayer.Tooltip.text "I am a tooltip!" in
       let interactive =
@@ -40,7 +41,7 @@ module Tooltip_positioning = struct
   ;;
 
   let view _graph =
-    let%map () = return () in
+    let%arr () = return () in
     let vbox = View.vbox ~gap:(`Em 1) in
     let hbox = View.hbox ~gap:(`Em 1) ~main_axis_alignment:Space_between in
     [%demo
@@ -86,16 +87,18 @@ module Tooltip_with_arbitrary_content = struct
   let description = {| With `Tooltip.create`, tooltips can contain any `Vdom.Node.t` |}
 
   let view _graph =
-    let%map () = return () in
+    let%arr () = return () in
     [%demo
       let tooltip =
         Toplayer.Tooltip.create
           ~hoverable_inside:true
           {%html|
-            <%{View.vbox}
-              >#{" do not click this button "}<button on_click=%{fun _ -> rickroll}>
+            <%{View.vbox}>
+              #{" do not click this button "}
+              <button on_click_js_of_ocaml=%{fun _ -> rickroll}>
                 #{"no clicky!"}
-              </button></>
+              </button>
+            </>
           |}
       in
       {%html|<span %{tooltip}>cursed knowledge</span>|}]

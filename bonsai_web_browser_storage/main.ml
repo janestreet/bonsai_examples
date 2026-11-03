@@ -6,7 +6,7 @@ module Elements = struct
   let grid children =
     {%html|
       <div
-        style="
+        css="
           display: grid;
           grid-template-columns: auto auto auto;
           width: min-content;
@@ -25,7 +25,12 @@ module Elements = struct
 
   let preview value =
     {%html|
-      <div style="font-family: monospace; box-shadow: 0 1px 0 0 black">
+      <div
+        css="
+          font-family: monospace;
+          box-shadow: 0 1px 0 0 black;
+        "
+      >
         *{value}
       </div>
     |}
@@ -62,13 +67,13 @@ let component graph =
     in
     let%arr item1 and set_item1 and item2 and set_item2 and unique_id and set_unique_id in
     let on_click_item1 =
-      Vdom.Attr.on_click (fun _ -> set_item1 (Fruit.random ~but_not:item1))
+      Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_item1 (Fruit.random ~but_not:item1))
     in
     let on_click_item2 =
-      Vdom.Attr.on_click (fun _ -> set_item2 (Fruit.random ~but_not:item2))
+      Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_item2 (Fruit.random ~but_not:item2))
     in
     let change_key =
-      Vdom.Attr.on_click (fun _ ->
+      Vdom.Attr.on_click_js_of_ocaml (fun _ ->
         let s = Random.ascii () |> Char.to_string in
         set_unique_id s)
     in
@@ -77,7 +82,7 @@ let component graph =
     let unique_id_str = [%message (unique_id : string)] |> Sexp.to_string in
     {%html|
       <div
-        style="
+        css="
           display: grid;
           grid-template-columns: 1fr;
           grid-gap: 10px;
@@ -107,9 +112,11 @@ let component graph =
         (make_example
            ~description:
              {%html|
-               <div>
-                 #{" Wrapped with "}<code>#{"Bonsai_web_browser_storage.with_storage"}</code>#{": writes\n                 should be synced to both items. "}
-               </div>
+              <div>
+                #{" Wrapped with "}
+                <code>#{"Bonsai_web_browser_storage.with_storage"}</code>
+                #{": writes\n                 should be synced to both items. "}
+              </div>
              |})
       graph
   in
@@ -118,19 +125,48 @@ let component graph =
       ~description:
         {%html|
           <div>
-            #{" Not wrapped with "}<code>#{"Bonsai_web_browser_storage.with_storage"}</code>#{": writes\n            should only affect one item. There should also be a warning in the browser\n            console. "}
+            #{" Not wrapped with "}
+            <code>#{"Bonsai_web_browser_storage.with_storage"}</code>
+            #{": writes\n\
+              \            should only affect one item. There should also be a warning \
+               in the browser\n\
+              \            console. "}
           </div>
         |}
       graph
   in
   let%arr example1 and example2 in
   {%html|
-      <div style="max-width: min(90vw, 800px);
-                  margin: auto;
-                  > * {
-                    margin-block: 24px;
-                  }"><p><code>#{" Bonsai_web_browser_storage.item "}</code>#{" demo. Expected behavior: "}<ul><li>#{" Values should be persisted across page refreshes "}</li><li>#{" If you open this same page in another tab, values should sync up between the tabs "}</li><li>#{" Changing the localStorage key should reset all values "}</li><li>#{" Same-tab syncing between items depends on whether "}<code>#{"Bonsai_web_browser_storage.with_storage"}</code>#{" is used. "}</li></ul></p><div>%{example1}</div><div>%{example2}</div></div>
-    |}
+    <div
+      css="
+        max-width: min(90vw, 800px);
+        margin: auto;
+        > * {
+          margin-block: 24px;
+        }
+      "
+    >
+      <p>
+        <code>#{" Bonsai_web_browser_storage.item "}</code>
+        #{" demo. Expected behavior: "}
+        <ul>
+          <li>#{" Values should be persisted across page refreshes "}</li>
+          <li>
+            #{" If you open this same page in another tab, values should sync up between \
+               the tabs "}
+          </li>
+          <li>#{" Changing the localStorage key should reset all values "}</li>
+          <li>
+            #{" Same-tab syncing between items depends on whether "}
+            <code>#{"Bonsai_web_browser_storage.with_storage"}</code>
+            #{" is used. "}
+          </li>
+        </ul>
+      </p>
+      <div>%{example1}</div>
+      <div>%{example2}</div>
+    </div>
+  |}
 ;;
 
 let () = Bonsai_web.Start.start component

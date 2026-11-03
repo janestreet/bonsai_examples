@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 module Gallery = Bonsai_web_contrib_gallery
 module Toplayer = Bonsai_web_themed_toplayer
@@ -35,7 +36,7 @@ module Popover = struct
         View.button
           theme
           ~intent:Info
-          ~attrs:[ popover_anchor; Vdom.Attr.on_click (fun _ -> open_) ]
+          ~attrs:[ popover_anchor; Vdom.Attr.on_click_js_of_ocaml (fun _ -> open_) ]
           ~on_click:Effect.Ignore
           "Open Popover"]
     in
@@ -89,7 +90,7 @@ module Nested_popover = struct
         View.button
           theme
           ~intent:Info
-          ~attrs:[ popover; Vdom.Attr.on_click (fun _ -> open_) ]
+          ~attrs:[ popover; Vdom.Attr.on_click_js_of_ocaml (fun _ -> open_) ]
           ~on_click:Effect.Ignore
           "Open Popover"]
     in
@@ -122,7 +123,7 @@ module Popover_with_arrow = struct
         View.button
           theme
           ~intent:Info
-          ~attrs:[ popover_anchor; Vdom.Attr.on_click (fun _ -> open_) ]
+          ~attrs:[ popover_anchor; Vdom.Attr.on_click_js_of_ocaml (fun _ -> open_) ]
           ~on_click:Effect.Ignore
           "Open Popover"]
     in
@@ -192,7 +193,8 @@ module Popover_close_on_click = struct
             [ popover1_anchor
             ; popover2_anchor
             ; popover3_anchor
-            ; Vdom.Attr.on_click (fun _ -> Effect.Many [ open_1; open_2; open_3 ])
+            ; Vdom.Attr.on_click_js_of_ocaml (fun _ ->
+                Effect.Many [ open_1; open_2; open_3 ])
             ]
           ~on_click:Effect.Ignore
           "Open Popovers"]

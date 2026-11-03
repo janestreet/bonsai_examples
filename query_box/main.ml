@@ -219,7 +219,7 @@ let component graph =
     ; Query_box.view query_box
     ; Node.ul (List.map selected_items ~f:(fun item -> Node.li [ Node.text item ]))
     ; Node.button
-        ~attrs:[ Attr.on_click (fun _ -> Query_box.focus_input query_box) ]
+        ~attrs:[ Attr.on_click_js_of_ocaml (fun _ -> Query_box.focus_input query_box) ]
         [ Node.text "Focus the query_box" ]
     ]
 ;;
