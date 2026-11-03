@@ -12,7 +12,8 @@ module T = struct
 
   let label_for_field = `Inferred
 
-  let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+  let form_for_field
+    : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
     =
     fun typed_field (local_ graph) ->
     match typed_field with
@@ -32,7 +33,7 @@ let alert_effect =
 
 let component (local_ graph) =
   let open Bonsai.Let_syntax in
-  let%map form = form graph in
+  let%arr form = form graph in
   let on_submit = Form.Submit.create ~f:(fun t -> alert_effect ([%sexp_of: T.t] t)) () in
   Vdom.Node.div
     [ Vdom.Node.h1 [ Vdom.Node.text "Form With Submit" ]

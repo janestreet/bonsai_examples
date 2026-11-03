@@ -33,7 +33,7 @@ let component (local_ graph) =
   let button =
     Vdom.Node.button
       ~attrs:
-        [ Vdom.Attr.on_click (fun _ ->
+        [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
             Effect.Many [ Form.set form (List.nth_exn generated_values index); incr () ])
         ]
       [ Vdom.Node.text "Set form to a random value" ]

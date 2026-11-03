@@ -1,5 +1,6 @@
 open! Core
 open Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 
 module Time_source_inside_of_apply_action = struct
@@ -23,7 +24,7 @@ module Time_source_inside_of_apply_action = struct
           | `Resting, `Sleep | `Pending, `Poke -> model)
         graph
     in
-    let%map model
+    let%arr model
     and inject
     and theme = View.Theme.current graph in
     let text =
@@ -57,7 +58,7 @@ include
            let%arr wait_after_display in
            Vdom.Node.button
              ~attrs:
-               [ Vdom.Attr.on_click (fun _ ->
+               [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
                    let%bind.Effect () = wait_after_display in
                    Effect.print_s [%message "after display"])
                ]

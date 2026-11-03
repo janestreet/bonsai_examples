@@ -20,7 +20,7 @@ let form_of_t =
       let label_for_field = `Inferred
 
       let form_for_field (type a) (field : a Typed_field.t)
-        : local_ Bonsai.graph -> a Form.t Bonsai.t
+        : Bonsai.graph @ local -> a Form.t Bonsai.t
         =
         match field with
         | Name -> Form.Elements.Textbox.string ~allow_updates_when_focused:`Never ()

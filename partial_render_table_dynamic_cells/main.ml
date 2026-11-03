@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 
 module Time_ns_option = struct
@@ -239,7 +240,7 @@ let table
       ~get_unlock_focus:Focus_control.unlock_focus
       ~get_focus_is_locked:Focus_control.focus_is_locked
       ~attr_of_focus:(fun (focus : _ Table.Focus.By_row.t) ~num_filtered_rows ->
-        Vdom.Attr.on_keydown (fun kbc ->
+        Vdom.Attr.on_keydown_js_of_ocaml (fun kbc ->
           let binding =
             match Js_of_ocaml.Dom_html.Keyboard_code.of_event kbc with
             | ArrowDown | KeyJ -> Some (Focus_control.focus_down focus)
@@ -274,7 +275,7 @@ let table
           | None -> Indexed_column_id.of_int 0
           | Some (_, c) -> c
         in
-        Vdom.Attr.on_keydown (fun kbc ->
+        Vdom.Attr.on_keydown_js_of_ocaml (fun kbc ->
           let binding =
             let module Focus_control = Table.Focus.By_cell in
             match Js_of_ocaml.Dom_html.Keyboard_code.of_event kbc with
@@ -334,7 +335,7 @@ module Layout_form = struct
     [@@deriving typed_fields]
 
     let form_for_field
-      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Forms.t Bonsai.t
+      : type a. a Typed_field.t -> Bonsai.graph @ local -> a Forms.t Bonsai.t
       =
       fun typed_field (local_ graph) ->
       match typed_field with

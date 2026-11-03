@@ -1,10 +1,10 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai_web bonsai_web_components.freeform_multiselect core
    virtual_dom.ui_effect)
  (preprocess
-  (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_jane)))
+  (pps js_of_ocaml-ppx bonsai.ppx_bonsai ppx_jane))
+ (modes js wasm byte exe))
 
 (rule
  (targets style.css)

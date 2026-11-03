@@ -60,7 +60,7 @@ let component (local_ graph) =
       graph
   in
   let on_change which =
-    let%map set_focused_table in
+    let%arr set_focused_table in
     function
     | None -> Effect.Ignore
     | Some _ -> set_focused_table which
@@ -90,7 +90,7 @@ let component (local_ graph) =
       ~equal:[%equal: Table_id.t]
       focused_table
       ~callback:
-        (let%map focus1 and focus2 in
+        (let%arr focus1 and focus2 in
          function
          | Table_id.First_table -> Table.Focus.By_row.unfocus focus2
          | Second_table -> Table.Focus.By_row.unfocus focus1)
@@ -116,7 +116,7 @@ let component (local_ graph) =
   let%arr tables and which_form and focused_table and focus1 and focus2 in
   let attr =
     Vdom.Attr.many
-      [ Vdom.Attr.on_keydown (fun kbc ->
+      [ Vdom.Attr.on_keydown_js_of_ocaml (fun kbc ->
           let focus =
             match focused_table with
             | First_table -> focus1

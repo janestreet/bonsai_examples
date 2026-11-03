@@ -206,18 +206,18 @@ let component (type a) (t : a t) (local_ graph) =
   in
   let uri_form = uri_form ~default:(Bonsai.return t.starting_components) graph in
   let uri_form_value =
-    let%map uri_form in
+    let%arr uri_form in
     Form.value uri_form
   in
   let uri_form_set =
-    let%map uri_form in
+    let%arr uri_form in
     fun new_components ->
       match new_components with
       | Ok x -> if is_same_as_fallback x then Effect.return () else Form.set uri_form x
       | Error _ -> Effect.return ()
   in
   let uri_form_set_even_if_same_as_callback =
-    let%map uri_form in
+    let%arr uri_form in
     fun new_components ->
       match new_components with
       | Ok x -> Form.set uri_form x
@@ -232,11 +232,11 @@ let component (type a) (t : a t) (local_ graph) =
       graph
   in
   let typed_url_form_value =
-    let%map typed_url_form in
+    let%arr typed_url_form in
     Form.value typed_url_form
   in
   let typed_url_form_set =
-    let%map typed_url_form in
+    let%arr typed_url_form in
     fun x ->
       match x with
       | Ok x -> Form.set typed_url_form x
@@ -272,7 +272,7 @@ let component (type a) (t : a t) (local_ graph) =
       in
       Vdom.Node.button
         ~attrs:
-          [ Vdom.Attr.on_click (fun _ ->
+          [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
               let%bind.Effect () = typed_url_form_set result in
               uri_form_set_even_if_same_as_callback result)
           ]

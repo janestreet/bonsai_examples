@@ -11,7 +11,7 @@ module Scale = struct
   let to_string t = sexp_of_t t |> Sexp.to_string
 end
 
-let scale : local_ Bonsai.graph -> (Scale.t * Vdom.Node.t) Bonsai.t =
+let scale : Bonsai.graph @ local -> (Scale.t * Vdom.Node.t) Bonsai.t =
   fun (local_ graph) ->
   let scale, set_scale =
     Bonsai.state `log ~sexp_of_model:[%sexp_of: Scale.t] ~equal:[%equal: Scale.t] graph
@@ -55,7 +55,7 @@ let app (local_ graph) =
   let y_labels = [ "Nominal"; "Real" ] in
   let%sub scale, scale_view = scale graph in
   let options =
-    match%map scale with
+    match%arr scale with
     | `log -> options ~logscale:true
     | `linear -> options ~logscale:false
   in

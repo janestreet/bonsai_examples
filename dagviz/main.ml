@@ -191,7 +191,7 @@ module Node_data = struct
   [@@deriving sexp, compare, quickcheck, fields ~iterators:create]
 
   let to_vdom (id : Id.t Bonsai.t) (t : t Bonsai.t)
-    : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t
+    : Bonsai.graph @ local -> Vdom.Node.t Bonsai.t
     =
     fun (local_ graph) ->
     let collapsed, collapse = Bonsai.toggle ~default_model:true graph in
@@ -226,7 +226,8 @@ module Node_data = struct
               ~attrs:[ Vdom.Attr.style (Css_gen.flex_container ~direction:`Row ()) ]
               [ name
               ; Feather_icon.svg
-                  ~extra_attrs:[ Styles.cursor; Vdom.Attr.on_click @@ Fn.const collapse ]
+                  ~extra_attrs:
+                    [ Styles.cursor; Vdom.Attr.on_click_js_of_ocaml @@ Fn.const collapse ]
                   (if collapsed
                    then Feather_icon.Chevron_down
                    else Feather_icon.Chevron_up)

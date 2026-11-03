@@ -79,16 +79,16 @@ let component (local_ graph) =
     <div>
       <div
         %{drop_target}
-        style="
+        css="
           width: 100px;
           height: 100px;
           border: 1px solid black;
-          background: %{background};
+          background: #{background};
         "
       >
         #{" Drop images here "}
       </div>
-      %{Vdom.Node.Map_children.div (images)}
+      %{Vdom.Node.Map_children.div images}
     </div>
   |}
 ;;

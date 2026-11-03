@@ -90,7 +90,7 @@ let component (local_ graph) =
         let label_for_field = `Inferred
 
         let form_for_field
-          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ graph) ->
           match typed_field with
@@ -221,7 +221,7 @@ let component (local_ graph) =
     ; Query_box.view query_box
     ; Node.ul (List.map selected_items ~f:(fun item -> Node.li [ Node.text item ]))
     ; Node.button
-        ~attrs:[ Attr.on_click (fun _ -> Query_box.focus_input query_box) ]
+        ~attrs:[ Attr.on_click_js_of_ocaml (fun _ -> Query_box.focus_input query_box) ]
         [ Node.text "Focus the query_box" ]
     ]
 ;;

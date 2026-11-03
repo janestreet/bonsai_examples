@@ -102,7 +102,7 @@ let double_number_app (local_ graph) =
     [ Vdom.Node.div [ Vdom.Node.text [%string "The number is: %{number#Int}"] ]
     ; Vdom.Node.button
         ~attrs:
-          [ Vdom.Attr.on_click (fun _ ->
+          [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
               match%bind.Effect dispatch_double_rpc number with
               | Ok doubled_number -> set_number doubled_number
               | Error error -> Effect.of_sync_fun eprint_s [%sexp (error : Error.t)])

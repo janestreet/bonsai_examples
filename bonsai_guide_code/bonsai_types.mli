@@ -11,7 +11,7 @@ module Url_var := Bonsai_web_url_var
 val peek
   :  here:[%call_pos]
   -> 'a Bonsai.t
-  -> local_ Bonsai.graph
+  -> Bonsai.graph @ local
   -> 'a Computation_status.t Effect.t Bonsai.t
 (* $MDX part-end *)
 
@@ -44,7 +44,7 @@ module Url_var : sig
   (* $MDX part-begin=url_var_from_uri_parsing *)
   module Typed : sig
     val make
-      :  ?navigation:[ `Ignore | `Intercept ]
+      :  ?navigation:[ `Ignore | `Intercept of [ `Reset_scroll | `Preserve_scroll ] ]
       -> ?on_fallback_raises:'a
       -> ?encoding_behavior:Uri_parsing.Percent_encoding_behavior.t
       -> ?trailing_slash_behavior:Uri_parsing.Trailing_slash_behavior.t
@@ -70,7 +70,7 @@ val mirror
   -> store_value:'m Bonsai.t
   -> interactive_set:('m -> unit Effect.t) Bonsai.t
   -> interactive_value:'m Bonsai.t
-  -> local_ Bonsai.graph
+  -> Bonsai.graph @ local
   -> unit
 (* $MDX part-end *)
 

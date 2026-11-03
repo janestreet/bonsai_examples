@@ -16,7 +16,9 @@ let textbox (local_ graph) =
   in
   let%arr text and set_text in
   let view =
-    Vdom.Node.input ~attrs:[ Vdom.Attr.(value text @ on_input (fun _ -> set_text)) ] ()
+    Vdom.Node.input
+      ~attrs:[ Vdom.Attr.(value text @ on_input_js_of_ocaml (fun _ -> set_text)) ]
+      ()
   in
   text, view
 ;;

@@ -1,10 +1,10 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai_web bonsai_web_components.auto_generated
    bonsai_web_components.form core)
  (preprocess
-  (pps bonsai.ppx_bonsai ppx_jane)))
+  (pps bonsai.ppx_bonsai ppx_jane))
+ (modes js wasm byte exe))
 
 (rule
  (targets embedded_files.ml embedded_files.mli)

@@ -1,6 +1,6 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai_web bonsai_web_components.url_var core uri uri_parsing)
  (preprocess
-  (pps ppx_html js_of_ocaml-ppx ppx_jane bonsai.ppx_bonsai ppx_css ppx_demo)))
+  (pps ppx_html js_of_ocaml-ppx ppx_jane bonsai.ppx_bonsai ppx_css ppx_demo))
+ (modes js wasm byte exe))

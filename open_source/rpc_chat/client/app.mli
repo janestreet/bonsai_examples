@@ -9,5 +9,5 @@ val component
   -> refresh_rooms:unit Effect.t
   -> change_room:(Room.t -> unit Effect.t)
   -> send_message:(room:Room.t -> contents:string -> unit Effect.t)
-  -> local_ Bonsai.graph
+  -> Bonsai.graph @ local
   -> Vdom.Node.t Bonsai.t

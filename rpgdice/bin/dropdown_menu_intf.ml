@@ -13,7 +13,7 @@ module type S = sig
 
   val component
     :  default_model:enum
-    -> local_ Bonsai.graph
+    -> Bonsai.graph @ local
     -> (enum * Vdom.Node.t) Bonsai.t
 end
 

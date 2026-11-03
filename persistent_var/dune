@@ -1,6 +1,11 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai_web core virtual_dom.css_gen)
  (preprocess
-  (pps bonsai.ppx_bonsai)))
+  (pps bonsai.ppx_bonsai))
+ (modes js wasm byte exe))
+
+(env
+ (_
+  (env-vars
+   (OCAMLPARAM w=-46,keywords=5.2,_))))

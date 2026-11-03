@@ -8,10 +8,10 @@ let effect_focus_demo (local_ graph) =
   let%arr { attr; focus; blur } = focus in
   Vdom.Node.div
     [ Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> focus) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> focus) ]
         [ Vdom.Node.text "focus input" ]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> blur) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> blur) ]
         [ Vdom.Node.text "blur input" ]
     ; Vdom.Node.input ~attrs:[ attr ] ()
     ]
@@ -35,7 +35,7 @@ let effect_focus_onactivate (local_ graph) =
   let%arr visible and set_visible and subview in
   Vdom.Node.div
     [ Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_visible (not visible)) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_visible (not visible)) ]
         [ Vdom.Node.text "toggle" ]
     ; subview
     ]

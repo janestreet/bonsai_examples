@@ -99,7 +99,7 @@ module My_variant = struct
   let initial_choice = `First_constructor
 
   let form_for_variant
-    : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+    : type a. a Typed_variant.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
     =
     fun typed_field (local_ graph) ->
     match typed_field with
@@ -129,7 +129,7 @@ module Nested_record = struct
     let label_for_field = `Inferred
 
     let form_for_field
-      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
       =
       fun typed_field (local_ graph) ->
       match typed_field with
@@ -150,7 +150,7 @@ module Nested_record = struct
     let label_for_field = `Inferred
 
     let form_for_field
-      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
       =
       fun typed_field (local_ graph) ->
       match typed_field with
@@ -174,7 +174,7 @@ module Record_for_list = struct
     let label_for_field = `Inferred
 
     let form_for_field
-      : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+      : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
       =
       fun typed_field (local_ graph) ->
       match typed_field with
@@ -264,7 +264,7 @@ let label_for_field : type a. a Typed_field.t -> string =
   |> String.substr_replace_all ~pattern:"_" ~with_:" "
 ;;
 
-let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t =
+let form_for_field : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t =
   fun typed_field (local_ graph) ->
   match typed_field with
   | Variant ->
@@ -452,7 +452,7 @@ let component (local_ graph) =
     [ Vdom.Node.h1 [ Vdom.Node.text "Big Form" ]
     ; Form.view_as_vdom ~editable form
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.(on_click (fun _ -> toggle_editable)) ]
+        ~attrs:[ Vdom.Attr.(on_click_js_of_ocaml (fun _ -> toggle_editable)) ]
         [ Vdom.Node.text "Toggle Editing" ]
     ; output
     ]

@@ -1,9 +1,10 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai_web bonsai_web_components.gallery
-   bonsai_web_components.form bonsai_web_components.partial_render_table
+   bonsai_web_components.form bonsai_web.ui_view
+   bonsai_web_components.partial_render_table
    bonsai_web.web_ui_partial_render_table_styling core js_of_ocaml
    virtual_dom.ui_effect)
  (preprocess
-  (pps bonsai.ppx_bonsai ppx_css ppx_jane)))
+  (pps bonsai.ppx_bonsai ppx_css ppx_jane))
+ (modes js wasm byte exe))

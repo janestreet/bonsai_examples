@@ -26,11 +26,11 @@ module Style =
 let widget uri : Vdom.Node.t =
   (* [init] is called whenever [uri] changes, updating the favicon. The DOM element
      produced by the widget is unused. *)
-  Vdom.Node.widget
+  Vdom.Node.widget_js_of_ocaml
     ~id:(Type_equal.Id.create ~name:"favicon" (const [%sexp "favicon"]))
     ~init:(fun () ->
       let _ : unit Or_error.t = Bonsai_web_favicon.set_favicon (Uri.to_string uri) in
-      (), Vdom.Node.to_dom Vdom.Node.none)
+      (), Vdom.Node.to_dom_js_of_ocaml Vdom.Node.none)
     ()
 ;;
 
@@ -42,7 +42,7 @@ let slider ~min ~max ~value ~inject =
       ; Attr.min min
       ; Attr.max max
       ; Attr.value_attr (value |> string_of_int)
-      ; Attr.on_input (fun _ev value -> inject (int_of_string value))
+      ; Attr.on_input_js_of_ocaml (fun _ev value -> inject (int_of_string value))
       ]
     ()
 ;;
@@ -184,7 +184,7 @@ let component (local_ graph) =
              ~attrs:
                [ Attr.type_ "color"
                ; Attr.value_attr fg_color
-               ; Attr.on_input (fun _ev value -> inject_fg_color value)
+               ; Attr.on_input_js_of_ocaml (fun _ev value -> inject_fg_color value)
                ]
              ()
          ]
@@ -195,7 +195,7 @@ let component (local_ graph) =
              ~attrs:
                [ Attr.type_ "color"
                ; Attr.value_attr bg_color
-               ; Attr.on_input (fun _ev value -> inject_bg_color value)
+               ; Attr.on_input_js_of_ocaml (fun _ev value -> inject_bg_color value)
                ]
              ()
          ]

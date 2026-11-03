@@ -118,7 +118,7 @@ module Fill = struct
         }
       |}]
 
-  let component : local_ Bonsai.graph -> t Bonsai.t =
+  let component : Bonsai.graph @ local -> t Bonsai.t =
     (* Equal to --js-primary-color *)
     fun (local_ graph) ->
     let default_fill_color = `Hex "#2085ef" in
@@ -180,7 +180,7 @@ let component (local_ graph) =
     Vdom.Node.button
       ~attrs:
         [ Vdom.Attr.many [ Card_like.class_; Style.reset ]
-        ; Vdom.Attr.on_click (fun _ ->
+        ; Vdom.Attr.on_click_js_of_ocaml (fun _ ->
             let { size; stroke_width; stroke; fill = _ } = default in
             Fields.to_list
               ~size:(fun _ -> Form.set size_slider size)

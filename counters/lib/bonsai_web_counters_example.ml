@@ -22,7 +22,7 @@ let add_counter_component (local_ graph) =
   let%arr state and inject in
   let view =
     Vdom.Node.button
-      ~attrs:[ Vdom.Attr.on_click (fun _ -> inject ()) ]
+      ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject ()) ]
       [ Vdom.Node.text "Add Another Counter" ]
   in
   state, view
@@ -54,7 +54,7 @@ let single_counter (local_ graph) =
   let%arr state and inject in
   let button label action =
     Vdom.Node.button
-      ~attrs:[ Vdom.Attr.on_click (fun _ -> inject action) ]
+      ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject action) ]
       [ Vdom.Node.text label ]
   in
   Vdom.Node.div

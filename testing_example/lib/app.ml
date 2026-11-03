@@ -3,14 +3,14 @@ open! Bonsai_web
 open Bonsai.Let_syntax
 
 (* $MDX part-begin=hello-world-component *)
-let hello_world : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t =
+let hello_world : Bonsai.graph @ local -> Vdom.Node.t Bonsai.t =
   fun (local_ _graph) -> Bonsai.return (Vdom.Node.span [ Vdom.Node.text "hello world" ])
 ;;
 
 (* $MDX part-end *)
 
 (* $MDX part-begin=hello-user-component *)
-let hello_user (name : string Bonsai.t) : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t =
+let hello_user (name : string Bonsai.t) : Bonsai.graph @ local -> Vdom.Node.t Bonsai.t =
   fun (local_ _graph) ->
   let%arr name in
   Vdom.Node.span [ Vdom.Node.textf "hello %s" name ]
@@ -19,7 +19,7 @@ let hello_user (name : string Bonsai.t) : local_ Bonsai.graph -> Vdom.Node.t Bon
 (* $MDX part-end *)
 
 (* $MDX part-begin=hello-text-box-component *)
-let hello_textbox : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t =
+let hello_textbox : Bonsai.graph @ local -> Vdom.Node.t Bonsai.t =
   fun (local_ graph) ->
   let state, set =
     Bonsai.state "" ~sexp_of_model:[%sexp_of: String.t] ~equal:[%equal: String.t] graph
@@ -27,6 +27,10 @@ let hello_textbox : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t =
   let message = hello_user state graph in
   let%arr message and set in
   Vdom.Node.div
-    [ Vdom.Node.input ~attrs:[ Vdom.Attr.on_input (fun _ text -> set text) ] (); message ]
+    [ Vdom.Node.input
+        ~attrs:[ Vdom.Attr.on_input_js_of_ocaml (fun _ text -> set text) ]
+        ()
+    ; message
+    ]
 ;;
 (* $MDX part-end *)

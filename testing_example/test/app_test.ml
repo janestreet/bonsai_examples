@@ -97,7 +97,7 @@ end
 
 let%expect_test "test Bonsai.state" =
   let component
-    : local_ Bonsai.graph -> (string * (string -> unit Vdom.Effect.t)) Bonsai.t
+    : Bonsai.graph @ local -> (string * (string -> unit Vdom.Effect.t)) Bonsai.t
     =
     fun (local_ graph) ->
     let state, set_state =

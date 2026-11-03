@@ -89,7 +89,7 @@ let bordered_text width text =
     ~attrs:
       [ [%css
           {|
-            width: %{width};
+            width: #{width};
             border: 2px solid red;
             margin-top: 2px;
             margin-bottom: 2px;
@@ -217,7 +217,7 @@ let visibility_component (local_ graph) =
 
 let buttons current inject =
   let make_button_for_tab page =
-    let click_handler = Vdom.Attr.on_click (fun _ -> inject page) in
+    let click_handler = Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject page) in
     let attr =
       if Page.equal page current
       then Vdom.Attr.(Style.primary @ click_handler)

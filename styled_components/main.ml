@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 module Gallery = Bonsai_web_contrib_gallery
 module Form = Bonsai_web_form.With_automatic_view
@@ -46,7 +47,8 @@ module Parameters = struct
     Form.Dynamic.with_default (Bonsai.return 2) form graph
   ;;
 
-  let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+  let form_for_field
+    : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
     =
     fun typed_field (local_ graph) ->
     match typed_field with
@@ -73,9 +75,9 @@ module Interpolation = struct
         Vdom.Node.div
           ~attrs:
             [ {%css|
-                background-color: %{color};
-                width: %{width};
-                height: %{height};
+                background-color: #{color};
+                width: #{width};
+                height: #{height};
               |}
             ]
           []]
@@ -118,9 +120,9 @@ module Typed_interpolation = struct
         Vdom.Node.div
           ~attrs:
             [ {%css|
-                background-color: %{color#Css_gen.Color};
-                width: %{width#Css_gen.Length};
-                height: %{height#Css_gen.Length};
+                background-color: #{color#Css_gen.Color};
+                width: #{width#Css_gen.Length};
+                height: #{height#Css_gen.Length};
               |}
             ]
           []]
@@ -193,9 +195,9 @@ module Stylesheet_interpolation = struct
           stylesheet
             {|
               .square {
-                background-color: %{color#Css_gen.Color};
-                width: %{width#Css_gen.Length};
-                height: %{height#Css_gen.Length};
+                background-color: #{color#Css_gen.Color};
+                width: #{width#Css_gen.Length};
+                height: #{height#Css_gen.Length};
                 transition: 1s;
               }
 

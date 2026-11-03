@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 module Gallery = Bonsai_web_contrib_gallery
 module Snips = Bonsai_experimental_snips
@@ -71,7 +72,9 @@ module Shared_code = struct
           position: absolute;
           opacity: 0;
           transform: translate(-100%, 0);
-          transition: opacity 0.15s linear, transform 0.15s ease-out;
+          transition:
+            opacity 0.15s linear,
+            transform 0.15s ease-out;
         }
 
         h2:hover > a::before {
@@ -139,9 +142,9 @@ module Markup = struct
   type t =
     | H of string
     | P of string
-    | D of (local_ Bonsai.graph -> (Vdom.Node.t * string) Bonsai.t)
+    | D of (Bonsai.graph @ local -> (Vdom.Node.t * string) Bonsai.t)
     | Ds of
-        (string option * (local_ Bonsai.graph -> (Vdom.Node.t * string) Bonsai.t)) list
+        (string option * (Bonsai.graph @ local -> (Vdom.Node.t * string) Bonsai.t)) list
 
   let remove_layout_comments code (local_ _graph) =
     let%arr code in

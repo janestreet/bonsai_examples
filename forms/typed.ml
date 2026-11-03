@@ -17,7 +17,8 @@ module Person = struct
 
   let label_for_field = `Computed field_to_string
 
-  let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+  let form_for_field
+    : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
     =
     fun typed_field (local_ graph) ->
     match typed_field with
@@ -49,7 +50,7 @@ module Dyn = struct
   let initial_choice = `First_constructor
 
   let form_for_variant
-    : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+    : type a. a Typed_variant.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
     =
     fun typed_field (local_ graph) ->
     match typed_field with
@@ -105,7 +106,7 @@ module Food = struct
     : type a cmp.
       a Typed_variant.t
       -> (a, cmp) Comparator.Module.t
-      -> local_ Bonsai.graph
+      -> Bonsai.graph @ local
       -> (a, cmp) Set.t Form.t Bonsai.t
     =
     fun variant (module Cmp) (local_ graph) ->

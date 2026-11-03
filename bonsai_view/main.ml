@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 module Form = Bonsai_web_form.With_automatic_view
 module Gallery = Bonsai_web_contrib_gallery
@@ -16,7 +17,7 @@ module Text = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo View.themed_text theme "hello world"]
   ;;
 
@@ -33,7 +34,7 @@ module Text_with_style_and_size = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       vbox
         [ View.themed_text theme ?style:None ?size:None "default style and size"
@@ -59,7 +60,7 @@ module Text_with_intent = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       vbox
         [ View.themed_text theme ?intent:None "no intent"
@@ -86,7 +87,7 @@ module Table = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let module T =
       [%demo
       [@@@ocamlformat "disable"]
@@ -138,7 +139,7 @@ module Table_with_group = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let module T = struct
       type t =
         { sym : string
@@ -189,7 +190,7 @@ module Table_with_empty_cells = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let module T = struct
       type t =
         { sym : string
@@ -231,7 +232,7 @@ module Tooltip = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let hbox = View.hbox ~gap:(`Em 1) in
     [%demo
       hbox
@@ -263,7 +264,7 @@ module Tooltip_positioning = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let vbox = View.vbox ~gap:(`Em 1) in
     let hbox = View.hbox ~gap:(`Em 1) ~main_axis_alignment:Space_between in
     [%demo
@@ -309,7 +310,7 @@ module Tooltip_with_arbitrary_content = struct
   let description = {| With `tooltip_attr'`, tooltips can contain any `Vdom.Node.t` |}
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       let tooltip =
         View.tooltip_attr'
@@ -336,7 +337,7 @@ module Tooltip_wrap = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       View.tooltip
         theme
@@ -353,7 +354,7 @@ module Tooltip_directions_wrap = struct
   let description = {| Tooltips can be positioned relative to the annotated content |}
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let vbox = View.vbox ~gap:(`Em 1) in
     let hbox = View.hbox ~gap:(`Em 1) in
     [%demo
@@ -382,7 +383,7 @@ module Tooltip_with_arbitrary_content_wrap = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       let tooltip =
         View.vbox
@@ -406,7 +407,7 @@ module Button = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo View.button theme ~on_click:Effect.Ignore "click me"]
   ;;
 
@@ -419,7 +420,7 @@ module Disabled_button = struct
   let description = {| Buttons can be disabled with an optional parameter |}
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       hbox
         [ View.button theme ~disabled:false ~on_click:Effect.Ignore "not disabled"
@@ -436,7 +437,7 @@ module Buttons_with_intent = struct
   let description = {| When given an intent, buttons can change their style |}
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let on_click = Effect.Ignore in
     [%demo
       hbox
@@ -461,7 +462,7 @@ module Disabled_buttons_with_intent = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       let on_click = Effect.Ignore
       and disabled = true in
@@ -487,7 +488,7 @@ module Badge = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       hbox
         [ View.badge theme ?intent:None "0"
@@ -511,7 +512,7 @@ module Dismissible_badge = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       let on_dismiss = Effect.Ignore in
       hbox
@@ -627,7 +628,7 @@ module Interactive_vbox = struct
   end
 
   let view (local_ graph) =
-    let%map axis_v, axis, _ = dropdown "function" ~init:`First_item (module Axis) graph
+    let%arr axis_v, axis, _ = dropdown "function" ~init:`First_item (module Axis) graph
     and v_direction_v, v_direction, v_f1 =
       dropdown "direction" (module Vertical_dir) graph
     and h_direction_v, h_direction, h_f1 =
@@ -713,7 +714,7 @@ module Basic_tabs = struct
   let description = ""
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     [%demo
       let on_change ~from:_ ~to_:_ = Effect.Ignore in
       View.tabs
@@ -739,7 +740,7 @@ module Enumerable_tabs = struct
   ;;
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let module T =
       [%demo
       module Pages = struct
@@ -767,7 +768,7 @@ module Devbar = struct
   let description = {| |}
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let view, text = [%demo View.devbar theme "DEV"] in
     Vdom.Node.div ~attrs:[ Vdom.Attr.style (Css_gen.max_width (`Px 500)) ] [ view ], text
   ;;
@@ -781,7 +782,7 @@ module Devbar_intent = struct
   let description = {| |}
 
   let view (local_ graph) =
-    let%map theme = View.Theme.current graph in
+    let%arr theme = View.Theme.current graph in
     let view, text =
       [%demo
         View.vbox
@@ -805,7 +806,7 @@ module Basic_card = struct
   let description = {| |}
 
   let view (local_ graph) =
-    let%map.Bonsai theme = View.Theme.current graph in
+    let%arr.Bonsai theme = View.Theme.current graph in
     let view, text = [%demo View.card theme "The message is: You are great!"] in
     Vdom.Node.div ~attrs:[ Vdom.Attr.style (Css_gen.max_width (`Px 500)) ] [ view ], text
   ;;
@@ -819,7 +820,7 @@ module Card_with_title = struct
   let description = {| |}
 
   let view (local_ graph) =
-    let%map.Bonsai theme = View.Theme.current graph in
+    let%arr.Bonsai theme = View.Theme.current graph in
     let view, text =
       [%demo View.card theme ~title:"New message!!" "The message is: You are great!"]
     in
@@ -835,7 +836,7 @@ module Cards_with_intent = struct
   let description = {| |}
 
   let view (local_ graph) =
-    let%map.Bonsai theme = View.Theme.current graph in
+    let%arr.Bonsai theme = View.Theme.current graph in
     let view, text =
       [%demo
         View.vbox
@@ -859,7 +860,7 @@ module Cards_with_fieldset = struct
   let description = {| |}
 
   let view (local_ graph) =
-    let%map.Bonsai theme = View.Theme.current graph in
+    let%arr.Bonsai theme = View.Theme.current graph in
     let view, text =
       [%demo
         View.vbox
@@ -911,7 +912,7 @@ module Card_with_rows = struct
   ;;
 
   let view (local_ graph) =
-    let%map.Bonsai theme = View.Theme.current graph in
+    let%arr.Bonsai theme = View.Theme.current graph in
     let view, text =
       [%demo
         hbox

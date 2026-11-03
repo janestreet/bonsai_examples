@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Url_var = Bonsai_web_url_var
 module Form = Bonsai_web_form.With_automatic_view
@@ -20,7 +21,8 @@ module Location = struct
     | Y -> from_query_optional_with_default ~equal:Int.equal int ~default:100
   ;;
 
-  let form_for_field : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+  let form_for_field
+    : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
     =
     let open Form.Elements.Textbox in
     function
@@ -28,7 +30,7 @@ module Location = struct
     | Y -> int ~allow_updates_when_focused:`Never ()
   ;;
 
-  let form_of_t : local_ Bonsai.graph -> t Form.t Bonsai.t =
+  let form_of_t : Bonsai.graph @ local -> t Form.t Bonsai.t =
     Form.Typed.Record.make
       (module struct
         module Typed_field = Typed_field
@@ -72,14 +74,14 @@ module Record = struct
     | From_fragment -> from_fragment string
   ;;
 
-  let form_of_t : local_ Bonsai.graph -> t Form.t Bonsai.t =
+  let form_of_t : Bonsai.graph @ local -> t Form.t Bonsai.t =
     fun (local_ graph) ->
     Form.Typed.Record.make
       (module struct
         module Typed_field = Typed_field
 
         let form_for_field
-          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ graph) ->
           let open Form.Elements.Textbox in
@@ -133,7 +135,7 @@ module Variant = struct
         module Typed_variant = Typed_variant
 
         let form_for_variant
-          : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_variant.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ _graph) ->
           match typed_field with
@@ -168,7 +170,7 @@ module Query_variant = struct
         module Typed_variant = Typed_variant
 
         let form_for_variant
-          : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_variant.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ graph) ->
           match typed_field with
@@ -208,7 +210,7 @@ module T = struct
         module Typed_variant = Typed_variant
 
         let form_for_variant
-          : type a. a Typed_variant.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_variant.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ graph) ->
           match typed_field with
@@ -263,7 +265,7 @@ let%expect_test _ =
     |}]
 ;;
 
-let navigation = `Intercept
+let navigation = `Intercept `Reset_scroll
 let fallback _exn _components = T.Unable_to_parse
 
 let component ~url_var (local_ graph) =
@@ -296,7 +298,8 @@ let component ~url_var (local_ graph) =
     in
     let%arr update_effect in
     Vdom.Node.button
-      ~attrs:[ Vdom.Attr.on_click (fun _ -> update_effect ~f:(fun _ -> Homepage)) ]
+      ~attrs:
+        [ Vdom.Attr.on_click_js_of_ocaml (fun _ -> update_effect ~f:(fun _ -> Homepage)) ]
       [ Vdom.Node.text "Go to homepage via [update]" ]
   in
   let%arr form
@@ -321,7 +324,7 @@ let component ~url_var (local_ graph) =
         [ Vdom.Node.text saved_to_history_text
         ; Vdom.Node.br ()
         ; Vdom.Node.button
-            ~attrs:[ Vdom.Attr.on_click (fun _ -> toggle_modify_history) ]
+            ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> toggle_modify_history) ]
             [ Vdom.Node.text "Toggle history saving" ]
         ]
     ; View.hbox [ update_button ]

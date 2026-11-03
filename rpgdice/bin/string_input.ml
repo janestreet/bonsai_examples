@@ -24,7 +24,7 @@ let component (type t) (module Conv : Conv with type t = t) ~default_model (loca
     Vdom.Node.input
       ~attrs:
         [ Vdom.Attr.type_ "text"
-        ; Vdom.Attr.on_input (fun _ -> set_text)
+        ; Vdom.Attr.on_input_js_of_ocaml (fun _ -> set_text)
         ; Vdom.Attr.value_attr text
         ; (match conv with
            | Ok _ -> Vdom.Attr.empty

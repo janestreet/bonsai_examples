@@ -1,6 +1,7 @@
 open! Core
 open! Async_kernel
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Form = Bonsai_web_form.With_manual_view
 
@@ -80,7 +81,8 @@ let with_submit_button (form : ('a, 'view) Form.t) ~(on_submit : 'a -> unit Effe
     let submit_button =
       match Form.value form with
       | Ok value ->
-        submit_button ~extra_attrs:[ Vdom.Attr.on_click (fun _ -> on_submit value) ]
+        submit_button
+          ~extra_attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> on_submit value) ]
       | Error _ -> submit_button ~extra_attrs:[ Vdom.Attr.disabled ]
     in
     View.vbox ~gap:(`Px 5) [ view; submit_button ])
@@ -114,7 +116,8 @@ let form_set (local_ graph) =
   Vdom.Node.div
     [ View.hbox ~gap:(`Px 5) [ Vdom.Node.text "my textbox"; Form.view textbox ]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> Form.set textbox "hello world") ]
+        ~attrs:
+          [ Vdom.Attr.on_click_js_of_ocaml (fun _ -> Form.set textbox "hello world") ]
         [ Vdom.Node.text "click me" ]
     ]
 ;;
@@ -192,7 +195,7 @@ module Record = struct
     }
   [@@deriving typed_fields, sexp_of]
 
-  let form : local_ Bonsai.graph -> (t, Vdom.Node.t) Form.t Bonsai.t =
+  let form : Bonsai.graph @ local -> (t, Vdom.Node.t) Form.t Bonsai.t =
     Form.Typed.Record.make
       (module struct
         (* Reimport the module that typed_fields just derived *)
@@ -212,7 +215,7 @@ module Record = struct
         (* Provide a form computation for each field in the record *)
         let form_for_field
           : type a.
-            a Typed_field.t -> local_ Bonsai.graph -> (a, field_view) Form.t Bonsai.t
+            a Typed_field.t -> Bonsai.graph @ local -> (a, field_view) Form.t Bonsai.t
           =
           fun typed_field (local_ graph) ->
           match typed_field with
@@ -253,7 +256,7 @@ module Variant = struct
     | C of string
   [@@deriving typed_variants, sexp_of]
 
-  let form : local_ Bonsai.graph -> (t, Vdom.Node.t) Form.t Bonsai.t =
+  let form : Bonsai.graph @ local -> (t, Vdom.Node.t) Form.t Bonsai.t =
     Form.Typed.Variant.make
       (module struct
         (* Reimport the module that typed_variants just derived *)
@@ -279,7 +282,7 @@ module Variant = struct
         (* Provide a form computation for constructing the clause's arguments *)
         let form_for_variant
           : type a.
-            a Typed_variant.t -> local_ Bonsai.graph -> (a, variant_view) Form.t Bonsai.t
+            a Typed_variant.t -> Bonsai.graph @ local -> (a, variant_view) Form.t Bonsai.t
           =
           fun typed_variant (local_ graph) ->
           match typed_variant with
@@ -315,7 +318,7 @@ let () =
 ;;
 
 (* $MDX part-begin=record_and_variant_form *)
-let view_record_and_variant_form : local_ Bonsai.graph -> Vdom.Node.t Bonsai.t =
+let view_record_and_variant_form : Bonsai.graph @ local -> Vdom.Node.t Bonsai.t =
   fun graph ->
   let form =
     let%arr record_form = Record.form graph

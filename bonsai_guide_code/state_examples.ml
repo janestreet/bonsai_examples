@@ -9,11 +9,11 @@ let counter_ui (local_ graph) =
   (* view-construction logic *)
   Vdom.Node.div
     [ Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_count (count - 1)) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_count (count - 1)) ]
         [ Vdom.Node.text "-1" ]
     ; Vdom.Node.text [%string "Counter value: %{count#Int}"]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_count (count + 1)) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_count (count + 1)) ]
         [ Vdom.Node.text "+1" ]
     ]
 ;;
@@ -39,11 +39,11 @@ let counter_state_machine_with_input ~(step : int Bonsai.t) (local_ graph) =
     let%arr step and count and inject in
     Vdom.Node.div
       [ Vdom.Node.button
-          ~attrs:[ Vdom.Attr.on_click (fun _ -> inject `Decrement) ]
+          ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject `Decrement) ]
           [ Vdom.Node.text [%string "-%{step#Int}"] ]
       ; Vdom.Node.text [%string "Counter value: %{count#Int}"]
       ; Vdom.Node.button
-          ~attrs:[ Vdom.Attr.on_click (fun _ -> inject `Increment) ]
+          ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> inject `Increment) ]
           [ Vdom.Node.text [%string "+%{step#Int}"] ]
       ]
   in

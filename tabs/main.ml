@@ -30,7 +30,7 @@ let component (local_ graph) =
             | A ->
               let%arr change_tab in
               Vdom.Node.button
-                ~attrs:[ Vdom.Attr.on_click (fun _ -> change_tab T.C) ]
+                ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> change_tab T.C) ]
                 [ Vdom.Node.text "jump to c" ]
             | B -> Bonsai.return (Vdom.Node.text "why are you even here")
             | C -> Bonsai.return (Vdom.Node.text "hello!"))

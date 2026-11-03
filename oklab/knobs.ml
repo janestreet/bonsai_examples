@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 module Form = Bonsai_web_form.With_automatic_view
 
@@ -32,7 +33,7 @@ module Shared = struct
         let label_for_field = `Inferred
 
         let form_for_field
-          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ graph) ->
           match typed_field with
@@ -54,7 +55,7 @@ module For_gradient = struct
         let label_for_field = `Inferred
 
         let form_for_field
-          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ graph) ->
           match typed_field with
@@ -92,7 +93,7 @@ module For_overlay = struct
         let label_for_field = `Computed label_for_field
 
         let form_for_field
-          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ graph) ->
           match typed_field with
@@ -145,7 +146,7 @@ let form (local_ graph) =
         let label_for_field = `Inferred
 
         let form_for_field
-          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ _graph) ->
           match typed_field with

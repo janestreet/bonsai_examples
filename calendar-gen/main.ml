@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open! Bonsai.Let_syntax
 module Form = Bonsai_web_form.With_manual_view
 
@@ -73,7 +74,13 @@ let render ~year =
         {%html|
           <div %{weekend_attrs} %{attrs} %{box_css}>
             <div>
-              <div style="padding: 0.5em; position: absolute; right: 0">
+              <div
+                css="
+                  padding: 0.5em;
+                  position: absolute;
+                  right: 0;
+                "
+              >
                 #{Int.to_string day_number}
               </div>
             </div>
@@ -90,7 +97,11 @@ let render ~year =
     let boxes = spacing_boxes @ date_boxes in
     let view =
       View.hbox
-        ({%html|<div %{month_name_box}>#{ Month.to_string month |> String.lowercase }</div>|}
+        ({%html|
+          <div %{month_name_box}>
+            #{Month.to_string month |> String.lowercase}
+          </div>
+         |}
          :: boxes)
     in
     view, List.length boxes
@@ -121,7 +132,7 @@ let render ~year =
       {%html|
         <div
           %{box_css}
-          style="
+          css="
             font-size: 1.5em;
             font-weight: bold;
             display: flex;
@@ -145,7 +156,7 @@ let component (local_ graph) =
   let year = Form.value_or_default ~default:2024 year_picker in
   View.hbox
     [ View.vbox [ Form.view year_picker; render ~year ]
-    ; {%html|<div style="width: 20px"></div>|}
+    ; {%html|<div css="width: 20px"></div>|}
     ]
 ;;
 

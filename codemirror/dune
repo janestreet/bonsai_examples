@@ -1,5 +1,4 @@
 (executables
- (modes byte exe)
  (names main)
  (libraries bonsai_web bonsai_web_components.bonsai_codemirror
    bonsai_web_components.form bonsai_web_components.codemirror
@@ -9,4 +8,5 @@
    bonsai_web_components.codemirror_vim core virtual_dom.css_gen
    ppx_css.inline_css js_of_ocaml virtual_dom)
  (preprocess
-  (pps bonsai.ppx_bonsai ppx_jane ppx_html)))
+  (pps bonsai.ppx_bonsai ppx_jane ppx_html))
+ (modes js wasm byte exe))

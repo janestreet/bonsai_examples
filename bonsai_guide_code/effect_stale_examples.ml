@@ -27,7 +27,7 @@ let set_and_run_effect_naive (other_input : string Bonsai.t) (local_ graph) =
   Vdom.Node.div
     [ Vdom.Node.text [%string "Counter value: %{count#Int}"]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_and_alert (count + 1)) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_and_alert (count + 1)) ]
         [ Vdom.Node.text "increment count" ]
     ]
 ;;
@@ -57,7 +57,7 @@ let set_and_run_effect_peek (other_input : string Bonsai.t) (local_ graph) =
   Vdom.Node.div
     [ Vdom.Node.text [%string "Counter value: %{count#Int}"]
     ; Vdom.Node.button
-        ~attrs:[ Vdom.Attr.on_click (fun _ -> set_and_alert (count + 1)) ]
+        ~attrs:[ Vdom.Attr.on_click_js_of_ocaml (fun _ -> set_and_alert (count + 1)) ]
         [ Vdom.Node.text "increment count" ]
     ]
 ;;

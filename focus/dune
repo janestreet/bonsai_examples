@@ -1,6 +1,6 @@
 (executables
- (modes byte exe)
  (names main)
- (libraries bonsai_web core)
+ (libraries bonsai_web bonsai_web.ui_view core)
  (preprocess
-  (pps ppx_jane bonsai.ppx_bonsai)))
+  (pps ppx_jane bonsai.ppx_bonsai))
+ (modes js wasm byte exe))

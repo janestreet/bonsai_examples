@@ -25,4 +25,4 @@ type t =
   ; for_overlay : For_overlay.t
   }
 
-val form : local_ Bonsai.graph -> (t * Vdom.Node.t) Bonsai.t
+val form : Bonsai.graph @ local -> (t * Vdom.Node.t) Bonsai.t

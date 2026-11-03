@@ -109,7 +109,7 @@ module Random_time_span = struct
         ;;
 
         let form_for_field
-          : type a. a Typed_field.t -> local_ Bonsai.graph -> a Form.t Bonsai.t
+          : type a. a Typed_field.t -> Bonsai.graph @ local -> a Form.t Bonsai.t
           =
           fun typed_field (local_ graph) ->
           match typed_field with

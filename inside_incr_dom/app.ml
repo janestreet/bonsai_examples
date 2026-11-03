@@ -48,7 +48,7 @@ let view model bonsai_subcomponent ~inject =
   let%map bonsai_subcomponent and model in
   let on_change _ text = inject (Action.Update_string text) in
   Vdom.Node.div
-    [ Vdom.Node.input ~attrs:[ Vdom.Attr.on_input on_change ] ()
+    [ Vdom.Node.input ~attrs:[ Vdom.Attr.on_input_js_of_ocaml on_change ] ()
     ; Vdom.Node.text (String.uppercase model.Model.other_model)
     ; Component.view bonsai_subcomponent
     ]

@@ -1,5 +1,6 @@
 open! Core
 open! Bonsai_web
+module View = Bonsai_web_legacy_view
 open Bonsai.Let_syntax
 
 let percent_range_generator = Base_quickcheck.Generator.float_inclusive (-2.8) 2.8
@@ -308,7 +309,7 @@ let component (local_ graph) =
     Vdom.Node.div
       ~attrs:
         [ Style.stress_button
-        ; Vdom.Attr.on_click (fun _ -> toggle_stress)
+        ; Vdom.Attr.on_click_js_of_ocaml (fun _ -> toggle_stress)
         ; Vdom.Attr.role "button"
         ; Vdom.Attr.tabindex 0
         ]

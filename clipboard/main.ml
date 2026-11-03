@@ -10,7 +10,7 @@ let component (local_ graph) =
     let%arr form in
     Vdom.Node.button
       ~attrs:
-        [ Vdom.Attr.on_click (fun _ ->
+        [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
             match%bind.Effect
               Js_clipboard.Asynchronous.copy_text
                 (Js.string (Form.value_or_default form ~default:""))
@@ -28,7 +28,7 @@ let component (local_ graph) =
     let%arr form in
     Vdom.Node.button
       ~attrs:
-        [ Vdom.Attr.on_click (fun _ ->
+        [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
             Ui_effect.Expert.handle
               (Effect.ignore_m
                  (Js_clipboard.Asynchronous.copy_text
@@ -42,7 +42,7 @@ let component (local_ graph) =
     let%arr form in
     Vdom.Node.button
       ~attrs:
-        [ Vdom.Attr.on_click (fun _ ->
+        [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
             let%bind.Effect st = Js_clipboard.Asynchronous.read_text in
             match st with
             | Ok st -> Form.set form (Js.to_string st)
@@ -55,7 +55,7 @@ let component (local_ graph) =
   let copy_blob_button =
     Vdom.Node.button
       ~attrs:
-        [ Vdom.Attr.on_click (fun _ ->
+        [ Vdom.Attr.on_click_js_of_ocaml (fun _ ->
             match%bind.Effect
               Js_clipboard.Asynchronous.copy_blob
                 [ Js_of_ocaml.File.blob_from_string

@@ -58,7 +58,7 @@ let component name (local_ graph) =
   let () =
     Bonsai.Edge.lifecycle
       ~on_activate:
-        (let%map inject in
+        (let%arr inject in
          inject Regenerate)
       graph
   in

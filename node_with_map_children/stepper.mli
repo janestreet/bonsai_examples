@@ -15,5 +15,5 @@ type t =
 val component
   :  before_state:Color_list.t Bonsai.t
   -> after_state:Color_list.t Bonsai.t
-  -> local_ Bonsai.graph
+  -> Bonsai.graph @ local
   -> t Bonsai.t
